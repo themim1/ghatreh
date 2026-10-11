@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}مدارک من — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div>
+    <h1>مدارک من</h1>
+    <div class="cap muted num">{{ logs|length|fa }} ردیف · {{ logs|selectattr('level','ge',2)|list|length|fa }} تأییدشده · {{ files_total|fa }} فایل</div>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn sm" href="/admin/export">⬇ خروجی Zip دروس</a>
+</div>
+
+<form method="get" class="row wrap" style="gap:8px;margin-bottom:14px">
+  <input class="input" name="q" value="{{ q }}" placeholder="جست‌وجو در یادداشت‌ها…" style="max-width:260px">
+  <a class="chip {% if not level %}on{% endif %}" href="/evidence{% if q %}?q={{ q }}{% endif %}">همه</a>
+  <a class="chip {% if level == 1 %}on{% endif %}" href="/evidence?level=1{% if q %}&q={{ q }}{% endif %}">سریع</a>
+  <a class="chip {% if level == 2 %}on{% endif %}" href="/evidence?level=2{% if q %}&q={{ q }}{% endif %}">مستند</a>
+  <a class="chip {% if level == 3 %}on{% endif %}" href="/evidence?level=3{% if q %}&q={{ q }}{% endif %}">کامل</a>
+  <button class="btn sm" type="submit">جست‌وجو</button>
+</form>
+
+{% if logs %}
+<div class="card pad0">
+  <table class="tbl">
+    <thead><tr><th style="width:78px">روز</th><th>یادداشت یک‌خطی</th><th style="width:120px">سطح</th><th style="width:150px">ضمیمه</th><th style="width:110px">تاریخ</th><th style="width:90px"></th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td class="num bold">{{ log.day_number|fa }}</td>
+        <td class="small">{{ log.note or '—' }}</td>
+        <td>
+          {% if log.kind == 'read' %}<span class="badge n">فقط مطالعه</span>
+          {% elif log.kind == 'token' %}<span class="badge info">مرخصی</span>
+          {% elif log.level >= 3 %}<span class="badge ai">۳ · کامل</span>
+          {% elif log.level == 2 %}<span class="badge ok">۲ · تأییدشده</span>
+          {% else %}<span class="badge warn">۱ · سریع</span>{% endif %}
+        </td>
+        <td class="small">
+          {% if log.link %}<a class="chip sm mono" href="{{ log.link }}" target="_blank" rel="noopener">لینک</a>{% endif %}
+          {% if log.files %}<span class="chip sm num">📎 {{ log.files|length|fa }} فایل</span>{% endif %}
+          {% if not log.link and not log.files %}<span class="muted">—</span>{% endif %}
+        </td>
+        <td class="cap muted num">{{ log.log_date|jd }}</td>
+        <td><a class="btn sm" href="/day/{{ log.day_number }}">مشاهده</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card center" style="padding:34px">
+  <div class="ico gold" style="margin:0 auto 10px;width:48px;height:48px"><svg class="ic lg"><use href="#i-folder"/></svg></div>
+  <div class="bold">اولین مدرک همین امروز ساخته می‌شود</div>
+  <p class="cap muted" style="margin:6px 0 12px">یک خط یادداشت هم کافی است؛ در پایان دوره از همین‌ها پرتفولیو می‌سازیم.</p>
+  <a class="btn pri" href="/day/{{ current }}">رفتن به درس امروز</a>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}امروز — قطره{% endblock %}
+{% block content %}
+
+<div class="row" style="margin-bottom:14px">
+  <div>
+    <div class="cap muted">{{ today_date|jdf }}</div>
+    <div style="font-size:19px;font-weight:800">
+      {% if now.hour < 12 %}صبح بخیر{% elif now.hour < 18 %}وقت بخیر{% else %}شب بخیر{% endif %}
+    </div>
+  </div>
+  <span class="spacer"></span>
+  <span class="chip tint">{{ course.icon }} {{ course.title }}</span>
+</div>
+
+{% if today_log %}
+{# ---------- قطره امروز بسته شده ---------- #}
+<div class="hero" style="border-color:var(--ok-line);background:linear-gradient(180deg,var(--ok-soft),var(--surface))">
+  <div class="row" style="gap:12px;align-items:flex-start">
+    <span class="ico ok" style="width:46px;height:46px"><svg class="ic lg"><use href="#i-check"/></svg></span>
+    <div style="flex:1">
+      <div style="font-size:18px;font-weight:800">قطره امروز بسته شد</div>
+      <div class="cap muted num">
+        روز {{ current|fa }} ·
+        {% if today_log.kind == 'token' %}مرخصی ژتون‌دار{% elif today_log.level >= 2 %}سطح {{ today_log.level|fa }} — تأییدشده{% else %}سطح سریع{% endif %}
+        · {{ today_log.submitted_at.strftime('%H:%M')|fa }}
+      </div>
+    </div>
+    <div class="metric" style="text-align:center">
+      <span class="v num" style="color:var(--ok)">{{ streak.streak|fa }}</span>
+      <span class="l">روز پیوسته</span>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="row wrap" style="gap:9px">
+    {% if tomorrow_lesson and tomorrow_lesson.status == 'published' %}
+      <a class="btn pri" href="/day/{{ current + 1 }}">درس فردا — {{ tomorrow_lesson.title }}
+        <svg class="ic"><use href="#i-arrowl"/></svg></a>
+    {% endif %}
+    <a class="btn" href="/day/{{ current }}">مشاهده و ویرایش مدرک امروز</a>
+    <a class="btn ghost" href="/path">مسیر دوره</a>
+  </div>
+</div>
+
+{% else %}
+{# ---------- کارت قهرمان: تصمیم امروز ---------- #}
+{% if current_lesson %}
+<div class="hero">
+  <div class="between">
+    <span class="row cap bold" style="gap:7px;color:var(--pri-ink)">
+      <svg class="ic sm"><use href="#i-book"/></svg>
+      {% if current_lesson.kind == 'project' %}مینی‌پروژه هفتگی{% elif current_lesson.kind == 'review' %}مرور هفته{% else %}درس روز{% endif %}
+    </span>
+    <span class="badge info num">روز {{ current|fa }} از {{ course.total_days|fa }}</span>
+  </div>
+  <div style="font-size:21px;font-weight:800;line-height:1.5;margin:9px 0 6px">{{ current_lesson.title }}</div>
+  {% if current_lesson.goal %}
+  <div class="row" style="gap:8px;align-items:flex-start;margin-bottom:11px">
+    <svg class="ic" style="color:var(--pri);margin-top:2px"><use href="#i-target"/></svg>
+    <span class="small ink2" style="line-height:1.8">{{ current_lesson.goal }}</span>
+  </div>
+  {% endif %}
+  <div class="row wrap" style="gap:7px;margin-bottom:13px">
+    <span class="chip"><svg class="ic"><use href="#i-clock"/></svg><span class="num">{{ current_lesson.read_minutes|fa }}</span> دقیقه مطالعه</span>
+    <span class="chip"><svg class="ic"><use href="#i-dumbbell"/></svg><span class="num">{{ current_lesson.exercise_minutes|fa }}</span> دقیقه تمرین</span>
+    <span class="chip num">فاز {{ current_lesson.phase_number|fa }} · هفته {{ current_lesson.week_number|fa }}</span>
+  </div>
+  <a class="btn pri blk" href="/day/{{ current }}">شروع درس امروز <svg class="ic"><use href="#i-arrowl"/></svg></a>
+  <div class="row" style="gap:9px;margin-top:11px">
+    <div class="bar" style="flex:1"><i style="width:{{ stats.percent }}%"></i></div>
+    <span class="cap muted num">{{ stats.percent|fa }}٪</span>
+  </div>
+</div>
+{% else %}
+<div class="hero">
+  <div class="row" style="gap:11px">
+    <span class="ico gold"><svg class="ic lg"><use href="#i-alert"/></svg></span>
+    <div>
+      <div class="bold">امروز محتوا ندارد</div>
+      <div class="cap muted num">درس روز {{ current|fa }} منتشر نشده است.</div>
+    </div>
+  </div>
+  <div class="row wrap" style="gap:9px;margin-top:13px">
+    <a class="btn pri" href="/admin/prompts">ساخت با پرامپت</a>
+    <a class="btn" href="/path">مرور هفته قبل</a>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+
+{# ---------- کارت جبران دیروز ---------- #}
+{% if streak.grace_open and not today_log %}
+<div class="card" style="margin-top:12px;border-color:var(--gold-line);background:var(--gold-soft)">
+  <div class="row" style="gap:11px;align-items:flex-start">
+    <span class="ico gold"><svg class="ic"><use href="#i-refresh"/></svg></span>
+    <div style="flex:1">
+      <div class="bold small">دیروز ({{ (today_date - one_day)|wd }} {{ (today_date - one_day)|jd }}) ثبت نشده</div>
+      <div class="cap muted">تا آخر امروز فرصت داری. با یک خط یادداشت، Streak <span class="num">{{ streak.streak|fa }}</span> حفظ می‌شود.</div>
+    </div>
+  </div>
+  <form method="post" action="/grace/submit" style="margin-top:10px">
+    <input class="input" name="note" placeholder="یک خط: دیروز چه کار کردی؟" style="margin-bottom:9px">
+    <button class="btn pri blk sm" type="submit">ثبت مدرک دیروز (سطح سریع)</button>
+  </form>
+</div>
+{% endif %}
+
+{# ---------- Streak و نقشه هفته ---------- #}
+<div class="card" style="margin-top:12px">
+  <div class="row" style="gap:11px">
+    <span class="ico gold"><svg class="ic lg"><use href="#i-flame"/></svg></span>
+    <div class="metric">
+      <span class="v num">{{ streak.streak|fa }}</span>
+      <span class="l">روز پیوسته — رکورد <span class="num">{{ streak.record|fa }}</span></span>
+    </div>
+    <span class="spacer"></span>
+    <a class="cap bold" style="color:var(--pri)" href="/path">مسیر دوره <svg class="ic sm" style="vertical-align:-3px"><use href="#i-chev"/></svg></a>
+  </div>
+  <div class="divider"></div>
+  <div class="week">
+    {% for d in week %}
+      <span class="daycell {{ d.state }}{% if d.is_today %} today{% endif %}">
+        <i>
+          {% if d.state == 'done' %}<svg class="ic sm"><use href="#i-check"/></svg>
+          {% elif d.state == 'read' %}<svg class="ic sm"><use href="#i-book"/></svg>
+          {% elif d.state == 'token' %}<svg class="ic sm"><use href="#i-trophy"/></svg>
+          {% elif d.state == 'pause' %}<svg class="ic sm"><use href="#i-clock"/></svg>
+          {% elif d.state == 'missed' %}<svg class="ic sm"><use href="#i-x"/></svg>
+          {% elif d.state == 'friday' %}<svg class="ic sm"><use href="#i-refresh"/></svg>
+          {% else %}<span class="num">{{ (d.day_number or '')|fa }}</span>{% endif %}
+        </i>
+        <span class="s">{{ d.label }}</span>
+      </span>
+    {% endfor %}
+  </div>
+  <div class="cap muted" style="margin-top:9px">
+    ✓ ثبت‌شده · {{ '📘 فقط مطالعه' }} · 🎫 مرخصی · ↻ مرور جمعه (نمی‌شکند) · ✕ ازدست‌رفته
+  </div>
+</div>
+
+<div class="g2" style="margin-top:12px">
+  {# ---------- بافر محتوا ---------- #}
+  <div class="card">
+    <div class="row" style="gap:10px">
+      <span class="ico sm {% if buffer_warn %}danger{% else %}ok{% endif %}"><svg class="ic sm"><use href="#i-layers"/></svg></span>
+      <div>
+        <div class="small bold num">{{ buffer|fa }} روز محتوا آماده است</div>
+        <div class="tiny muted">بافر خط تولید — از همین‌جا مدیریت کن</div>
+      </div>
+      <span class="spacer"></span>
+      <span class="badge {% if buffer_warn %}warn{% else %}ok{% endif %}">{% if buffer_warn %}کم{% else %}امن{% endif %}</span>
+    </div>
+    {% if buffer_warn %}
+      <a class="btn sm blk pri" style="margin-top:10px" href="/admin/prompts">پر کردن شکاف با پرامپت</a>
+    {% else %}
+      <a class="cap bold" style="color:var(--pri);display:block;margin-top:9px" href="/admin/lessons">مشاهده فهرست دروس ←</a>
+    {% endif %}
+  </div>
+
+  {# ---------- درس فردا ---------- #}
+  <div class="card" style="background:var(--surface2)">
+    <div class="row" style="gap:10px;{% if not today_log %}opacity:.7{% endif %}">
+      <span class="ico sm">{% if today_log %}<svg class="ic sm"><use href="#i-book"/></svg>{% else %}<svg class="ic sm"><use href="#i-lock"/></svg>{% endif %}</span>
+      <div>
+        <div class="small bold">{% if tomorrow_lesson and tomorrow_lesson.title %}درس فردا — {{ tomorrow_lesson.title }}{% else %}درس فردا آماده نیست{% endif %}</div>
+        <div class="tiny muted">{% if today_log %}باز شده — می‌توانی جلو بزنی{% else %}پس از ثبت قطره امروز باز می‌شود{% endif %}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if stats %}
+<div class="g3" style="margin-top:12px">
+  <div class="card"><div class="cap muted">روزهای ثبت‌شده</div><div class="metric"><span class="v num">{{ stats.done|fa }}</span></div></div>
+  <div class="card"><div class="cap muted">مدارک تأییدشده (سطح ۲+)</div><div class="metric"><span class="v num">{{ stats.verified|fa }}</span></div></div>
+  <div class="card"><div class="cap muted">پیشرفت دوره</div><div class="metric"><span class="v num">{{ stats.percent|fa }}٪</span></div></div>
+</div>
+{% endif %}
+
+{% endblock %}

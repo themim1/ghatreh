@@ -1,0 +1,96 @@
+{# شیت ثبت مدرک — سه سطح؛ پیش‌فرض: سریع #}
+<div class="grab"></div>
+<div class="between">
+  <div>
+    <div class="xbold" style="font-size:16px">ثبت مدرک امروز</div>
+    <div class="cap muted num">روز {{ lesson_index|fa }} · {{ lesson.title }}</div>
+  </div>
+  <span class="badge ok num"><svg class="ic"><use href="#i-flame"/></svg>+۱ → {{ (streak.streak + 1)|fa }}</span>
+</div>
+
+{% if error %}
+  <div class="callout bad" style="margin-top:12px">
+    <svg class="ic"><use href="#i-alert"/></svg><div class="small">{{ error }}</div>
+  </div>
+{% endif %}
+
+<form hx-post="/day/{{ lesson_index }}/submit" hx-target="#sheet-content" hx-swap="innerHTML"
+      hx-encoding="multipart/form-data" method="post" action="/day/{{ lesson_index }}/submit"
+      style="margin-top:13px">
+
+  <div class="seg3 seg" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+    <input type="radio" name="level" id="lv1" value="1" {% if level == 1 %}checked{% endif %}>
+    <label for="lv1">سریع</label>
+    <input type="radio" name="level" id="lv2" value="2" {% if level == 2 %}checked{% endif %}>
+    <label for="lv2">مستند</label>
+    <input type="radio" name="level" id="lv3" value="3" {% if level == 3 %}checked{% endif %}>
+    <label for="lv3">کامل</label>
+  </div>
+
+  {# ----- سطح ۱ ----- #}
+  <div data-lvl="1">
+    <span class="label">یادداشت یک‌خطی <span class="muted" style="font-weight:600">(اختیاری)</span></span>
+    <textarea class="ta" name="note" placeholder="امروز چه یاد گرفتی؟">{{ note or '' }}</textarea>
+    <div class="cap muted" style="margin-top:7px">۱۵ ثانیه هم کافی است — همین تیک، امروز را می‌بندد.</div>
+  </div>
+
+  {# ----- سطح ۲ ----- #}
+  <div data-lvl="2">
+    <label class="dropzone" for="file-pick">
+      <svg class="ic lg"><use href="#i-upload"/></svg>
+      <div class="small bold">اسکرین‌شات یا فایل را انتخاب کن</div>
+      <div class="tiny">PNG / JPG / PDF · حداکثر ۵ مگابایت</div>
+      <input type="file" id="file-pick" name="files" multiple accept="image/*,.pdf,.txt,.py,.md">
+    </label>
+    <div style="margin-top:12px">
+      <span class="label">یادداشت</span>
+      <textarea class="ta" name="note" style="min-height:64px" placeholder="امروز چه یاد گرفتی؟">{{ note or '' }}</textarea>
+    </div>
+    <div style="margin-top:11px">
+      <span class="label">لینک <span class="muted" style="font-weight:600">(گیت، جیست، مخزن)</span></span>
+      <input class="input mono" dir="ltr" name="link" value="{{ link or '' }}" placeholder="https://…">
+    </div>
+  </div>
+
+  {# ----- سطح ۳ ----- #}
+  <div data-lvl="3">
+    <label class="dropzone" for="file-pick3">
+      <svg class="ic lg"><use href="#i-layers"/></svg>
+      <div class="small bold">فایل‌های پروژه را انتخاب کن</div>
+      <div class="tiny">چند فایل مجاز است · مجموع تا ۵ مگابایت</div>
+      <input type="file" id="file-pick3" name="files" multiple>
+    </label>
+    <div style="margin-top:12px">
+      <span class="label">یادداشت پروژه</span>
+      <textarea class="ta" name="note" style="min-height:64px" placeholder="این پروژه چه چیزی را نمایش می‌دهد؟">{{ note or '' }}</textarea>
+    </div>
+    <div style="margin-top:11px">
+      <span class="label">لینک مخزن</span>
+      <input class="input mono" dir="ltr" name="link" value="{{ link or '' }}" placeholder="https://github.com/…">
+    </div>
+    <div class="callout gold" style="margin-top:11px;padding:10px 12px">
+      <svg class="ic"><use href="#i-trophy"/></svg><div class="small">این مدرک به <b>پرتفولیوی پایان فاز</b> اضافه می‌شود.</div>
+    </div>
+  </div>
+
+  <div class="callout ok" style="margin-top:13px;padding:10px 12px">
+    <svg class="ic"><use href="#i-flame"/></svg>
+    <div class="small">با این ثبت: <b>Streak {{ (streak.streak + 1)|fa }}</b> · درس فردا باز می‌شود</div>
+  </div>
+
+  <div class="row" style="gap:9px;margin-top:13px">
+    <button class="btn pri" style="flex:1" type="submit">ثبت قطره امروز</button>
+    <button class="btn" type="button" data-close-sheet>انصراف</button>
+  </div>
+  <div class="cap muted center" style="margin-top:9px">Ctrl + Enter برای ثبت سریع · انصراف، پیش‌نویس را نگه می‌دارد</div>
+</form>
+
+<script>
+applyLevel(document.getElementById('sheet-content'));
+document.addEventListener('keydown', function ctrlEnter(e){
+  if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+    var form = document.querySelector('#sheet-content form');
+    if(form && document.querySelector('dialog.sheet[open]')){ form.requestSubmit(); }
+  }
+});
+</script>

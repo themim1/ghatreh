@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}روز {{ lesson_index }} — {{ lesson.title }}{% endblock %}
+{% block bodyclass %}has-tabbar{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:12px">
+  <a class="btn sm" href="/"><svg class="ic"><use href="#i-arrowr"/></svg>امروز</a>
+  <span class="badge n num">روز {{ lesson_index|fa }} · فاز {{ lesson.phase_number|fa }} · هفته {{ lesson.week_number|fa }}</span>
+  <span class="spacer"></span>
+  <span class="chip sm num">{{ lesson.read_minutes|fa }} دقیقه مطالعه</span>
+  {% if lesson.kind == 'project' %}<span class="badge info">مینی‌پروژه</span>{% endif %}
+  {% if lesson.kind == 'review' %}<span class="badge n">مرور هفته</span>{% endif %}
+</div>
+
+{% if lesson.status != 'published' and lesson.status != 'ai' %}
+  <div class="callout bad" style="margin-bottom:12px">
+    <svg class="ic"><use href="#i-alert"/></svg>
+    <div class="small">این درس هنوز منتشر نشده است (وضعیت: {{ lesson.status }}). می‌توانی بخوانی و ثبت کنی، ولی محتوا ممکن است تغییر کند. <a href="/admin/lesson/{{ lesson.id }}" style="color:var(--pri)">ویرایش در پنل ←</a></div>
+  </div>
+{% endif %}
+
+{% if lesson.goal %}
+<div class="callout pri"><svg class="ic"><use href="#i-target"/></svg><div class="small"><b>هدف امروز:</b> {{ lesson.goal }}</div></div>
+{% endif %}
+
+{% if lesson.title %}<h1 style="margin:14px 0 8px">{{ lesson.title }}</h1>{% endif %}
+
+<div class="day">{{ body_html|safe }}</div>
+
+{% if lesson.golden_tip and 'نکته طلایی' not in lesson.body_md %}
+<div class="callout gold" style="margin-top:12px">
+  <svg class="ic"><use href="#i-bolt"/></svg>
+  <div class="small"><b>نکته طلایی:</b> {{ lesson.golden_tip }}</div>
+</div>
+{% endif %}
+
+{% if lesson.exercise_prompt %}
+<div class="card" style="margin-top:14px;border-color:var(--hero-line)">
+  <div class="between" style="margin-bottom:8px">
+    <span class="row small xbold" style="gap:7px">
+      <svg class="ic" style="color:var(--pri)"><use href="#i-dumbbell"/></svg>
+      تمرین امروز <span class="badge n num">{{ lesson.exercise_minutes|fa }} دقیقه</span>
+    </span>
+    <button class="btn sm" type="button" onclick="copyText(this.dataset.t, this)" data-t="{{ lesson.exercise_prompt }}">
+      <svg class="ic sm"><use href="#i-copy"/></svg>کپی صورت تمرین
+    </button>
+  </div>
+  <p class="small" style="margin:0 0 7px">{{ lesson.exercise_prompt }}</p>
+  {% if lesson.exercise_expected %}
+    <div class="row wrap" style="gap:6px">
+      <span class="chip sm"><svg class="ic sm"><use href="#i-checkc"/></svg>خروجی: {{ lesson.exercise_expected }}</span>
+    </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="row between" style="margin-top:14px">
+  {% if prev_n %}<a class="btn sm" href="/day/{{ prev_n }}"><svg class="ic"><use href="#i-arrowr"/></svg>روز {{ prev_n|fa }}</a>{% else %}<span></span>{% endif %}
+  {% if next_n and not next_locked %}<a class="btn sm" href="/day/{{ next_n }}">روز {{ next_n|fa }}<svg class="ic"><use href="#i-arrowl"/></svg></a>
+  {% elif next_n %}<span class="chip sm"><svg class="ic sm"><use href="#i-lock"/></svg>روز بعد پس از ثبت</span>{% endif %}
+</div>
+
+{# ---------- نوار کنش ---------- #}
+<div class="actionbar" id="actionbar">
+  {% if log %}
+    <a class="btn pri" style="flex:1" href="#" data-open-sheet>
+      <svg class="ic"><use href="#i-checkc"/></svg>ثبت‌شده — ویرایش مدرک
+    </a>
+    <a class="btn" href="/evidence">مدارک</a>
+  {% elif current == lesson_index or lesson_index == stats.current %}
+    <button class="btn pri" style="flex:1" type="button" data-open-sheet>ثبت تمرین امروز</button>
+    <form method="post" action="/day/{{ lesson_index }}/read">
+      <button class="btn ghost" type="submit">فقط مطالعه</button>
+    </form>
+  {% else %}
+    <a class="btn pri" style="flex:1" href="/day/{{ current }}">رفتن به درس امروز</a>
+  {% endif %}
+</div>
+
+{# ---------- شیت ثبت ---------- #}
+<dialog class="sheet" aria-label="ثبت مدرک">
+  <div class="sheet-inner" id="sheet-content">
+    {% include 'partials/sheet_body.html' %}
+  </div>
+</dialog>
+
+{% endblock %}

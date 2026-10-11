@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}پیام‌های روبیکا — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div><h1>بازوی پیگیری — روبیکا</h1>
+  <div class="cap muted">همه پیام‌ها با داده واقعی امروز ساخته شده‌اند · {% if connected %}توکن تنظیم شده است{% else %}بدون توکن: ثبت در صندوق خروجی{% endif %}</div></div>
+  <span class="spacer"></span>
+  <form method="post" action="/rubika/test"><button class="btn sm pri" type="submit">ارسال پیام آزمایشی</button></form>
+  <form method="post" action="/admin/notifications/tick"><button class="btn sm" type="submit">اجرای موتور ارسال</button></form>
+</div>
+
+<div class="g3">
+  <div>
+    <div class="cap bold" style="margin-bottom:8px">۰۸:۰۰ — پیام صبحگاهی</div>
+    <div class="chatbox">
+      <div class="chathead">
+        <span class="avatar"><svg class="ic"><use href="#i-drop"/></svg></span>
+        <div><div class="small bold">ربات قطره</div><div class="tiny muted">هر روز {{ settings.morning_time|fa }}</div></div>
+      </div>
+      <div class="bub them">{{ morning }}<span class="tm">{{ settings.morning_time|fa }}</span></div>
+      <div class="bub them" style="background:var(--surface2)">
+        دستورهای همیشه در دسترس:
+        <span class="mono tiny">وضعیت · توقف ۵ · ساعت 21:00 · امروز</span>
+      </div>
+    </div>
+    <div class="cap muted" style="margin-top:8px">لینک عمیق وقتی میزبانی فعال باشد اضافه می‌شود؛ در حالت لوکال، «کد روز» جایگزین است.</div>
+  </div>
+
+  <div>
+    <div class="cap bold" style="margin-bottom:8px">{{ settings.evening_time|fa }} — یادآوری عصرانه</div>
+    <div class="chatbox">
+      <div class="chathead">
+        <span class="avatar"><svg class="ic"><use href="#i-drop"/></svg></span>
+        <div><div class="small bold">ربات قطره</div><div class="tiny muted">اگر امروز ثبت نشده باشد</div></div>
+      </div>
+      <div class="bub them">{{ evening }}<span class="tm">{{ settings.evening_time|fa }}</span></div>
+      <div class="bub me">۱<span class="tm">{{ settings.evening_time|fa }}</span></div>
+      <div class="bub them" style="background:var(--ok-soft);border-color:var(--ok-line)">{{ congrats }}<span class="tm">{{ settings.evening_time|fa }}</span></div>
+    </div>
+    <div class="cap muted" style="margin-top:8px">اگر امروز ثبت شده باشد، این پیام ارسال نمی‌شود · بعد از ۲۱:۰۰ سکوت مطلق.</div>
+  </div>
+
+  <div>
+    <div class="cap bold" style="margin-bottom:8px">بازگشت مهربان و کارنامه</div>
+    <div class="chatbox">
+      <div class="chathead">
+        <span class="avatar"><svg class="ic"><use href="#i-drop"/></svg></span>
+        <div><div class="small bold">ربات قطره</div><div class="tiny muted">روزهای بعد</div></div>
+      </div>
+      <div class="bub them">{{ back }}<span class="tm">۰۸:۰۰</span></div>
+      <div class="bub them" style="background:var(--surface2)">{{ weekly }}<span class="tm">جمعه ۱۰:۰۰</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div class="row between" style="margin-bottom:10px">
+    <span class="small xbold">قواعد سخت ارسال</span>
+    <a class="cap bold" style="color:var(--pri)" href="/admin/notifications">لاگ و صف ارسال ←</a>
+  </div>
+  <div class="g3">
+    <div class="callout ok"><svg class="ic"><use href="#i-checkc"/></svg><div class="small">حداکثر ۳ پیام در روز · پنجره سکوت ۲۳:۰۰ تا ۰۷:۰۰</div></div>
+    <div class="callout ok"><svg class="ic"><use href="#i-bell"/></svg><div class="small">پس از ثبت موفق، هیچ یادآوری‌ای ارسال نمی‌شود</div></div>
+    <div class="callout ok"><svg class="ic"><use href="#i-clock"/></svg><div class="small">توقف با یک کلیک یا دستور <span class="mono">توقف ۵</span> در روبیکا</div></div>
+  </div>
+</div>
+
+{% endblock %}

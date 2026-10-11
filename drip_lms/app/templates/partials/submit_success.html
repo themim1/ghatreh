@@ -1,0 +1,49 @@
+{# نتیجه ثبت — قطعی و ساده #}
+<div class="grab"></div>
+<div class="center" style="padding:6px 0 2px">
+  <div style="width:74px;height:74px;border-radius:24px;background:var(--ok-soft);display:grid;place-items:center;margin:0 auto 12px">
+    <svg style="width:34px;height:34px;stroke:var(--ok);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><use href="#i-check"/></svg>
+  </div>
+  <div style="font-size:20px;font-weight:800">قطره امروز بسته شد</div>
+  <div class="cap muted num">{{ today_date|jdf }} · ساعت {{ now.strftime('%H:%M')|fa }}</div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <div class="row" style="gap:12px">
+    <span class="ico gold" style="width:46px;height:46px"><svg class="ic lg"><use href="#i-flame"/></svg></span>
+    <div class="metric">
+      <span class="v num" style="font-size:28px">{{ streak.streak|fa }} <span style="font-size:13px;color:var(--ok)">+۱</span></span>
+      <span class="l">روز پیوسته · رکورد <span class="num">{{ streak.record|fa }}</span></span>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="row between small"><span class="muted">سطح مدرک</span><span class="bold">
+    {% if level >= 3 %}کامل — پرتفولیو{% elif level == 2 %}مستند — تأییدشده{% else %}سریع (خوداظهاری){% endif %}</span></div>
+  <div class="row between small" style="margin-top:6px"><span class="muted">پیشرفت دوره</span>
+    <span class="bold num">{{ ((lesson_index) * 100 // (course.total_days or 180))|fa }}٪ · {{ lesson_index|fa }} از {{ course.total_days|fa }}</span></div>
+  {% if log and log.files %}<div class="row between small" style="margin-top:6px"><span class="muted">ضمیمه</span><span class="bold num">{{ log.files|length|fa }} فایل</span></div>{% endif %}
+</div>
+
+<div class="row wrap" style="gap:8px;margin-top:14px">
+  {% if next_lesson %}
+    <a class="btn pri" style="flex:1" href="/day/{{ next_n }}">درس فردا — {{ next_lesson.title }} <svg class="ic"><use href="#i-arrowl"/></svg></a>
+  {% else %}
+    <a class="btn pri" style="flex:1" href="/path">مسیر دوره <svg class="ic"><use href="#i-arrowl"/></svg></a>
+  {% endif %}
+</div>
+<div class="row wrap" style="gap:7px;margin-top:9px">
+  <a class="chip" href="/day/{{ lesson_index }}#sheet"><svg class="ic"><use href="#i-pen"/></svg>ویرایش یادداشت</a>
+  <a class="chip" href="/evidence"><svg class="ic"><use href="#i-folder"/></svg>مدارک من</a>
+  <a class="chip" href="/"><svg class="ic"><use href="#i-home"/></svg>امروز</a>
+</div>
+
+<div class="callout ok" style="margin-top:12px;padding:10px 12px">
+  <svg class="ic"><use href="#i-bell"/></svg>
+  <div class="small"><b>یادآوری عصرانه لغو شد</b> — پس از ثبت موفق، ربات پیام یادآوری نمی‌فرستد.</div>
+</div>
+
+{# به‌روزرسانی نوار کنش روز (خارج از شیت) #}
+<div id="actionbar" hx-swap-oob="true" class="actionbar">
+  <a class="btn pri" style="flex:1" href="#" data-open-sheet><svg class="ic"><use href="#i-checkc"/></svg>ثبت‌شده — ویرایش مدرک</a>
+  <a class="btn" href="/evidence">مدارک</a>
+</div>

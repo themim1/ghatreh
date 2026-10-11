@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}تنظیمات — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div><h1>تنظیمات</h1><div class="cap muted">روبیکا · توقف · ژتون · دوره فعال · داده · نمایش</div></div>
+  <span class="spacer"></span>
+  {% if paused %}<span class="badge warn">⏸ در توقف تا {{ settings.paused_until }}</span>
+  {% else %}<span class="badge ok">فعال</span>{% endif %}
+</div>
+
+<div class="g2">
+  {# ---------- کارت ۱: روبیکا و ساعات ---------- #}
+  <form method="post" action="/settings" class="card">
+    <div class="row" style="gap:10px;margin-bottom:12px">
+      <span class="ico pri"><svg class="ic"><use href="#i-chat"/></svg></span>
+      <div><div class="bold small">اتصال روبیکا و ساعت‌ها</div>
+      <div class="cap muted">{% if settings.rubika_token %}توکن تنظیم شده است{% else %}بدون توکن — پیام‌ها در صندوق خروجی ثبت می‌شوند{% endif %}</div></div>
+    </div>
+    <div class="g2">
+      <div><span class="label">پیام صبحگاهی</span><input class="input num" name="morning_time" value="{{ settings.morning_time }}" placeholder="08:00"></div>
+      <div><span class="label">یادآوری عصرانه</span><input class="input num" name="evening_time" value="{{ settings.evening_time }}" placeholder="18:00"></div>
+    </div>
+    <div style="margin-top:11px"><span class="label">شناسه چت روبیکا</span>
+      <input class="input mono" dir="ltr" name="rubika_chat_id" value="{{ settings.rubika_chat_id }}" placeholder="chat_id"></div>
+    <div style="margin-top:11px"><span class="label">توکن ربات (اختیاری)</span>
+      <input class="input mono" dir="ltr" name="rubika_token" value="{{ settings.rubika_token }}" placeholder="token">
+      <span class="cap muted">با توکن، همان پیام‌ها از مسیر واقعی API می‌روند. بدون آن، همه چیز در «موتور ارسال» ثبت و صف می‌شود.</span>
+    </div>
+    <label class="chip" style="margin-top:12px;display:inline-flex">موتور ارسال روشن
+      <input type="checkbox" name="scheduler_enabled" value="1" style="margin-inline-start:6px" {% if settings.scheduler_enabled == '1' %}checked{% endif %}>
+    </label>
+    <div class="row" style="gap:9px;margin-top:12px">
+      <button class="btn sm pri" type="submit">ذخیره تنظیمات روبیکا</button>
+      <a class="btn sm" href="/rubika/preview">پیش‌نمایش متن پیام‌ها</a>
+    </div>
+  </form>
+
+  {# ---------- کارت ۲: توقف و ژتون ---------- #}
+  <div class="card">
+    <div class="row" style="gap:10px;margin-bottom:12px">
+      <span class="ico gold"><svg class="ic"><use href="#i-clock"/></svg></span>
+      <div><div class="bold small">توقف و ژتون</div><div class="cap muted">روزهای توقف و ژتون «ازدست‌رفته» حساب نمی‌شوند</div></div>
+    </div>
+
+    <form method="post" action="/settings" class="row" style="gap:9px;align-items:flex-end">
+      <div><span class="label">ژتون باقی‌مانده این ماه</span>
+        <input class="input num" name="tokens_left" value="{{ settings.tokens_left }}" style="max-width:110px"></div>
+      <input type="hidden" name="morning_time" value="{{ settings.morning_time }}">
+      <input type="hidden" name="evening_time" value="{{ settings.evening_time }}">
+      <input type="hidden" name="rubika_token" value="{{ settings.rubika_token }}">
+      <input type="hidden" name="rubika_chat_id" value="{{ settings.rubika_chat_id }}">
+      <input type="hidden" name="scheduler_enabled" value="{{ settings.scheduler_enabled }}">
+      <button class="btn sm pri" type="submit">ذخیره ژتون</button>
+    </form>
+
+    <div class="divider"></div>
+    <div class="row wrap" style="gap:8px">
+      <form method="post" action="/settings/pause"><input type="hidden" name="days" value="3">
+        <button class="btn sm" type="submit">توقف ۳ روز</button></form>
+      <form method="post" action="/settings/pause"><input type="hidden" name="days" value="7">
+        <button class="btn sm" type="submit">توقف ۷ روز</button></form>
+      {% if paused %}
+      <form method="post" action="/settings/resume"><button class="btn sm pri" type="submit">ادامه بده</button></form>
+      {% endif %}
+      <form method="post" action="/settings/token"><button class="btn sm ghost" type="submit">استفاده از ژتون امروز</button></form>
+    </div>
+    <div class="cap muted" style="margin-top:9px">
+      {% if paused %}الان در توقف هستی — تا {{ settings.paused_until }} هیچ پیامی ساخته نمی‌شود.
+      {% else %}در حال توقف نیستی. «ژتون» یک روز مرخصی است که Streak را نمی‌شکند.{% endif %}
+    </div>
+  </div>
+
+  {# ---------- کارت ۳: دوره فعال ---------- #}
+  <form method="post" action="/settings" class="card">
+    <div class="row" style="gap:10px;margin-bottom:12px">
+      <span class="ico"><svg class="ic"><use href="#i-layers"/></svg></span>
+      <div><div class="bold small">دوره فعال</div><div class="cap muted">در هر لحظه یک دوره فعال است — بقیه فقط آرشیو می‌شوند</div></div>
+    </div>
+    <select class="select" name="active_course_id">
+      {% for c in courses %}
+        <option value="{{ c.id }}" {% if course and c.id == course.id %}selected{% endif %}>{{ c.icon }} {{ c.title }} ({{ c.total_days|fa }} روز)</option>
+      {% endfor %}
+    </select>
+    <input type="hidden" name="morning_time" value="{{ settings.morning_time }}">
+    <input type="hidden" name="evening_time" value="{{ settings.evening_time }}">
+    <input type="hidden" name="rubika_token" value="{{ settings.rubika_token }}">
+    <input type="hidden" name="rubika_chat_id" value="{{ settings.rubika_chat_id }}">
+    <input type="hidden" name="tokens_left" value="{{ settings.tokens_left }}">
+    <input type="hidden" name="scheduler_enabled" value="{{ settings.scheduler_enabled }}">
+    <button class="btn sm pri" style="margin-top:11px" type="submit">فعال‌کردن این دوره</button>
+  </form>
+
+  {# ---------- کارت ۴: داده و نمایش ---------- #}
+  <div class="card">
+    <div class="row" style="gap:10px;margin-bottom:12px">
+      <span class="ico"><svg class="ic"><use href="#i-upload"/></svg></span>
+      <div><div class="bold small">داده، پشتیبان و نمایش</div><div class="cap muted">همه چیز محلی است؛ هیچ داده‌ای بیرون نمی‌رود</div></div>
+    </div>
+    <div class="stack8">
+      <a class="btn sm" href="/admin/export">⬇ خروجی Zip دروس (Markdown)</a>
+      <a class="btn sm" href="/admin/upload">⬆ بارگذاری گروهی (Zip / MD)</a>
+      <div class="cap muted">پایگاه داده <span class="mono">drip_lms/data/drip.sqlite3</span> · فایل‌ها <span class="mono">data/uploads/</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="row wrap" style="gap:8px;align-items:center">
+      <span class="chip">تم فعلی: {{ 'تیره' if theme == 'dark' else 'روشن' }}</span>
+      <a class="btn sm" href="/settings/theme?to={{ 'light' if theme == 'dark' else 'dark' }}">تغییر به تم {{ 'روشن' if theme == 'dark' else 'تیره' }}</a>
+      <span class="cap muted">فونت وزیرمتن محلی · بدون CDN — آفلاین هم کار می‌کند</span>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <div class="between" style="margin-bottom:10px">
+    <span class="small xbold">آخرین پیام‌های ساخته‌شده</span>
+    <a class="cap bold" style="color:var(--pri)" href="/admin/notifications">لاگ کامل موتور ارسال ←</a>
+  </div>
+  <div class="stack8">
+    {% for n in outbox %}
+      <div class="row" style="gap:10px">
+        <span class="cap num">{{ n.created_at.strftime('%m-%d %H:%M')|fa }}</span>
+        <span class="badge {% if n.status == 'sent' %}ok{% elif n.status == 'failed' %}bad{% else %}n{% endif %}">{{ n.kind }}</span>
+        <span class="cap muted" style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" dir="auto">{{ n.body.split('\n')[0][:70] }}</span>
+      </div>
+    {% else %}
+      <div class="cap muted">هنوز پیامی ساخته نشده — با «اجرای tick» در موتور ارسال شروع کن.</div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

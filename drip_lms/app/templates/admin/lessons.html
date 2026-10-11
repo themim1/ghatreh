@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}دروس — خط تولید{% endblock %}
+{% block content %}
+{% set tot = lessons|length %}
+{% set pub = stats_status.get('published', 0) %}
+{% set ai = stats_status.get('ai', 0) %}
+{% set draft = stats_status.get('draft', 0) %}
+{% set empty = stats_status.get('empty', 0) %}
+{% set covered = coverage|selectattr('status', 'ne', 'empty')|list|length %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div>
+    <h1>خط تولید محتوا</h1>
+    <div class="cap muted num">{{ tot|fa }} درس · {{ pub|fa }} منتشرشده · {{ ai|fa }} ویرایش‌نشده · {{ draft|fa }} پیش‌نویس · {{ empty|fa }} خالی</div>
+  </div>
+  <span class="spacer"></span>
+  <a class="btn sm pri" href="/admin/lesson/new">+ درس تازه</a>
+  <a class="btn sm" href="/admin/upload">بارگذاری گروهی</a>
+  <a class="btn sm" href="/admin/export">خروجی Zip</a>
+</div>
+
+<div class="g3" style="margin-bottom:14px">
+  <div class="card">
+    <div class="cap muted">پوشش ۳۰ روز آینده</div>
+    <div class="metric"><span class="v num">{{ covered|fa }} / ۳۰</span></div>
+    <div class="bar" style="margin-top:9px"><i style="width:{{ (covered * 100 // 30) }}%"></i></div>
+  </div>
+  <div class="card">
+    <div class="cap muted">بافر خط تولید</div>
+    <div class="metric"><span class="v num">{{ buffer|fa }} روز</span>
+      <span class="l">{% if buffer < 5 %}کمتر از کف ۵ روز — الان پر کن{% else %}امن{% endif %}</span></div>
+  </div>
+  <div class="card">
+    <div class="cap muted">درس امروز</div>
+    <div class="metric"><span class="v num">روز {{ current|fa }}</span>
+      <span class="l">{{ current_lesson.title if current_lesson else 'محتوا ندارد' }}</span></div>
+  </div>
+</div>
+
+{% if ai %}
+<div class="callout ai" style="margin-bottom:14px">
+  <svg class="ic"><use href="#i-spark"/></svg>
+  <div class="small"><b>{{ ai|fa }} درس با وضعیت «AI · ویرایش‌نشده»</b> — قبل از رسیدن روز، صدا و مثال‌ها را انسانی کن. <a href="#ai" style="color:var(--pri)">فهرست ↓</a></div>
+</div>
+{% endif %}
+
+<div class="card pad0">
+  <table class="tbl">
+    <thead><tr>
+      <th style="width:62px">روز</th><th>عنوان</th><th style="width:105px">وضعیت</th>
+      <th style="width:215px">کنش‌ها</th>
+    </tr></thead>
+    <tbody>
+      {% for l in lessons %}
+      <tr>
+        <td class="num bold">{{ l.day_number|fa }}</td>
+        <td>
+          <div class="small bold">{{ l.title or '—' }}</div>
+          <div class="tiny muted num">فاز {{ l.phase_number|fa }} · هفته {{ l.week_number|fa }} · {{ l.kind }}{% if l.body_md %} · ≈{{ (l.body_md|length // 5)|fa }} کلمه{% endif %}
+            {% if l.day_number == current %}· <span style="color:var(--pri)">امروز</span>{% endif %}</div>
+        </td>
+        <td><span class="badge {% if l.status == 'published' %}ok{% elif l.status == 'ai' %}ai{% elif l.status == 'draft' %}warn{% else %}n{% endif %}">{{ l.status }}</span></td>
+        <td class="row" style="gap:6px;flex-wrap:nowrap;align-items:center">
+          <a class="btn sm" href="/admin/lesson/{{ l.id }}">ویرایش</a>
+          {% if l.status != 'published' %}
+          <form method="post" action="/admin/lesson/{{ l.id }}/status">
+            <input type="hidden" name="status" value="published">
+            <button class="btn sm ghost" type="submit">انتشار</button>
+          </form>
+          {% else %}
+          <a class="btn sm ghost" href="/day/{{ l.day_number }}">مشاهده</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not lessons %}<tr><td colspan="4" class="cap muted">هنوز درسی ثبت نشده — با «درس تازه» یا بارگذاری Zip شروع کن.</td></tr>{% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% if ai %}
+<div class="card" id="ai" style="margin-top:14px">
+  <div class="small xbold" style="margin-bottom:10px">صف ویرایش انسانی ({{ ai|fa }} درس)</div>
+  <div class="stack8">
+    {% for l in ai_lessons %}
+      <div class="row between" style="gap:10px">
+        <span class="cap num">روز {{ l.day_number|fa }}</span>
+        <span class="small bold" style="flex:1">{{ l.title }}</span>
+        <a class="btn sm" href="/admin/lesson/{{ l.id }}">ویرایش صدا</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

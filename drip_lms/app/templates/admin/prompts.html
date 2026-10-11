@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}پرامپت‌ها — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div><h1>کتابخانه پرامپت</h1>
+  <div class="cap muted">محتوا را با هوش مصنوعی تولید کن، بعد ویرایش انسانی بزن — وضعیت <span class="badge ai">ai</span> تا ویرایش نهایی</div></div>
+  <span class="spacer"></span>
+  <a class="btn sm" href="/admin/upload">بارگذاری خروجی</a>
+</div>
+
+<div class="card" style="margin-bottom:14px">
+  <div class="g2">
+    <div><span class="label">زمینه درس (به پرامپت تزریق می‌شود)</span>
+      <input class="input" id="ctx-lesson" value="دوره {{ course.title if course else '—' }} · روز {{ current|fa }} · {{ current_lesson.title if current_lesson else 'بدون موضوع' }}"></div>
+    <div><span class="label">سطح و مخاطب</span>
+      <input class="input" id="ctx-level" value="فاز {{ (current - 1) // 30 + 1 }} — مخاطب: خودم، سطح متوسط تا پیشرفته"></div>
+  </div>
+  <div style="margin-top:11px"><span class="label">راهنمای صدا (به همه پرامپت‌ها اضافه می‌شود)</span>
+    <textarea class="ta" id="voice-guide" style="min-height:62px">لحن: معلم خصوصی صبور و بی‌حاشیه. جمله‌های کوتاه. بدون شعار انگیزشی. مثال از دنیای واقعی بک‌اند. اصطلاح فنی با معادل انگلیسی در پرانتز.</textarea>
+  </div>
+  <div class="row wrap" style="gap:8px;margin-top:11px">
+    <label class="chip">تزریق راهنمای صدا
+      <input type="checkbox" id="inject-voice" checked style="margin-inline-start:6px">
+    </label>
+    <label class="chip">تزریق زمینه
+      <input type="checkbox" id="inject-ctx" checked style="margin-inline-start:6px">
+    </label>
+    <span class="cap muted">متغیرهای پرشده با داده واقعی دوره: <span class="num">{{ vars.day_number }}</span> روز · هفته <span class="num">{{ vars.week_number }}</span></span>
+  </div>
+</div>
+
+<div class="g2">
+  {% for p in prompts %}
+  <div class="card">
+    <div class="between" style="margin-bottom:8px">
+      <span class="row" style="gap:9px">
+        <span class="ico ai sm"><svg class="ic sm"><use href="#i-spark"/></svg></span>
+        <span>
+          <span class="small xbold">{{ p.title }}</span>
+          <span class="cap muted" style="display:block">{{ p.category }} · نسخه <span class="num">{{ p.version|fa }}</span> · <span class="num">{{ p.uses|fa }}</span> بار استفاده</span>
+        </span>
+      </span>
+      <button class="btn sm" type="button" data-copy-prompt="{{ loop.index0 }}">
+        <svg class="ic sm"><use href="#i-copy"/></svg>کپی
+      </button>
+    </div>
+    {% if p.vars %}<div class="row wrap" style="gap:6px;margin-bottom:8px">
+      {% for v in p.vars %}<span class="chip sm mono">{{ v }}</span>{% endfor %}
+    </div>{% endif %}
+    <pre class="mono tiny" id="prompt-{{ loop.index0 }}" dir="ltr"
+         style="background:var(--surface2);padding:11px;border-radius:12px;overflow:auto;max-height:200px;white-space:pre-wrap">{{ p.filled }}</pre>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card" style="margin-top:14px">
+  <div class="small xbold" style="margin-bottom:8px">گردش‌کار پیشنهادی (سه قدم)</div>
+  <div class="g3">
+    <div class="callout"><svg class="ic"><use href="#i-spark"/></svg><div class="small"><b>۱.</b> پرامپت مناسب را با زمینه واقعی کپی کن.</div></div>
+    <div class="callout"><svg class="ic"><use href="#i-upload"/></svg><div class="small"><b>۲.</b> خروجی Markdown را در بارگذاری گروهی بریز (حالت add_new).</div></div>
+    <div class="callout"><svg class="ic"><use href="#i-pen"/></svg><div class="small"><b>۳.</b> در ویرایشگر، صدا و مثال را انسانی کن و منتشر کن.</div></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('[data-copy-prompt]');
+  if(!btn){ return; }
+  var box = document.getElementById('prompt-' + btn.dataset.copyPrompt);
+  var out = '';
+  if(document.getElementById('inject-ctx').checked){
+    out += '[زمینه] ' + document.getElementById('ctx-lesson').value + ' | '
+         + document.getElementById('ctx-level').value + '\n';
+  }
+  if(document.getElementById('inject-voice').checked){
+    out += '[راهنمای صدا] ' + document.getElementById('voice-guide').value + '\n';
+  }
+  out += (out ? '\n' : '') + box.innerText;
+  copyText(out, btn);
+});
+</script>
+
+{% endblock %}

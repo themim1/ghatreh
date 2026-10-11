@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}راه‌اندازی قطره{% endblock %}
+{% block content %}
+
+<div class="card" style="max-width:640px;margin:26px auto;text-align:center;padding:30px">
+  <span class="logo" style="width:56px;height:56px;border-radius:18px;margin:0 auto 12px"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><use href="#i-drop"/></svg></span>
+  <h1 style="margin:0 0 6px">به قطره خوش آمدی</h1>
+  <p class="cap muted" style="line-height:1.9;margin:0 0 16px">
+    هنوز دوره‌ای فعال نیست. قطره یک ابزار شخصی است: یک دوره می‌سازی، روزی یک درس می‌گیری و
+    یک مدرک کوچک ثبت می‌کنی. ربات روبیکا صبح درس را می‌آورد و عصر فقط اگر ثبت نکرده باشی یادآوری می‌کند.
+  </p>
+  <div class="row" style="gap:9px;justify-content:center">
+    <a class="btn pri" href="/admin/upload">بارگذاری دروس از Zip</a>
+    <a class="btn" href="/admin/lessons">مدیریت دروس</a>
+    <a class="btn ghost" href="/settings">تنظیمات</a>
+  </div>
+  <div class="callout" style="text-align:start;margin-top:18px">
+    <svg class="ic"><use href="#i-info"/></svg>
+    <div class="small">میان‌بر: یک فایل Markdown با frontmatter بنویس و در <b>بارگذاری گروهی</b> بریز؛ ساختار پوشه‌ها خودکار ساخته می‌شود.</div>
+  </div>
+</div>
+
+{% endblock %}

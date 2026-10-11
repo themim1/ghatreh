@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}مسیر دوره — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div>
+    <h1>مسیر دوره</h1>
+    <div class="cap muted num">{{ course.icon }} {{ course.title }} · {{ logs_count|fa }} روز ثبت‌شده از {{ course.total_days|fa }}</div>
+  </div>
+  <span class="spacer"></span>
+  <span class="badge {% if buffer < 5 %}warn{% else %}ok{% endif %} num">بافر محتوا {{ buffer|fa }} روز</span>
+  <a class="btn sm" href="/admin/lessons">مدیریت دروس</a>
+</div>
+
+<div class="card" style="margin-bottom:14px">
+  <div class="row between" style="margin-bottom:8px">
+    <span class="small bold">فاز {{ (current - 1) // 30 + 1 }} از {{ course.phases|fa }}</span>
+    <span class="cap muted num">{{ stats.done|fa }} / {{ course.total_days|fa }} · {{ stats.percent|fa }}٪</span>
+  </div>
+  <div class="bar"><i style="width:{{ stats.percent }}%"></i></div>
+</div>
+
+{% for week_no, rows in weeks %}
+<div class="card" style="margin-bottom:12px">
+  <div class="between" style="margin-bottom:10px">
+    <span class="small xbold">هفته {{ week_no|fa }}</span>
+    <span class="cap muted num">{{ rows|length|fa }} روز</span>
+  </div>
+  <div class="tilegrid">
+    {% for r in rows %}
+      {% set l = r.lesson %}{% set log = r.log %}
+      <a class="tile {% if log and log.kind in ['done','read','token'] %}done{% elif r.is_today %}today{% elif r.is_future %}future{% elif not log and l.day_number < current %}missed{% endif %}"
+         href="/day/{{ l.day_number }}">
+        <div class="between">
+          <span class="cap bold num">روز {{ l.day_number|fa }}</span>
+          {% if log and log.level >= 2 %}<span class="badge ok tiny">تأییدشده</span>
+          {% elif log and log.kind == 'read' %}<span class="badge n tiny">فقط مطالعه</span>
+          {% elif log and log.kind == 'token' %}<span class="badge info tiny">مرخصی</span>
+          {% elif r.is_today %}<span class="badge info tiny">امروز</span>
+          {% elif r.is_future %}<span class="badge n tiny">آینده</span>
+          {% elif l.day_number < current %}<span class="badge bad tiny">ازدست‌رفته</span>{% endif %}
+        </div>
+        <div class="small bold" style="margin-top:5px;line-height:1.7">{{ l.title or '— بدون محتوا —' }}</div>
+        <div class="tiny muted num" style="margin-top:4px">
+          {% if l.kind == 'project' %}🔨 مینی‌پروژه{% elif l.kind == 'review' %}🔁 مرور{% endif %}
+          {{ (l.read_minutes + l.exercise_minutes)|fa }} دقیقه
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

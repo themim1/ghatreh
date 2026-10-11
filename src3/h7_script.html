@@ -1,0 +1,167 @@
+  </main>
+</div>
+
+<script>
+/* ---------- ۱) کلون تم تیره ---------- */
+function cloneDark(srcFrameId, holderId, tagText){
+  var src = document.querySelector('#'+srcFrameId+' .cloneable');
+  var holder = document.getElementById(holderId);
+  if(!src || !holder) return;
+  var node = src.cloneNode(true);
+  node.classList.add('dark');
+  var tag = node.querySelector('.ptag');
+  if(tag) tag.innerHTML = '<i class="d"></i> ' + tagText;
+  holder.appendChild(node);
+}
+cloneDark('f-s1l','s1d-holder','S1 · امروز · تم تیره');
+cloneDark('f-s2l','s2d-holder','S2 · درس روز · تم تیره');
+
+/* ---------- ۲) انوتیشن‌ها ---------- */
+const NOTES = {
+"f-style": {who:"🎨 مبانی بصری · مرجع", items:[
+ {t:"یک زبان واحد برای همه صفحه‌ها: پالت نقش‌دار، مقیاس تایپوگرافی، اجزای پایه و قواعد RTL — هر صفحه بعدی از همین کیت ساخته می‌شود.", hot:true},
+ {t:"رنگ‌ها نقش دارند: آبی=کنش، سبز=ثبت‌شده، طلایی=نکته/هشدار، قرمز=خطا، بنفش=محتوای AI ویرایش‌نشده. بنفش نقش معنایی دارد، نه تزئینی.", hot:true},
+ {t:"تم تیره هم‌رتبه است: سطح‌های #0E1015 → #15181F → #1B1F28 و آبی روشن‌تر #6E88FF تا کنتراست لمس و متن در شب حفظ شود."},
+ {t:"وزیرمتن با ۴ وزن (۴۰۰/۵۰۰/۷۰۰/۸۰۰) و ارتفاع خط ۱.۹ برای متن فارسی؛ اعداد UI فارسی با tabular-nums."},
+ {t:"اعلان‌ها چهار نقش دارند (هدف، نکته طلایی، موفقیت، خطا) و همه با آیکون و متن می‌آیند — رنگ تنها حامل معنا نیست."},
+ {t:"قاعده سخت: در هر قاب فقط یک CTA اصلی؛ دکمه‌های بعدی tonal، ساده یا ghost هستند."}]},
+"f-s1l": {who:"👤 صفحه S1 · امروز (روشن)", items:[
+ {t:"کارت قهرمان با گرادیان ملایم، یک کنش اصلی و پیامد شفاف: هدف امروز، بودجه زمانی، پیشرفت — همه بدون اسکرول.", hot:true},
+ {t:"نقشه هفته در کارت Streak: چهار وضعیت بصری (ثبت‌شده، امروز، مینی‌پروژه، مرور) + یادآوری مهلت جبران سه‌شنبه.", hot:true},
+ {t:"تراشه بافر محتوا در «امروز»: چون خودم سازنده‌ام، وضعیت خط تولید کنار وضعیت یادگیری دیده می‌شود."},
+ {t:"درس فردا با آیکون قفل و شفافیت متن: «پس از ثبت قطره امروز باز می‌شود» — قفل به‌عنوان تعهد، نه سد."},
+ {t:"ناوبری پایین با آیکون‌های خطی هم‌خانواده؛ آیتم فعال هم رنگ و هم پس‌زمینه pill می‌گیرد (نه فقط رنگ)."},
+ {t:"هیچ بنر، اعلان تزئینی یا کارت پیشنهادی روی این صفحه نیست — تمرکز کامل روی یک تصمیم."}]},
+"f-s1d": {who:"👤 صفحه S1 · امروز (تیره)", items:[
+ {t:"همان ساختار، توکن‌های تیره: بدون سفید خالص و مشکی خالص؛ متن روشن روی سطح #0E1015.", hot:true},
+ {t:"کارت قهرمان در تیره گرادیان سرمه‌ای می‌گیرد تا هنوز برجسته بماند، بدون اینکه با سفید چشم را بزند."},
+ {t:"طلایی گرم‌تر (#E9B65C) برای Streak: در شب باید «گرم» دیده شود، نه زرد تیز.", hot:true},
+ {t:"کنسول‌های کد در تیره روی سطح #0B0D13 می‌نشینند و رنگ‌های سینتکس روشن‌تر می‌شوند."},
+ {t:"این قاب با کلون خودکار از قاب روشن ساخته شده تا اگر توکن جایی جا مانده باشد، فوراً دیده شود (تست یکپارچگی تم)."}]},
+"f-s2l": {who:"👤 صفحه S2 · درس روز (روشن)", items:[
+ {t:"عرض متن محدود و تک‌ستون: تجربه مطالعه نزدیک به «یادداشت شخصی»، بدون سایدبار و بدون حواس‌پرتی.", hot:true},
+ {t:"نوار فایل روی بلوک کد (نام فایل + دکمه کپی) — کد آماده بردن به ترمینال است؛ بلوک کد همیشه LTR مستقل.", hot:true},
+ {t:"نمودار مسیر درخواست به‌جای متن توضیحی: FastAPI → Broker → Worker → API؛ مفهوم با تصویر بهتر جا می‌افتد."},
+ {t:"نکته طلایی با نقش بصری مستقل (طلایی + آیکون صاعقه) تا از متن اصلی جدا شود."},
+ {t:"کارت تمرین: صورت تمرین، زمان، و «خروجی مورد انتظار» به‌شکل تراشه — پیش از رفتن به ترمینال می‌دانم چه چیزی باید بسازم."},
+ {t:"نوار کنش چسبان پایین: ثبت (اصلی) و «فقط مطالعه» (ghost) — هر دو مسیر رسمی‌اند."}]},
+"f-s2d": {who:"👤 صفحه S2 · درس روز (تیره)", items:[
+ {t:"شب‌خوان: کنتراست متن پایین‌تر ولی بالاتر از حد استاندارد؛ بلوک کد تیره‌تر از پس‌زمینه.", hot:true},
+ {t:"نمودار مسیر و کارت تمرین همان ساختار روشن را حفظ می‌کنند — تغییر فقط توکن است، نه چیدمان (سازگاری حافظه بصری).", hot:true},
+ {t:"رنگ‌های سینتکس تیره، اشباع کمتری دارند تا چشم در مطالعه شب اذیت نشود."},
+ {t:"کادر «هدف امروز» در تیره به سرمه‌ای ملایم تبدیل می‌شود، نه آبی روشن — همان نقش، شدت کمتر."},
+ {t:"دکمه ثبت در تیره روشن‌تر از روشنِ روز است تا در نور کم، هدف لمس گم نشود."}]},
+"f-s3": {who:"👤 صفحه S3 · شیت ثبت", items:[
+ {t:"پیش‌فرض «سریع»: روز شلوغ با یک یادداشت ۱۵ ثانیه‌ای بسته می‌شود؛ مستند و کامل به‌عنوان ارتقا در دسترس‌اند.", hot:true},
+ {t:"خط پیامد همیشه بالای دکمه: «با این ثبت: Streak ۱۳ · درس فردا باز می‌شود» — هیچ غافلگیری‌ای بعد از زدن دکمه نیست.", hot:true},
+ {t:"سطح ۲ با درگ‌اند‌دراپ و ورودی لینک؛ تراشه فایل با دکمه حذف و نشان حجم، تا کنترل کامل باشد."},
+ {t:"سطح ۳ با چک‌لیست خروجی و یادآوری پرتفولیو — کار پروژه‌ای اینجا معنی سرمایه‌گذاری پیدا می‌کند."},
+ {t:"پشت شیت، درس روز محو می‌ماند: کاربر می‌داند کجای مسیر است و شیت یک لایه است، نه صفحه جدید.", hot:true},
+ {t:"انصراف همیشه ثانویه است و پیش‌نویس می‌ماند؛ میانبر Ctrl+Enter برای ثبت سریع."}]},
+"f-s3st": {who:"👤 صفحه S3 · نتیجه و حالت‌ها", items:[
+ {t:"قاب موفقیت: تیک بزرگ، عدد Streak با «+۱»، سه ردیف وضعیت، و تنها یک CTA اصلی («درس فردا»).", hot:true},
+ {t:"حالت آپلود: بازخورد روی خود دکمه (۶۴٪) + نوار پیشرفت در کادر فایل؛ متن یادداشت دست‌نخورده می‌ماند."},
+ {t:"فایل بزرگ‌تر از حد: خطا با راه‌حل («فشرده کن یا لینک بفرست») و فرم سالم — خطا هرگز فرم را خالی نمی‌کند.", hot:true},
+ {t:"آفلاین: یادداشت روی دستگاه ذخیره و در صف ثبت می‌ماند؛ بنر بالای صفحه وضعیت را شفاف می‌گوید."},
+ {t:"قاعده ضداسپم در همین صفحه دیده می‌شود: پس از ثبت، یادآوری عصرانه لغو شده است."},
+ {t:"Undo پنج‌ثانیه‌ای برای ثبت اشتباه؛ بعد از آن ویرایش جای حذف را می‌گیرد."}]},
+"f-rub": {who:"📱 روبیکا · سه لحظه", items:[
+ {t:"صبح: پنج سطر و یک لینک عمیق. شماره روز، هدف، بودجه زمانی، شروع، دستورها — نه یک کلمه بیشتر.", hot:true},
+ {t:"عصر: چهار پاسخ شماره‌ای؛ «۱» یعنی ثبت سطح ۱ از داخل چت و Streak زنده می‌ماند.", hot:true},
+ {t:"حباب‌ها ساده و متنی‌اند (بدون دکمه گرافیکی) تا محدودیت‌های احتمالی API روبیکا مسئله نشود؛ گزینه‌ها همان متن شماره‌دار هستند."},
+ {t:"بازگشت مهربان: «رکورد ۱۹ روزه‌ات سر جایش است» + نشان پایان فاز — دو پیامی که رفتار بازگشت را می‌سازند.", hot:true},
+ {t:"ربات باید توضیح بدهد، نه فقط اعلام کند؛ نمونه‌اش پاسخ به «چرا ۱۳ نشد؟» است."},
+ {t:"قاعده‌های سخت: پس از ثبت، هیچ یادآوری‌ای نمی‌آید · بعد از ۲۱:۰۰ سکوت · حداکثر ۳ پیام در روز."}]},
+"f-a1": {who:"🔐 دسکتاپ · A1 بافر محتوا", items:[
+ {t:"عدد بافر (۱۴ روز) درشت‌ترین عنصر صفحه است، چون مهم‌ترین سؤال روزمره من همین است: چند روز جلوترم؟", hot:true},
+ {t:"نوار پوشش ۳۰ روزه با چهار وضعیت؛ شکاف‌ها همان‌جا با دو دکمه («پر کردن با پرامپت» و «بارگذاری Zip») بسته می‌شوند.", hot:true},
+ {t:"بنفش مخصوص «AI · ویرایش‌نشده» است و هرگز خودکار منتشر نمی‌شود — تصمیم انتشار همیشه با من است."},
+ {t:"درخت دوره با ریزآمار هفته‌ها و زمان‌های هر روز؛ دکمه ویرایش روی ردیف AI برجسته‌تر است چون کار پرتکرار است."},
+ {t:"کارت «قاعده شخصی» در سایدبار: حد پایین بافر فراموش نمی‌شود، چون در همان صفحه زندگی می‌کند."},
+ {t:"سایدبار دو دنیای من را یکی می‌کند: یادگیری (امروز، مسیر، مدارک) و خط تولید (دروس، ویرایشگر، پرامپت، اعلان)."}]},
+"f-a2": {who:"🔐 دسکتاپ · A2 ویرایشگر", items:[
+ {t:"چیدمان دو ستونه: نوشتن در راست، دیدن در چپ؛ پیش‌نمایش دقیقاً همان چیزی است که فردا صبح در موبایل می‌خوانم.", hot:true},
+ {t:"«چسباندن خروجی AI» گام اول است و متادیتا خودکار جدا می‌شود؛ کار دستی از خط تولید حذف می‌شود."},
+ {t:"گیت کیفیت با یک هشدار زرد: مانع انتشار نیست (چون خودم منتشر می‌کنم) ولی در فهرست دروس می‌ماند.", hot:true},
+ {t:"نسخه‌ها در سایدبار با دکمه بازگردانی — ویرایش درس منتشرشده هیچ‌وقت نابودکننده نیست."},
+ {t:"نوار پایین: آمادگی انتشار، یادآوری بی‌اثری ویرایش روی پیشرفت من، و انتشار زمان‌بندی‌شده."},
+ {t:"بلوک مارک‌داون با نوار فایل و دکمه پیش‌نمایش؛ همان زبان صفحه S2، پس اعتماد بصری بین دو محیط حفظ می‌شود."}]}
+};
+
+const order = Array.from(document.querySelectorAll('.nav button[data-goto]')).map(b => b.dataset.goto);
+const fa = n => Number(n).toLocaleString('fa-IR');
+
+document.querySelectorAll('.frame').forEach(sec => {
+  const duo = sec.querySelector('.duo');
+  if (duo) {
+    const fh = document.createElement('div');
+    fh.className = 'fhead';
+    fh.innerHTML = '<div class="kick">' + (sec.dataset.kick || '') + '</div>'
+      + '<h1>' + (sec.dataset.title || '') + '</h1>'
+      + '<p>' + (sec.dataset.desc || '') + '</p>';
+    sec.insertBefore(fh, duo);
+
+    const cfg = NOTES[sec.id];
+    if (cfg) {
+      let aside = duo.querySelector('aside.notes');
+      if (!aside) { aside = document.createElement('aside'); aside.className = 'notes'; duo.appendChild(aside); }
+      const h3 = document.createElement('h3');
+      h3.innerHTML = '🔎 یادداشت طراحی · ' + fa(cfg.items.length) + ' مورد';
+      const ol = document.createElement('ol');
+      cfg.items.forEach((it, i) => {
+        const li = document.createElement('li');
+        if (it.hot) li.classList.add('hot');
+        li.innerHTML = '<span class="n">' + fa(i + 1) + '</span><span>' + it.t + '</span>';
+        ol.appendChild(li);
+      });
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = cfg.who;
+      aside.innerHTML = '';
+      aside.append(h3, ol, who);
+    }
+  }
+
+  const idx = order.indexOf(sec.id);
+  const pg = document.createElement('div');
+  pg.className = 'row';
+  pg.style.marginTop = '6px';
+  const prev = order[idx - 1], next = order[idx + 1];
+  pg.innerHTML = (prev ? '<button class="tbtn" data-goto="' + prev + '">→ فریم قبلی</button>' : '')
+    + (next ? '<button class="tbtn" data-goto="' + next + '">فریم بعدی ←</button>' : '')
+    + '<span class="cap muted" style="margin-inline-start:auto">فریم ' + fa(idx + 1) + ' از ' + fa(order.length) + '</span>';
+  sec.appendChild(pg);
+});
+
+function show(id, push) {
+  const target = document.getElementById(id) ? id : order[0];
+  document.querySelectorAll('.frame').forEach(f => f.classList.toggle('on', f.id === target));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.goto === target));
+  if (push && location.hash !== '#' + target) { try { history.replaceState(null, '', '#' + target); } catch (e) {} }
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-goto]');
+  if (go) { show(go.dataset.goto, true); return; }
+  const ctrl = e.target.closest('[data-ctrl]');
+  if (ctrl) {
+    const k = ctrl.dataset.ctrl;
+    if (k === 'notes') {
+      const hidden = document.body.classList.toggle('hidenotes');
+      ctrl.setAttribute('aria-pressed', String(!hidden));
+      ctrl.textContent = hidden ? '📝 انوتیشن‌ها' : '📝 پنهان‌کردن';
+    }
+    if (k === 'print') window.print();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, select')) return;
+  const cur = order.findIndex(id => document.getElementById(id) && document.getElementById(id).classList.contains('on'));
+  if (e.key === 'ArrowLeft' && cur < order.length - 1) show(order[cur + 1], true);
+  if (e.key === 'ArrowRight' && cur > 0) show(order[cur - 1], true);
+});
+window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+show(location.hash.slice(1) || order[0], false);
+</script>
+</body>
+</html>

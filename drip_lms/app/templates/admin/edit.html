@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}ویرایش درس {{ lesson.day_number }} — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:12px">
+  <a class="btn sm" href="/admin/lessons"><svg class="ic"><use href="#i-arrowr"/></svg>دروس</a>
+  <span class="badge n num">روز {{ lesson.day_number|fa }}</span>
+  <span class="badge {% if lesson.status == 'published' %}ok{% elif lesson.status == 'ai' %}ai{% elif lesson.status == 'draft' %}warn{% else %}n{% endif %}">{{ lesson.status }}</span>
+  <span class="cap muted num">فاز {{ lesson.phase_number|fa }} · هفته {{ lesson.week_number|fa }}</span>
+  <span class="spacer"></span>
+  <a class="btn sm" href="/day/{{ lesson.day_number }}">صفحه روز ←</a>
+</div>
+
+<form method="post" action="/admin/lesson/{{ lesson.id }}">
+  <div class="split">
+    <div class="stack12">
+      <div class="card">
+        <div class="g2">
+          <div><span class="label">عنوان</span><input class="input" name="title" value="{{ lesson.title }}" placeholder="مثلاً صف کارها با Redis و Celery"></div>
+          <div><span class="label">نوع</span>
+            <select class="select" name="kind">
+              {% for k, fa in [('lesson','درس'),('project','مینی‌پروژه'),('review','مرور')] %}
+                <option value="{{ k }}" {% if lesson.kind == k %}selected{% endif %}>{{ fa }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:11px"><span class="label">هدف امروز (یک جمله)</span>
+          <input class="input" name="goal" value="{{ lesson.goal }}" placeholder="در پایان امروز می‌توانی…"></div>
+        <div class="g3" style="margin-top:11px">
+          <div><span class="label">دقیقه مطالعه</span><input class="input num" name="read_minutes" value="{{ lesson.read_minutes }}"></div>
+          <div><span class="label">دقیقه تمرین</span><input class="input num" name="exercise_minutes" value="{{ lesson.exercise_minutes }}"></div>
+          <div><span class="label">نکته طلایی</span><input class="input" name="golden_tip" value="{{ lesson.golden_tip }}" placeholder="اختیاری"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="between" style="margin-bottom:9px">
+          <span class="small xbold">متن درس (Markdown)</span>
+          <span class="cap muted">پیش‌فرض چپ‌به‌راست برای کد</span>
+        </div>
+        <textarea class="ta mono" dir="ltr" name="body_md" style="min-height:340px;text-align:left">{{ lesson.body_md }}</textarea>
+      </div>
+
+      <div class="card">
+        <div class="small xbold" style="margin-bottom:9px">تمرین</div>
+        <span class="label">صورت تمرین</span>
+        <textarea class="ta" name="exercise_prompt" style="min-height:72px">{{ lesson.exercise_prompt }}</textarea>
+        <div style="margin-top:10px"><span class="label">خروجی مورد انتظار</span>
+          <input class="input" name="exercise_expected" value="{{ lesson.exercise_expected }}" placeholder="مثلاً وورکر با retry کار می‌کند"></div>
+      </div>
+    </div>
+
+    <div class="stack12">
+      <div class="card">
+        <div class="small xbold" style="margin-bottom:10px">پیش‌نمایش زنده</div>
+        <div class="scrollbox" style="max-height:400px" id="preview-box">
+          {% include 'partials/preview.html' %}
+        </div>
+        <div class="cap muted" style="margin-top:8px">پیش‌نمایش بعد از ذخیره به‌روز می‌شود («ذخیره و پیش‌نمایش»).</div>
+      </div>
+
+      <div class="card">
+        <div class="small xbold" style="margin-bottom:10px">ذخیره و وضعیت</div>
+        <div class="stack8">
+          <button class="btn pri blk sm" type="submit" name="status" value="published">ذخیره و انتشار</button>
+          <div class="row" style="gap:8px">
+            <button class="btn sm" style="flex:1" type="submit" name="status" value="draft">ذخیره (پیش‌نویس)</button>
+            <button class="btn ghost sm" style="flex:1" type="submit" formaction="/admin/lesson/{{ lesson.id }}/preview">فقط پیش‌نمایش</button>
+          </div>
+          <button class="btn ghost blk sm" type="submit" name="status" value="ai">ذخیره — وضعیت: AI ویرایش‌نشده</button>
+        </div>
+        <div class="divider"></div>
+        <div class="cap muted">گیت انتشار غیربلوکه است: می‌توانی پیش‌نویس یا ویرایش‌نشده را هم بخوانی و ثبت کنی. «انتشار» یعنی درس به پیام صبحگاهی روز خودش می‌رسد.</div>
+      </div>
+
+      <div class="card">
+        <div class="row between" style="margin-bottom:9px">
+          <span class="small xbold">تاریخچه نسخه‌ها</span><span class="cap muted num">{{ versions|length|fa }} نسخه</span>
+        </div>
+        <div class="scrollbox" style="max-height:220px">
+          {% for v in versions %}
+            <div class="row between" style="gap:8px;margin-bottom:7px">
+              <span class="cap muted num">{{ v.created_at.strftime('%m-%d %H:%M')|fa }}</span>
+              <span class="cap muted">{{ v.title[:28] or '—' }}</span>
+              <form method="post" action="/admin/lesson/{{ lesson.id }}/restore/{{ v.id }}">
+                <button class="btn sm ghost" type="submit">بازگردانی</button>
+              </form>
+            </div>
+          {% else %}
+            <div class="cap muted">هر بار ذخیره، نسخه قبلی این‌جا نگه داشته می‌شود.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

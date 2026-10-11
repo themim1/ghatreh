@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="{{ theme|default('light') }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}قطره{% endblock %}</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233555E6' d='M12 3.2c3.7 4.3 6.1 7.2 6.1 10.4a6.1 6.1 0 1 1-12.2 0c0-3.2 2.4-6.1 6.1-10.4z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/htmx.min.js" defer></script>
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+{% include 'partials/icons.html' %}
+
+{% macro navitem(href, label, icon, key) %}
+<a href="{{ href }}" class="{% if page == key %}on{% endif %}"><svg class="ic"><use href="#i-{{ icon }}"/></svg>{{ label }}</a>
+{% endmacro %}
+
+<header class="topbar">
+  <a class="row" href="/" style="gap:10px">
+    <span class="logo"><svg viewBox="0 0 24 24"><use href="#i-drop"/></svg></span>
+    <span class="brandtxt">قطره<small>{% if course %}{{ course.title }}{% else %}سامانه شخصی{% endif %}</small></span>
+  </a>
+  <span class="spacer"></span>
+  {% if streak and course %}
+    <span class="chip tint"><svg class="ic"><use href="#i-flame"/></svg><span class="num">{{ streak.streak|fa }}</span> روز</span>
+    {% if buffer is defined %}
+      <span class="badge {% if buffer < 5 %}warn{% else %}ok{% endif %} num">بافر {{ buffer|fa }} روز</span>
+    {% endif %}
+  {% endif %}
+  <a class="tbtn" href="/settings/theme?to={{ 'light' if theme == 'dark' else 'dark' }}"><svg class="ic"><use href="#i-{{ 'sun' if theme == 'dark' else 'moon' }}"/></svg></a>
+  <a class="tbtn" href="/rubika/preview"><svg class="ic"><use href="#i-chat"/></svg>روبیکا</a>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <div class="grp">آموزش</div>
+    {{ navitem('/', 'امروز', 'home', 'today') }}
+    {{ navitem('/path', 'مسیر دوره', 'cal', 'path') }}
+    {{ navitem('/evidence', 'مدارک من', 'folder', 'evidence') }}
+    {{ navitem('/settings', 'تنظیمات', 'cog', 'settings') }}
+    <div class="grp">خط تولید محتوا</div>
+    {{ navitem('/admin/lessons', 'دروس', 'book', 'admin_lessons') }}
+    {{ navitem('/admin/prompts', 'پرامپت‌ها', 'spark', 'admin_prompts') }}
+    {{ navitem('/admin/upload', 'بارگذاری گروهی', 'upload', 'admin_upload') }}
+    {{ navitem('/admin/notifications', 'اعلان‌ها', 'bell', 'admin_notifications') }}
+    {{ navitem('/rubika/preview', 'پیام‌های روبیکا', 'chat', 'rubika') }}
+    {% if settings and settings.paused_until %}
+      <div class="card soft" style="margin-top:14px;padding:11px">
+        <div class="cap bold">⏸ در حالت توقف</div>
+        <div class="cap muted">تا {{ settings.paused_until }} — روزها ازدست‌رفته حساب نمی‌شوند.</div>
+      </div>
+    {% endif %}
+  </aside>
+
+  <main class="main">
+    {% if msg %}
+      <div class="callout {{ kind if kind in ['ok','warn','bad','pri'] else 'ok' }}" style="margin-bottom:14px">
+        <svg class="ic"><use href="#i-{{ 'alert' if kind == 'bad' else ('info' if kind == 'warn' else 'checkc') }}"/></svg>
+        <div class="small">{{ msg }}</div>
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+{% if page not in ['rubika'] %}
+<nav class="tabbar">
+  {{ navitem('/', 'امروز', 'home', 'today') }}
+  {{ navitem('/path', 'مسیر', 'cal', 'path') }}
+  {{ navitem('/evidence', 'مدارک', 'folder', 'evidence') }}
+  {{ navitem('/admin/lessons', 'دروس', 'book', 'admin_lessons') }}
+  {{ navitem('/settings', 'تنظیمات', 'cog', 'settings') }}
+</nav>
+{% endif %}
+
+<script>
+/* ---------- ابزارهای کوچک اپ ---------- */
+function copyText(text, btn){
+  navigator.clipboard.writeText(text).then(function(){
+    var old = btn.innerHTML;
+    btn.innerHTML = 'کپی شد ✓';
+    setTimeout(function(){ btn.innerHTML = old; }, 1400);
+  });
+}
+function applyLevel(scope, level){
+  scope = scope || document;
+  var seg = scope.querySelectorAll('.seg3 input');
+  seg.forEach(function(i){ if(String(level) === i.value){ i.checked = true; } });
+  scope.querySelectorAll('[data-lvl]').forEach(function(el){
+    el.style.display = (el.dataset.lvl === String(level)) ? '' : 'none';
+  });
+}
+document.addEventListener('change', function(e){
+  if(e.target.matches('.seg3 input')){ applyLevel(e.target.closest('.sheet-inner') || document, e.target.value); }
+});
+document.body.addEventListener('htmx:afterSwap', function(e){ applyLevel(e.target.closest('.sheet-inner') || document); });
+document.addEventListener('click', function(e){
+  var open = e.target.closest('[data-open-sheet]');
+  if(open){ e.preventDefault(); var d = document.querySelector('dialog.sheet'); if(d){ d.showModal(); applyLevel(d); } }
+  var close = e.target.closest('[data-close-sheet]');
+  if(close){ e.preventDefault(); var d2 = close.closest('dialog.sheet'); if(d2){ d2.close(); } }
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ var d = document.querySelector('dialog.sheet[open]'); if(d){ d.close(); } }
+});
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

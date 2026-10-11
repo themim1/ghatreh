@@ -1,0 +1,25 @@
+{# پیش‌نمایش درس — قالب سند #}
+<div class="between" style="margin-bottom:13px">
+  <div>
+    <div class="xbold">{{ lesson.title or 'بدون عنوان' }}</div>
+    <div class="cap muted num">روز {{ lesson.day_number|fa }} · فاز {{ lesson.phase_number|fa }} · هفته {{ lesson.week_number|fa }} · {{ lesson.read_minutes|fa }} دقیقه مطالعه + {{ lesson.exercise_minutes|fa }} دقیقه تمرین</div>
+  </div>
+  <div class="row" style="gap:6px">
+    <span class="badge {% if lesson.status == 'published' %}ok{% elif lesson.status == 'ai' %}ai{% elif lesson.status == 'draft' %}warn{% else %}n{% endif %}">{{ lesson.status }}</span>
+    <span class="badge n">{{ lesson.kind }}</span>
+  </div>
+</div>
+{% if lesson.goal %}
+  <div class="callout pri"><svg class="ic"><use href="#i-target"/></svg><div class="small">{{ lesson.goal }}</div></div>
+{% endif %}
+<div class="day card" style="margin-top:12px">{{ body_html|safe }}</div>
+{% if lesson.exercise_prompt %}
+<div class="card" style="margin-top:12px">
+  <div class="small xbold" style="margin-bottom:6px">تمرین</div>
+  <p class="small" style="margin:0">{{ lesson.exercise_prompt }}</p>
+  {% if lesson.exercise_expected %}<div class="cap muted" style="margin-top:6px">خروجی مورد انتظار: {{ lesson.exercise_expected }}</div>{% endif %}
+</div>
+{% endif %}
+{% if lesson.golden_tip %}
+<div class="callout gold" style="margin-top:12px"><svg class="ic"><use href="#i-bolt"/></svg><div class="small">{{ lesson.golden_tip }}</div></div>
+{% endif %}

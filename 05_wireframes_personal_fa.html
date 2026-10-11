@@ -1,0 +1,2009 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وایرفریم‌های «قطره» — نسخه شخصی (تک‌کاربره)</title>
+<style>
+:root{
+  --bg:#f1f2f5; --surface:#fff; --ink:#171a21; --ink2:#4b5262; --muted:#8b93a5;
+  --line:#dcdfe6; --line2:#eceef3;
+  --accent:#2f5fe0; --accent-soft:#e8eeff;
+  --ok:#1a8f4a; --ok-soft:#e6f6ec;
+  --warn:#b7791f; --warn-soft:#fdf3e0;
+  --bad:#c0392b; --bad-soft:#fdecea;
+  --ai:#7a4dc0; --ai-soft:#f3edff;
+  --r:12px;
+  --font:"Vazirmatn","IRANSansX","IRANSans","Segoe UI",Tahoma,system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;line-height:1.5;font-weight:700}
+h1{font-size:21px}h2{font-size:17px}h3{font-size:14.5px}
+p{margin:0 0 9px}
+ul,ol{margin:0;padding:0;list-style:none}
+a{color:inherit}
+.mono,code,pre{font-family:var(--mono);direction:ltr;text-align:left}
+.muted{color:var(--muted)}.ink2{color:var(--ink2)}.strong{font-weight:700}
+.small{font-size:12.5px}.tiny{font-size:11px}.num{font-variant-numeric:tabular-nums}
+.center{text-align:center}
+/* ---------- topbar ---------- */
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:9px 18px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800}
+.brand .logo{width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+.brand small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);line-height:1.2}
+.spacer{flex:1}
+.tbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:#fff;font:inherit;font-size:12.5px;cursor:pointer}
+.tbtn:hover{border-color:#c3c9d4}
+.hint{font-size:11.5px;color:var(--muted)}
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);align-items:start}
+.nav{position:sticky;top:57px;height:calc(100vh - 57px);overflow:auto;padding:12px 10px 40px;background:#fff;border-inline-end:1px solid var(--line)}
+.nav h4{font-size:10.5px;letter-spacing:.05em;color:var(--muted);margin:14px 10px 5px;font-weight:700}
+.nav h4:first-child{margin-top:4px}
+.nav button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:0;background:transparent;border-radius:9px;font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;text-align:start;line-height:1.5}
+.nav button:hover{background:#f3f5f9;color:var(--ink)}
+.nav button.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav .n{width:22px;height:22px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;font-size:10.5px;background:#fff;flex:0 0 auto;color:var(--muted)}
+.nav button.on .n{border-color:var(--accent);color:var(--accent)}
+@media (max-width:1080px){.layout{grid-template-columns:1fr}.nav{position:static;height:auto;max-height:240px}}
+.stage{padding:20px 22px 80px;min-width:0}
+.frame{display:none}
+.frame.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.fhead{margin:0 0 16px;max-width:96ch}
+.fhead .kick{font-size:11.5px;color:var(--accent);font-weight:700}
+.fhead h1{margin:3px 0 7px}
+.fhead p{color:var(--ink2);margin:0}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:18px;align-items:start}
+@media (max-width:1300px){.duo{grid-template-columns:minmax(0,1fr)}}
+/* ---------- notes ---------- */
+.notes{position:sticky;top:76px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.notes h3{display:flex;align-items:center;gap:8px;margin-bottom:11px;font-size:13.5px}
+.notes ol{display:flex;flex-direction:column;gap:9px}
+.notes li{display:flex;gap:8px;font-size:12.5px;color:var(--ink2);line-height:1.7;border-radius:8px;padding:2px 3px;transition:background .2s}
+.notes li .n{flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:#eef1f6;color:var(--ink);font-size:10.5px;font-weight:700;display:grid;place-items:center;margin-top:3px}
+.notes li.hot{background:#fffbe8;outline:1.5px solid #ffe9a8}
+.notes .who{margin-top:12px;border-top:1px solid var(--line2);padding-top:10px;font-size:12px;color:var(--muted)}
+.notes .fl{margin-top:8px;display:flex;gap:5px;flex-wrap:wrap}
+body.hidenotes .notes{display:none}
+body.hidenotes .duo{grid-template-columns:minmax(0,1fr)}
+.an{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;cursor:pointer;border:0;padding:0;font-family:inherit;vertical-align:middle;margin:0 3px}
+.an:hover{filter:brightness(1.15)}
+/* ---------- primitives ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:13px}
+.card.soft{background:#fbfcfe}
+.card.dash{border-style:dashed;background:#fdfefe}
+.card.hero{background:linear-gradient(180deg,#fafcff,#fff);padding:16px}
+.sect{margin-bottom:15px}
+.sect>h3{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:10px}
+.hstack{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sep{border:0;border-top:1px solid var(--line2);margin:12px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;line-height:1.4;text-decoration:none}
+.btn:hover{border-color:#c3c9d4}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.dark{background:#20242c;border-color:#20242c;color:#fff}
+.btn.ghost{border-style:dashed;color:var(--ink2)}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn.blk{display:flex;width:100%}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.chip.on{background:#20242c;border-color:#20242c;color:#fff}
+.chip.a{background:var(--accent-soft);border-color:#c9d8ff;color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:7px;font-size:11px;font-weight:700;border:1px solid transparent;white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok);border-color:#bfe6cd}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:#f0dcb4}
+.badge.bad{background:var(--bad-soft);color:var(--bad);border-color:#f3c8c3}
+.badge.info{background:var(--accent-soft);color:var(--accent);border-color:#ccdaff}
+.badge.ai{background:var(--ai-soft);color:var(--ai);border-color:#e2d4f7}
+.badge.n{background:#f2f4f8;color:var(--ink2);border-color:var(--line)}
+label.lbl{display:block;font-size:12px;color:var(--ink2);font-weight:700;margin-bottom:4px}
+.input,.ta,.select{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px;background:#fff;color:var(--ink)}
+.ta{min-height:76px;resize:vertical;line-height:1.8}
+.field{margin-bottom:11px}
+.help{font-size:11.5px;color:var(--muted);margin-top:4px;display:block}
+.seg{display:inline-flex;padding:3px;background:#f2f4f8;border-radius:10px;gap:3px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;font:inherit;font-size:12.5px;padding:6px 11px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.seg button.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.seg.tiny button{font-size:11.5px;padding:4px 9px}
+.img{position:relative;background:#f1f3f7;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px;
+ background-image:linear-gradient(to top right,transparent calc(50% - 1px),#d9dde5 50%,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),#d9dde5 50%,transparent calc(50% + 1px))}
+.ph-txt{display:grid;place-items:center;font-size:11px;color:var(--muted);padding:8px;text-align:center}
+.bar{height:8px;border-radius:999px;background:#eef0f5;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.bar.ok>i{background:var(--ok)}.bar.warn>i{background:#e0a83c}
+.avatar{width:30px;height:30px;border-radius:50%;background:#e7eaf0;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--ink2);font-weight:700;flex:0 0 auto}
+.ico{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fbfcfe;display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+.ico.lg{width:44px;height:44px;font-size:20px;border-radius:12px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff}
+.kpi .v{font-size:21px;font-weight:800;line-height:1.3}
+.kpi .l{font-size:11.5px;color:var(--muted)}
+.call{border-radius:10px;border:1px solid var(--line);padding:11px 12px;display:flex;gap:10px;background:#fbfcfe}
+.call .ic{flex:0 0 auto;width:27px;height:27px;border-radius:8px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:14px}
+.call.gold{background:var(--warn-soft);border-color:#f0dcb4}
+.call.info{background:var(--accent-soft);border-color:#ccdaff}
+.call.ok{background:var(--ok-soft);border-color:#bfe6cd}
+.call.bad{background:var(--bad-soft);border-color:#f3c8c3}
+.call p:last-child{margin-bottom:0}
+.code{direction:ltr;text-align:left;background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12px;line-height:1.65;overflow:auto;white-space:pre}
+.code .c{color:#98a0b0}.code .s{color:#8a5a1f}.code .k{color:#2f5fe0}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:start;font-size:11px;color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line);background:#fafbfc;white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.skel{height:11px;border-radius:6px;background:linear-gradient(90deg,#eef0f5,#e1e5ed,#eef0f5);background-size:200% 100%;animation:sh 1.3s linear infinite}
+@keyframes sh{from{background-position:200% 0}to{background-position:-200% 0}}
+.daypill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;background:#fff}
+.daypill.ok{background:var(--ok-soft);border-color:#bfe6cd}
+.daypill.miss{background:var(--bad-soft);border-color:#f3c8c3}
+.daypill.now{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.daypill.rest{background:#f8f9fb;border-style:dashed}
+/* ---------- desktop app shell (admin) ---------- */
+.app{display:grid;grid-template-columns:212px minmax(0,1fr);min-height:600px}
+@media (max-width:860px){.app{grid-template-columns:1fr}.app-side{display:none}}
+.app-side{background:#fafbfc;border-inline-end:1px solid var(--line);padding:13px 11px}
+.app-main{padding:15px 17px;min-width:0}
+.app-top{display:flex;align-items:center;gap:10px;padding-bottom:11px;border-bottom:1px solid var(--line2);margin-bottom:14px;flex-wrap:wrap}
+.snav{display:flex;flex-direction:column;gap:2px}
+.snav a{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;font-size:12.5px;color:var(--ink2);text-decoration:none;cursor:pointer}
+.snav a:hover{background:#f2f4f9}
+.snav a.on{background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:700}
+.app-side .grp{font-size:10.5px;color:var(--muted);margin:12px 8px 4px;font-weight:700}
+/* ---------- phone ---------- */
+.phones{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.m{width:346px;max-width:100%;border:9px solid #232830;border-radius:36px;background:#fff;overflow:hidden;box-shadow:0 16px 36px rgba(20,25,40,.16);display:flex;flex-direction:column}
+.m-tag{font-size:11px;color:var(--ink2);font-weight:700;margin:0 0 7px;display:flex;align-items:center;gap:6px}
+.m-top{display:flex;align-items:center;justify-content:space-between;padding:6px 15px;font-size:10px;color:var(--muted);background:#fff}
+.m-head{display:flex;align-items:center;gap:8px;padding:8px 13px 10px;border-bottom:1px solid var(--line2)}
+.m-body{padding:12px 13px;display:flex;flex-direction:column;gap:11px;background:#f9fafc;min-height:120px}
+.m-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:#fff}
+.m-nav div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 8px;font-size:9.5px;color:var(--muted)}
+.m-nav div.on{color:var(--accent);font-weight:700}
+.m-nav .i{font-size:15px;line-height:1.2}
+.m-cta{display:flex;gap:7px;padding:9px 12px;border-top:1px solid var(--line);background:#fff;align-items:center}
+.sheet-scrim{background:rgba(20,25,40,.32);padding:24px 8px 0;display:flex;align-items:flex-end}
+.sheet{background:#fff;border-radius:18px 18px 0 0;padding:9px 13px 13px;width:100%}
+.grab{width:38px;height:4px;border-radius:99px;background:#d5d9e0;margin:0 auto 9px}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);background:#f2f4f8;border-radius:10px;padding:3px;gap:3px;font-size:11px}
+.seg3 span{text-align:center;padding:6px 2px;border-radius:8px;color:var(--ink2)}
+.seg3 span.on{background:#fff;font-weight:700;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.lvl{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11.5px;background:#fff}
+.lvl.on{border-color:var(--accent);background:var(--accent-soft)}
+.lvl b{display:block;font-size:12px}
+/* mobile atoms */
+.mcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px 12px}
+.mcard.tight{padding:9px 11px}
+.mrow{display:flex;align-items:center;gap:9px}
+.dot7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dot7 i{height:22px;border-radius:6px;border:1px solid var(--line);background:#fbfcfd;display:grid;place-items:center;font-size:9.5px;color:var(--muted);font-style:normal}
+.dot7 i.ok{background:var(--ok-soft);border-color:#bfe6cd;color:var(--ok)}
+.dot7 i.now{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.dot7 i.pj{background:var(--accent-soft);border-color:#ccdaff;color:var(--accent)}
+.dot7 i.rs{background:#f8f9fb;border-style:dashed}
+.dot7 i.ms{background:var(--bad-soft);border-color:#f3c8c3;color:var(--bad)}
+.big{font-size:30px;font-weight:800;line-height:1.15}
+/* chat */
+.chat{padding:11px;display:flex;flex-direction:column;gap:7px;background:#f3f4f7}
+.bg{max-width:90%;padding:8px 10px;border-radius:13px;background:#fff;border:1px solid var(--line);font-size:11.5px;line-height:1.7}
+.bg.them{align-self:flex-start}
+.bg.me{align-self:flex-end;background:#eef3ff;border-color:#d7e2ff}
+.bg .lnk{display:block;margin-top:6px;border:1px solid #c9d8ff;background:#fff;border-radius:9px;padding:6px;font-size:11.5px;color:var(--accent);text-align:center}
+.bg .meta{font-size:9px;color:var(--muted);margin-top:3px;text-align:end;direction:ltr}
+.kbdr{display:grid;grid-template-columns:1fr;gap:4px;margin-top:7px}
+.kbdr span{display:block;border:1px solid var(--line);background:#fafbfc;border-radius:8px;padding:5px 8px;font-size:11px;color:var(--ink2)}
+/* coverage strip */
+.cov{display:flex;gap:4px}
+.cov i{flex:1;height:30px;border-radius:6px;border:1px solid var(--line);background:#fbfcfd;display:grid;place-items:center;font-size:9px;color:var(--muted);font-style:normal}
+.cov i.ok{background:var(--ok-soft);border-color:#bfe6cd;color:var(--ok)}
+.cov i.ai{background:var(--ai-soft);border-color:#e2d4f7;color:var(--ai)}
+.cov i.dr{background:var(--warn-soft);border-color:#f0dcb4;color:var(--warn)}
+.cov i.em{background:repeating-linear-gradient(45deg,#eff1f5,#eff1f5 5px,#e7eaef 5px,#e7eaef 10px);color:var(--muted)}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2)}
+.lg i{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid var(--line);vertical-align:-1px;margin-inline-end:4px}
+.lg i.ok{background:var(--ok-soft);border-color:#bfe6cd}
+.lg i.ai{background:var(--ai-soft);border-color:#e2d4f7}
+.lg i.dr{background:var(--warn-soft);border-color:#f0dcb4}
+.lg i.em{background:#eceff4}
+.lg i.ms{background:var(--bad-soft);border-color:#f3c8c3}
+.lg i.now{background:var(--accent-soft);border-color:var(--accent)}
+/* tree */
+.tnode{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;border:1px solid transparent}
+.tnode.on{background:#fff;border-color:var(--line)}
+.lv2{margin-inline-start:20px;background:#fbfcfe}
+.lv3{margin-inline-start:42px}
+/* flow */
+.flow{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}
+.fbox{flex:1 1 122px;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff;font-size:11.5px;text-align:center;min-width:106px}
+.fbox.a{background:var(--accent-soft);border-color:#ccdaff}
+.fbox b{display:block;font-size:11.5px}
+.fbox span{font-size:10px;color:var(--muted)}
+.arr{display:grid;place-items:center;color:var(--muted);flex:0 0 auto;font-size:14px}
+.sm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.sm{grid-template-columns:minmax(0,1fr)}}
+.smbox{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px}
+.smbox h4{font-size:12.5px;margin-bottom:7px}
+.smbox button{display:block;width:100%;text-align:start;border:1px dashed var(--line);background:#fbfcfe;border-radius:8px;padding:6px 9px;margin-bottom:5px;font:inherit;font-size:12px;color:var(--ink2);cursor:pointer}
+.smbox button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.legendbox{border:1px dashed var(--line);border-radius:11px;padding:11px 13px;background:#fbfcfe;font-size:12.5px;color:var(--ink2)}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:#fff}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.sw div{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:10.5px;color:var(--ink2)}
+.sw .cbox{height:36px}
+.sw .nam{padding:5px 7px;background:#fff}
+@media print{.topbar,.nav{display:none}.frame{display:block !important;page-break-after:always}.layout{grid-template-columns:1fr}.notes{position:static}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">💧</span>
+    <span>قطره — نسخه شخصی<small>وایرفریم بر پایه سند طراحی · ۲۰ فریم</small></span>
+  </div>
+  <span class="spacer"></span>
+  <span class="hint">موبایل: یادگیرنده · دسکتاپ: سازنده محتوا</span>
+  <button class="tbtn" data-ctrl="notes" aria-pressed="true">📝 نمایش انوتیشن‌ها</button>
+  <button class="tbtn" data-ctrl="print">🖨 خروجی گرفتن</button>
+</header>
+
+<div class="layout">
+  <aside class="nav">
+    <h4>👤 مسیر یادگیرنده</h4>
+    <button data-goto="f-login"><span class="n">۱</span> ورود و راه‌اندازی (S0)</button>
+    <button data-goto="f-today"><span class="n">۲</span> امروز (S1)</button>
+    <button data-goto="f-today-st"><span class="n">۳</span> حالت‌های «امروز»</button>
+    <button data-goto="f-day"><span class="n">۴</span> درس روز (S2)</button>
+    <button data-goto="f-sheet"><span class="n">۵</span> شیت ثبت مدرک (S3)</button>
+    <button data-goto="f-done"><span class="n">۶</span> نتیجه ثبت</button>
+    <button data-goto="f-path"><span class="n">۷</span> مسیر دوره (S4)</button>
+    <button data-goto="f-courses"><span class="n">۸</span> دوره‌های من (S5)</button>
+    <button data-goto="f-evi"><span class="n">۹</span> مدارک من (S6)</button>
+    <button data-goto="f-set"><span class="n">۱۰</span> تنظیمات (S7)</button>
+    <h4>📱 پیام‌های روبیکا</h4>
+    <button data-goto="f-r1"><span class="n">۱۱</span> پیام صبحگاهی</button>
+    <button data-goto="f-r2"><span class="n">۱۲</span> یادآوری عصرانه</button>
+    <button data-goto="f-r3"><span class="n">۱۳</span> دستورات و بازگشت</button>
+    <h4>🔐 خط تولید محتوا</h4>
+    <button data-goto="f-a1"><span class="n">۱۴</span> فهرست دروس و بافر (A1)</button>
+    <button data-goto="f-a2"><span class="n">۱۵</span> ویرایشگر درس (A2)</button>
+    <button data-goto="f-a3"><span class="n">۱۶</span> بارگذاری گروهی (A3)</button>
+    <button data-goto="f-a4"><span class="n">۱۷</span> کتابخانه پرامپت (A4)</button>
+    <button data-goto="f-a5"><span class="n">۱۸</span> لاگ اعلان‌ها (A5)</button>
+    <h4>🧩 سیستمی</h4>
+    <button data-goto="f-states"><span class="n">۱۹</span> حالت‌ها و ریزکپی</button>
+    <button data-goto="f-flows"><span class="n">۲۰</span> جریان‌ها، کیت و اولویت‌ها</button>
+  </aside>
+
+  <main class="stage">
+<section class="frame" id="f-login" data-kick="جریان ۱۴ · S0" data-title="ورود و راه‌اندازی اولیه — یک‌بار، زیر ۱۰ دقیقه" data-desc="دو صفحه موبایل: ورود با لینک جادویی (بدون رمز) و صفحه راه‌اندازی یک‌باره با سه سؤال. چون تک‌کاربره است، خبری از تور، ویدیو یا خوش‌آمدگویی نیست — فقط سه فیلد و یک پیام آزمایشی." data-who="👤 مسیر یادگیرنده · جریان‌های ۱۴ و ۱">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S0 · ورود</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۸:۱۲</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="ico">💧</span><div><div class="small strong">قطره</div><div class="tiny muted">بدون رمز</div></div></div>
+            <div class="m-body">
+              <p class="small ink2" style="margin:0">لینک ورود را در روبیکا برای خودت می‌فرستم؛ فقط شناسه‌ات را بنویس.</p>
+              <div class="mcard">
+                <label class="lbl">شناسه یا شماره روبیکا</label>
+                <input class="input" dir="ltr" value="@mehdi_dev">
+                <span class="help">فقط برای من؛ هیچ کاربر دیگری در این نسخه وجود ندارد.</span>
+              </div>
+              <button class="btn pri blk">ارسال لینک ورود در روبیکا ←</button>
+              <div class="tiny muted center">اعتبار ۱۵ دقیقه · یک‌بارمصرف · نشست ۳۰ روزه</div>
+            </div>
+          </div>
+          <div style="width:346px;max-width:100%;margin-top:9px" class="call bad"><span class="ic">⚠</span><p class="tiny" style="margin:0"><b>حالت خطا:</b> «این لینک دیگر معتبر نیست» + دکمه <b>ارسال لینک تازه</b> — هرگز بن‌بست.</p></div>
+        </div>
+
+        <div>
+          <div class="m-tag">راه‌اندازی · یک‌بار</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۸:۱۲</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div><div class="small strong">راه‌اندازی</div><div class="tiny muted">۳ کار تا شروع</div></div></div>
+            <div class="m-body">
+              <div class="mcard">
+                <div class="mrow"><span class="badge info">۱</span><div class="small strong">دوره اول</div></div>
+                <input class="input" style="margin-top:8px" value="پایتون و معماری بک‌اند">
+                <div class="hstack" style="margin-top:8px"><span class="chip on num">۱۸۰ روز</span><span class="chip num">۹۰ روز</span><span class="chip num">۳۰ روز</span><span class="chip">۷ رو</span></div>
+                <span class="help">ساختار هفته پیش‌فرض: ۵ درس + مینی‌پروژه + مرور جمعه.</span>
+              </div>
+              <div class="mcard">
+                <div class="mrow"><span class="badge info">۲</span><div class="small strong">ساعت یادآوری</div></div>
+                <div class="hstack" style="margin-top:8px">
+                  <span class="chip num on">صبح ۰۸:۰۰</span><span class="chip num">صبح ۰۷:۰۰</span><span class="chip num">عصر ۱۸:۰۰</span><span class="chip num">عصر ۲۱:۰۰</span>
+                </div>
+              </div>
+              <div class="mcard">
+                <div class="mrow"><span class="badge info">۳</span><div class="small strong">اتصال روبیکا</div><span class="spacer" style="flex:1"></span><span class="badge ok">متصل ✓</span></div>
+                <button class="btn sm blk" style="margin-top:8px">ارسال پیام آزمایشی</button>
+                <span class="help">اگر وصل نشد: «دوباره بررسی کن» با راهنمای دو خطی.</span>
+              </div>
+            </div>
+            <div class="m-cta"><button class="btn pri blk sm">شروع — فردا صبح پیام می‌گیری</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="legendbox" style="margin-top:14px">
+        <b>چرا این‌قدر کوتاه؟</b> کاربر این محصول خودم هستم؛ هدف از «راه‌اندازی»، فقط تولید دو ردیف داده است: نام دوره و ساعت. هر گام اضافه (تور، انتخاب پلن، دعوت دوستان) اصطکاک بی‌دلیل است.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-today" data-kick="جریان‌های ۱–۴ · S1" data-title="امروز — یک صفحه، یک تصمیم، یک کنش" data-desc="قلب تجربه روزانه: کارت درس امروز با هدف یک‌خطی و یک CTA اصلی، بعد وضعیت (Streak + هفته) و بعد سلامت خط تولید محتوا. هیچ چیز دیگری روی این صفحه نیست." data-who="👤 مسیر یادگیرنده · جریان‌های ۱، ۲، ۳، ۴">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S1 · امروز (حالت پیش‌فرض)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۱۲</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head">
+              <div><div class="small strong">شنبه ۱۲ مهر</div><div class="tiny muted">سلام مهدی 👋</div></div>
+              <span class="spacer" style="flex:1"></span>
+              <span class="chip a num">روز ۴۳ از ۱۸۰</span>
+            </div>
+            <div class="m-body">
+              <div class="mcard" style="border-color:#ccdaff;background:linear-gradient(180deg,#f7faff,#fff)">
+                <div class="tiny muted">دوره فعال: 🐍 پایتون و معماری بک‌اند</div>
+                <div class="strong" style="font-size:15px;margin-top:3px">صف کارها با Redis و Celery</div>
+                <p class="small ink2" style="margin:5px 0 8px">🎯 هدف امروز: یک کار سنگین را از مسیر درخواست جدا کنی.</p>
+                <div class="hstack" style="margin-bottom:9px"><span class="chip num">⏱ مطالعه ۱۰ دقیقه</span><span class="chip num">🏋️ تمرین ۳۵ دقیقه</span></div>
+                <button class="btn pri blk">شروع درس امروز ←</button>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow">
+                  <div><div class="small strong num">🔥 ۱۳ روز</div><div class="tiny muted num">رکورد: ۱۹</div></div>
+                  <span class="spacer" style="flex:1"></span>
+                  <a class="tiny">مسیر دوره ←</a>
+                </div>
+                <div class="dot7" style="margin-top:8px">
+                  <i class="ok">ش</i><i class="ok">ی</i><i class="ok">د</i><i class="ms">س</i><i class="ok">چ</i><i class="pj">پ</i><i class="rs">ج</i>
+                </div>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow"><span class="badge ok">✓ محتوا: ۱۴ روز جلوتر</span><span class="spacer" style="flex:1"></span><a class="tiny">مدیریت دروس ←</a></div>
+                <span class="help" style="margin-top:6px">چون خودم سازنده‌ام، همین‌جا هم وضعیت خط تولید را می‌بینم — بدون رفتن به پنل.</span>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow"><span class="ico">📘</span><div><div class="small strong">درس فردا</div><div class="tiny muted">زمان‌بند کارها و Retry · قفل‌گشایی پس از ثبت امروز</div></div></div>
+              </div>
+            </div>
+            <div class="m-nav">
+              <div class="on"><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">S1 · پس از ثبت امروز</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۱۹:۴۰</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div><div class="small strong">شنبه ۱۲ مهر</div><div class="tiny muted">قطره امروز بسته شد</div></div><span class="spacer" style="flex:1"></span><span class="badge ok">✓ ثبت‌شده</span></div>
+            <div class="m-body">
+              <div class="mcard" style="border-color:#bfe6cd;background:linear-gradient(180deg,#f4fdf7,#fff)">
+                <div class="mrow"><span style="font-size:22px">✅</span><div><div class="small strong">امروز ثبت شده · Streak ۱۳ 🔥</div><div class="tiny muted">سطح: مستند · مدرک: اسکرین‌شات + لینک</div></div></div>
+                <div class="hstack" style="margin-top:10px"><button class="btn sm pri">درس فردا</button><button class="btn sm">ویرایش مدرک</button><button class="btn sm ghost">مشاهده</button></div>
+              </div>
+              <div class="mcard tight">
+                <div class="tiny muted">کنش‌های ثانویه امروز:</div>
+                <div class="hstack" style="margin-top:7px"><span class="chip">📎 ارتقا به «کامل»</span><span class="chip">✍️ ویرایش یادداشت</span><span class="chip">🗓 مرور جمعه</span></div>
+              </div>
+              <div class="call ok" style="margin:0"><span class="ic">🔕</span><p class="tiny" style="margin:0">یادآوری عصرانه <b>ارسال نشد</b> — چون امروز ثبت شده بود. قاعده ضداسپم، سمت ربات هم اجرا می‌شود.</p></div>
+              <div class="call" style="margin:0"><span class="ic">↩️</span><p class="tiny" style="margin:0">۵ ثانیه فرصت <b>Undo</b> برای ثبت اشتباه؛ بعد از آن، ویرایش عادی است نه حذف.</p></div>
+            </div>
+            <div class="m-nav">
+              <div class="on"><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-today-st" data-kick="جریان‌های ۶، ۷، ۸، ۱۳ · S1" data-title="حالت‌های «امروز» — تأخیری، شکست، توقف، بدون محتوا" data-desc="چهار حالت بحرانی که برای خودم طراحی شده‌اند تا هیچ‌کدام باعث رهاکردن نشود: روز بازِ دیروز، شکست Streak، توقف برنامه‌ریزی‌شده، و صبحی که محتوا آماده نیست." data-who="👤 مسیر یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">الف) دیروز باز است (مهلت ۱ روز)</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0">
+              <div class="mcard" style="border-color:#f0dcb4;background:#fffdf5">
+                <div class="mrow"><span style="font-size:19px">🕗</span><div><div class="small strong">دیروز (سه‌شنبه) ثبت نشده</div><div class="tiny muted">تا آخر امروز فرصت داری.</div></div></div>
+                <button class="btn pri blk sm" style="margin-top:9px">ثبت مدرک دیروز</button>
+                <div class="tiny muted center" style="margin-top:6px">با این ثبت، <b>Streak ۱۲ حفظ می‌شود</b>.</div>
+              </div>
+              <div class="mcard tight"><p class="tiny muted" style="margin:0">کارت درس امروز مثل همیشه بالای همین صفحه است — جبران، جای درس امروز را نمی‌گیرد.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">ب) شکست Streak — بازگشت تخت‌ورق</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0">
+              <div class="mcard">
+                <div class="mrow"><span style="font-size:19px">🤝</span><div><div class="small strong">Streak از صفر شروع شد</div><div class="tiny muted">ولی چیزی از دست نرفته.</div></div></div>
+                <div class="call" style="margin:9px 0 0"><span class="ic">🏆</span><p class="tiny" style="margin:0"><b>رکوردت ۱۹ روز است</b> و سر جایش می‌ماند.</p></div>
+                <button class="btn pri blk sm" style="margin-top:9px">شروع امروز</button>
+              </div>
+              <div class="mcard tight"><p class="tiny muted" style="margin:0">بدون رنگ قرمز، بدون اموجی ناراحت، بدون انیمیشن شکستن. صفر شدن عدد = یک روز عادی، نه یک فاجعه.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">ج) در توقف برنامه‌ریزی‌شده</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0">
+              <div class="mcard" style="border-color:#ccdaff;background:#f7faff">
+                <div class="mrow"><span style="font-size:19px">⏸</span><div><div class="small strong">در توقف تا ۵ روز دیگر</div><div class="tiny muted">اعلان‌ها خاموش‌اند.</div></div></div>
+                <p class="tiny muted" style="margin:8px 0 0">روزهای توقف «ازدست‌رفته» حساب نمی‌شوند و Streak نمی‌شکند.</p>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm">ادامه زودتر</button><button class="btn sm ghost">تمدید توقف</button></div>
+              </div>
+              <div class="mcard tight"><p class="tiny muted" style="margin:0">تنظیم از دو جا: دستور <span class="mono">توقف ۵</span> در روبیکا یا همین صفحه؛ هر دو روی یک وضعیت می‌نویسند.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">د) صبح بدون محتوا (بافر صفر)</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0">
+              <div class="mcard" style="border-color:#f0dcb4;background:#fffdf5">
+                <div class="mrow"><span style="font-size:19px">🗂</span><div><div class="small strong">امروز محتوا ندارد</div><div class="tiny muted">درس روز ۴۴ منتشر نشده.</div></div></div>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm pri">ساخت با پرامپت</button><button class="btn sm">مرور هفته قبل</button></div>
+              </div>
+              <div class="mcard tight">
+                <div class="mrow"><span class="badge warn">بافر: ۰ روز</span><span class="tiny muted">پیام صبحگاهی هم ارسال نشد (نه پیام خالی)</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-day" data-kick="جریان‌های ۲ و ۳ · S2" data-title="درس روز — خواندن تا تمرین، بدون ترک صفحه" data-desc="تک‌ستون، عرض متن ~۷۰ کاراکتر، نوار کنش چسبان پایین. ناوبری پایین عمداً پنهان است: در حالت مطالعه هیچ چیزی نباید حواس را پرت کند. دکمه «کپی صورت تمرین» برای بردن تمرین به ترمینال است." data-who="👤 مسیر یادگیرنده · جریان‌های ۲، ۳">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S2 · درس روز ۴۳</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۱۴</span><span class="tiny">قطره · مطالعه</span><span>▮▮▮</span></div>
+            <div class="m-head">
+              <button class="btn sm" style="border:0;padding:2px 6px">→</button>
+              <div><div class="small strong">روز ۴۳ از ۱۸۰</div><div class="tiny muted">فاز ۳ · هفته ۹</div></div>
+              <span class="spacer" style="flex:1"></span>
+              <span class="chip num">۳ از ۶ این هفته</span>
+            </div>
+            <div class="m-body">
+              <div class="call info" style="margin:0"><span class="ic">🎯</span><p class="small" style="margin:0"><b>هدف امروز:</b> یک کار سنگین را از مسیر درخواست جدا کنی و در پس‌زمینه اجرا کنی.</p></div>
+              <h3>۱) چرا صف کار لازم داریم؟</h3>
+              <p class="small ink2" style="margin:0">اگر ارسال ایمیل داخل مسیر درخواست اجرا شود، کاربر منتظر می‌ماند و یک خطای ساده، کل درخواست را می‌خواباند.</p>
+              <div class="code" style="font-size:10.5px">@app.task
+def send_daily_lesson(chat_id, day):
+    ...</div>
+              <div class="mrow" style="justify-content:space-between"><span class="tiny muted">بلوک کد · dir=ltr</span><button class="btn sm">کپی کد</button></div>
+              <div class="call gold" style="margin:0"><span class="ic">⚡</span><p class="tiny" style="margin:0"><b>نکته طلایی:</b> هر کاری بیش از ۵۰۰ میلی‌ثانیه طول بکشد، از مسیر درخواست بیرون است.</p></div>
+              <div class="mcard" style="border-color:#ccdaff">
+                <div class="mrow"><span class="badge info">🏋️ تمرین · ۳۵ دقیقه</span><span class="spacer" style="flex:1"></span><button class="btn sm">کپی صورت تمرین</button></div>
+                <p class="small" style="margin:8px 0 4px">یک صف Redis بساز، سه کار بفرست و با Worker اجرا کن؛ زمان هر کار را لاگ بگیر.</p>
+                <span class="help">خروجی مورد انتظار: <span class="mono">tasks.py</span> + لاگ اجرا + یک خط یادداشت.</span>
+              </div>
+              <div class="mcard tight">
+                <div class="mrow"><span class="tiny muted">روز قبل</span><span class="spacer" style="flex:1"></span><span class="tiny muted">روز بعد: <b>🔒 پس از ثبت</b></span></div>
+              </div>
+            </div>
+            <div class="m-cta">
+              <button class="btn pri blk" style="flex:1">ثبت تمرین امروز</button>
+              <button class="btn">فقط مطالعه</button>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1 1 240px;min-width:230px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:7px">چیدمان از بالا به پایین</div>
+            <ol class="small ink2" style="display:flex;flex-direction:column;gap:6px">
+              <li>۱ · متادیتا (روز، فاز، هفته)</li>
+              <li>۲ · هدف امروز در کادر تأکید</li>
+              <li>۳ · بدنه مارک‌داون با بلوک کد LTR</li>
+              <li>۴ · نکته طلایی</li>
+              <li>۵ · کارت تمرین + خروجی</li>
+              <li>۶ · نوار کنش چسبان (ثبت / فقط مطالعه)</li>
+            </ol>
+            <hr class="sep">
+            <p class="tiny muted" style="margin:0">در روزهای ثبت‌شده، نوار کنش به «ثبت‌شده ✓ · مشاهده مدرک» تغییر می‌کند و «روز بعد» قفل‌گشایی می‌شود.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-sheet" data-kick="جریان ۴ · S3" data-title="شیت ثبت مدرک — سه سطح، پیش‌فرض «سریع»" data-desc="قلب محصول: بستن روز با کمترین اصطکاک. سگمنت سه‌سطحی بالای شیت، پیش‌فرض را روی «سریع» می‌گذارد تا در روز شلوغ ۱۵ ثانیه کافی باشد؛ دو سطح دیگر برای روزهای خوب‌اند. خط «با این ثبت…» همیشه پیامد را شفاف می‌کند." data-who="👤 مسیر یادگیرنده · جریان ۴">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">سطح ۱ · سریع (پیش‌فرض)</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0;background:#f2f3f6">
+              <div class="call info" style="margin:0;opacity:.5"><span class="ic">🎯</span><p class="small" style="margin:0">هدف امروز: کار سنگین را از مسیر درخواست جدا کنی…</p></div>
+              <div class="skel" style="width:80%"></div><div class="skel" style="width:92%"></div><div class="skel" style="width:64%"></div>
+            </div>
+            <div class="sheet-scrim">
+              <div class="sheet">
+                <div class="grab"></div>
+                <div class="mrow"><div class="small strong">ثبت مدرک · روز ۴۳</div><span class="spacer" style="flex:1"></span><span class="badge ok num">+۱ 🔥</span></div>
+                <div class="seg3" style="margin-top:9px"><span class="on">سریع</span><span>مستند</span><span>کامل</span></div>
+                <div style="margin-top:10px">
+                  <label class="lbl">یادداشت یک‌خطی <span class="tiny muted">(اختیاری)</span></label>
+                  <textarea class="ta" style="min-height:50px">کار سنگین را از مسیر درخواست جدا کردم؛ تایم‌اوت حل شد.</textarea>
+                  <span class="help">۱۵ ثانیه هم کافی است — همین تیک، امروز را می‌بندد.</span>
+                </div>
+                <div class="tiny muted" style="margin:9px 0">با این ثبت: <b>Streak ۱۳ 🔥</b> · درس فردا باز می‌شود</div>
+                <div class="hstack"><button class="btn pri blk" style="flex:1">ثبت قطره امروز</button><button class="btn">انصراف</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">سطح ۲ · مستند</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0;background:#f2f3f6">
+              <div class="call info" style="margin:0;opacity:.5"><span class="ic">🎯</span><p class="small" style="margin:0">هدف امروز…</p></div>
+              <div class="skel" style="width:80%"></div><div class="skel" style="width:92%"></div>
+            </div>
+            <div class="sheet-scrim">
+              <div class="sheet">
+                <div class="grab"></div>
+                <div class="mrow"><div class="small strong">ثبت مدرک · روز ۴۳</div><span class="spacer" style="flex:1"></span><span class="badge info">تأییدشده</span></div>
+                <div class="seg3" style="margin-top:9px"><span>سریع</span><span class="on">مستند</span><span>کامل</span></div>
+                <div class="img" style="margin-top:10px;height:56px">افزودن اسکرین‌شات (Drag & Drop یا انتخاب)</div>
+                <div style="margin-top:9px"><label class="lbl">لینک <span class="tiny muted">(گیت، جیست، مخزن)</span></label><input class="input mono" dir="ltr" value="https://gist.github.com/mehdi/8f2a1"></div>
+                <div class="tiny muted" style="margin:9px 0">نشان «تأییدشده» می‌گیری · Streak ۱۳ 🔥</div>
+                <div class="hstack"><button class="btn pri blk" style="flex:1">ثبت قطره امروز</button><button class="btn">انصراف</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">سطح ۳ · کامل</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0;background:#f2f3f6">
+              <div class="call info" style="margin:0;opacity:.5"><span class="ic">🎯</span><p class="small" style="margin:0">هدف امروز…</p></div>
+              <div class="skel" style="width:82%"></div>
+            </div>
+            <div class="sheet-scrim">
+              <div class="sheet">
+                <div class="grab"></div>
+                <div class="mrow"><div class="small strong">ثبت مدرک · روز ۴۳</div><span class="spacer" style="flex:1"></span><span class="badge ai">پروژه</span></div>
+                <div class="seg3" style="margin-top:9px"><span>سریع</span><span>مستند</span><span class="on">کامل</span></div>
+                <div class="img" style="margin-top:10px;height:46px">افزودن فایل‌های پروژه (حداکثر ۵ مگابایت)</div>
+                <div class="hstack" style="margin-top:8px"><span class="chip">📄 tasks.py</span><span class="chip">🖼 log.png</span><span class="chip">🔗 repo</span></div>
+                <p class="tiny muted" style="margin:9px 0 0">چک‌لیست خروجی: ✓ فایل اجرایی · ✓ لاگ · ✓ یک خط یادداشت</p>
+                <div class="tiny muted" style="margin:8px 0">مناسب پایان فاز و پرتفولیو · Streak ۱۳ 🔥</div>
+                <div class="hstack"><button class="btn pri blk" style="flex:1">ثبت قطره امروز</button><button class="btn">انصراف</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g3" style="margin-top:14px">
+        <div class="call"><span class="ic">⏳</span><p class="tiny" style="margin:0"><b>در حال آپلود:</b> «در حال ثبت… ۶۴٪» روی همان دکمه؛ فرم غیرفعال می‌شود ولی متن می‌ماند.</p></div>
+        <div class="call bad"><span class="ic">📎</span><p class="tiny" style="margin:0"><b>فایل بزرگ:</b> «۸.۲ مگابایت؛ سقف ۵ — فشرده کن یا لینک بفرست.» بقیه فرم دست‌نخورده می‌ماند.</p></div>
+        <div class="call warn"><span class="ic">📡</span><p class="tiny" style="margin:0"><b>قطع نت:</b> «یادداشت روی همین دستگاه ذخیره شد؛ به‌محض وصل شدن ثبت می‌شود.» + تلاش مجدد خودکار.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-done" data-kick="جریان ۴ · S3 → S1" data-title="نتیجه ثبت و ثبت تکراری — دقیقاً دو جمله" data-desc="لحظه پس از ثبت باید ساده و قطعی باشد: یک تیک، یک عدد، یک کنش. حالت «ثبت تکراری» هم خطا نیست؛ بازنویسی است." data-who="👤 مسیر یادگیرنده · جریان ۴">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">الف) ثبت موفق</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0;align-items:stretch">
+              <div class="mcard center" style="border-color:#bfe6cd;background:linear-gradient(180deg,#f4fdf7,#fff);padding:20px 13px">
+                <div style="font-size:30px">✅</div>
+                <div class="strong" style="font-size:15px;margin-top:4px">قطره امروز بسته شد</div>
+                <div class="small muted num" style="margin-top:2px">Streak ۱۳ 🔥 <span style="color:var(--ok)">+۱</span></div>
+                <button class="btn pri blk" style="margin-top:13px">درس فردا ←</button>
+                <div class="tiny muted" style="margin-top:8px">سطح: سریع · منبع: وب · ۱۹:۴۲</div>
+              </div>
+              <div class="mcard tight">
+                <div class="tiny muted">پس از این لحظه:</div>
+                <div class="hstack" style="margin-top:6px"><span class="chip">✍️ ویرایش یادداشت</span><span class="chip">📎 ارتقا به مستند</span><span class="chip">📁 مدارک</span></div>
+              </div>
+              <div class="call ok" style="margin:0"><span class="ic">🔕</span><p class="tiny" style="margin:0">یادآوری عصرانه لغو شد · ارتقای سطح فقط با افزودن مدرک، نه ثبت مجدد.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">ب) ثبت تکراری (بازنویسی، نه خطا)</div>
+          <div class="m">
+            <div class="m-body" style="min-height:0">
+              <div class="mcard" style="border-color:#ccdaff;background:#f7faff">
+                <div class="mrow"><span style="font-size:19px">♻️</span><div><div class="small strong">امروز قبلاً ثبت شده</div><div class="tiny muted">۱۹:۱۲ · سطح سریع</div></div></div>
+                <p class="tiny muted" style="margin:8px 0 0">می‌خواهی همین را به‌روزرسانی کنی یا مدرک اضافه کنی؟</p>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm pri">به‌روزرسانی</button><button class="btn sm">افزودن مدرک</button><button class="btn sm ghost">مشاهده</button></div>
+              </div>
+              <div class="mcard tight">
+                <p class="tiny muted" style="margin:0">Streak و شماره روز <b>دوباره محاسبه نمی‌شوند</b> — ثبت مجدد فقط رکورد را ویرایش می‌کند.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 250px;min-width:240px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:7px">سه قاعده این لحظه</div>
+            <ul class="small ink2" style="display:flex;flex-direction:column;gap:7px">
+              <li>۱ · <b>یک کنش اصلی</b>؛ بقیه ثانویه. (اینجا: «درس فردا»)</li>
+              <li>۲ · <b>اعداد دقیق</b> و فارسی: Streak و +۱.</li>
+              <li>۳ · <b>حذف اعلان‌های موازی</b>: پس از ثبت، ربات دست نگه می‌دارد.</li>
+            </ul>
+            <hr class="sep">
+            <p class="tiny muted" style="margin:0">Undo پنج‌ثانیه‌ای برای ثبت اشتباه (روز اشتباه) — بعد از آن ویرایش عادی.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-path" data-kick="جریان‌های ۶، ۷، ۹ · S4" data-title="مسیر دوره — تقویم شمسی، هفته‌ی شنبه‌محور" data-desc="نمای مسیر: هر روز یک سلول با عدد روز (بزرگ‌تر از تاریخ) و وضعیت. مینی‌پروژه پنجشنبه و مرور جمعه بخشی از ساختار هفته‌اند، نه استثنا. زیر تقویم، دسترسی به کارنامه هفته و خروجی ICS." data-who="👤 مسیر یادگیرنده · جریان‌های ۶، ۷، ۹">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S4 · مسیر دوره</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۲۰</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head">
+              <div><div class="small strong">مسیر دوره</div><div class="tiny muted">🐍 پایتون و معماری بک‌اند</div></div>
+              <span class="spacer" style="flex:1"></span>
+              <span class="chip num">۲۴٪</span>
+            </div>
+            <div class="m-body">
+              <div class="mcard tight">
+                <div class="between tiny muted"><span>فاز ۳ · صف، کش و عملیات پس‌زمینه</span><span class="num">۳۹ / ۱۸۰</span></div>
+                <div class="bar" style="margin-top:6px"><i style="width:24%"></i></div>
+              </div>
+
+              <div class="mcard">
+                <div class="tiny muted" style="margin-bottom:7px">هفته ۹ · ۱۲ تا ۱۸ مهر</div>
+                <div class="dot7" style="grid-template-columns:repeat(7,1fr)">
+                  <i class="ok">ش</i><i class="ok">ی</i><i class="ok">د</i><i class="ms">س</i><i class="ok">چ</i><i class="pj">پ</i><i class="rs">ج</i>
+                </div>
+                <div class="hstack" style="margin-top:9px">
+                  <span class="daypill ok num">۳۹ ✓ مستند</span>
+                  <span class="daypill now num">۴۰ امروز</span>
+                  <span class="daypill num">۴۱ پروژه</span>
+                  <span class="daypill rest num">۴۲ مرور</span>
+                </div>
+              </div>
+
+              <div class="mcard tight">
+                <div class="strong small" style="margin-bottom:6px">این هفته</div>
+                <div class="stack" style="gap:6px">
+                  <div class="mrow"><span class="badge warn">سه‌شنبه · ازدست‌رفته</span><span class="spacer" style="flex:1"></span><span class="tiny muted">فرصت جبران تمام شد</span></div>
+                  <div class="mrow"><span class="badge ok">جمعه ۱۰:۰۰ · کارنامه هفته</span><span class="spacer" style="flex:1"></span><a class="tiny">باز کردن ←</a></div>
+                </div>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow"><span class="chip">⬇ خروجی ICS</span><span class="chip">📄 فهرست سرفصل‌ها</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۶ فاز</span></div>
+              </div>
+            </div>
+            <div class="m-nav">
+              <div><span class="i">🏠</span>امروز</div>
+              <div class="on"><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1 1 240px;min-width:230px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:7px">قواعد نمایش</div>
+            <ul class="small ink2" style="display:flex;flex-direction:column;gap:6px">
+              <li>ستون اول = شنبه؛ هفته در یک خط خوانده می‌شود.</li>
+              <li>عدد روز درشت‌تر از تاریخ؛ در هفته‌های دور، فقط عدد روز.</li>
+              <li>وضعیت با نماد + متن + رنگ؛ کوررنگی اطلاعات را حذف نمی‌کند.</li>
+              <li>مرز فازها با نوار تیره مشخص می‌شود.</li>
+              <li>توقف و مرخصی، خاکستری خط‌چین‌اند نه قرمز.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-courses" data-kick="جریان ۱۸ · S5" data-title="دوره‌های من — یک فعال، بقیه نگهداری" data-desc="قاعده‌ی «۱ دوره فعال در هر لحظه» روی صفحه دیده می‌شود: کارت بزرگ برای فعال، کارت‌های فشرده برای نگهداری و تمام‌شده. فعال‌کردن دوره جدید، هشدار ملایم دارد ولی مسیر را نمی‌بندد." data-who="👤 مسیر یادگیرنده · جریان ۱۸">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S5 · دوره‌های من</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۲۵</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div><div class="small strong">دوره‌های من</div><div class="tiny muted">۱ فعال · ۱ نگهداری · ۱ تمام‌شده</div></div></div>
+            <div class="m-body">
+              <div class="mcard" style="border-inline-start:4px solid var(--accent)">
+                <div class="mrow"><span class="badge info">فعال</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">روز ۴۳</span></div>
+                <div class="strong" style="font-size:14px;margin-top:5px">🐍 پایتون و معماری بک‌اند</div>
+                <div class="tiny muted num">۱۸۰ روز · فاز ۳ از ۶</div>
+                <div class="bar" style="margin-top:8px"><i style="width:24%"></i></div>
+                <div class="between tiny muted" style="margin-top:4px"><span class="num">۲۴٪</span><span class="num">🔥 Streak ۱۳</span></div>
+                <button class="btn pri blk sm" style="margin-top:9px">ادامه روز ۴۳ ←</button>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow"><span class="ico">🎨</span><div style="flex:1"><div class="small strong">مبانی فرانت‌اند <span class="badge n">نگهداری</span></div><div class="tiny muted num">۹۰ روز · روز ۵۸ · مرور ۵ دقیقه‌ای</div></div></div>
+                <div class="hstack" style="margin-top:8px"><button class="btn sm">شروع مرور امروز</button><button class="btn sm ghost">فعال‌کردن به‌جای فعلی</button></div>
+              </div>
+
+              <div class="mcard tight">
+                <div class="mrow"><span class="ico">🌿</span><div style="flex:1"><div class="small strong">Git و GitHub <span class="badge ok">تمام‌شده</span></div><div class="tiny muted num">۳۰ روز · ۲۴ مرداد</div></div></div>
+                <div class="hstack" style="margin-top:8px"><button class="btn sm">⬇ خروجی مدارک</button><button class="btn sm">مرور آزاد</button></div>
+              </div>
+
+              <div class="call warn" style="margin:0"><span class="ic">⇄</span><p class="tiny" style="margin:0">با فعال‌کردن دوره جدید: دوره فعلی به <b>نگهداری (۵ دقیقه/روز)</b> می‌رود. پیشرفت و مدارک دست‌نخورده می‌مانند.</p></div>
+            </div>
+            <div class="m-nav">
+              <div><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div class="on"><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-evi" data-kick="جریان‌های ۴، ۱۲ · S6" data-title="مدارک من — یک ردیف برای هر روز یادگیری" data-desc="آرشیو شخصی: فیلتر سطح، جست‌وجوی یادداشت‌ها، و خروجی Zip. لینک به تمرین کهنه، خروجی گرفتن و اتصال به دوره‌های تمام‌شده هم از همین‌جا است." data-who="👤 مسیر یادگیرنده · جریان‌های ۴، ۱۲">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S6 · مدارک (پرشده)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۳۰</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head">
+              <div><div class="small strong">مدارک من</div><div class="tiny muted num">۳۹ ردیف · ۲۱ تأییدشده</div></div>
+              <span class="spacer" style="flex:1"></span>
+              <button class="btn sm">⬇ Zip</button>
+            </div>
+            <div class="m-body">
+              <div class="hstack"><span class="chip">جست‌وجو…</span><span class="chip on">همه</span><span class="chip">سریع</span><span class="chip">مستند</span><span class="chip">کامل</span></div>
+              <div class="mcard tight">
+                <div class="mrow"><span class="badge n num">روز ۴۳</span><span class="spacer" style="flex:1"></span><span class="badge ok">مستند</span></div>
+                <p class="small" style="margin:6px 0 4px">کار سنگین را از مسیر درخواست جدا کردم؛ تایم‌اوت حل شد.</p>
+                <div class="hstack"><span class="chip tiny">🖼 log.png</span><span class="chip tiny">🔗 gist</span><span class="tiny muted">۱۲ مهر</span></div>
+              </div>
+              <div class="mcard tight">
+                <div class="mrow"><span class="badge n num">روز ۴۲</span><span class="spacer" style="flex:1"></span><span class="badge warn">سریع</span></div>
+                <p class="small" style="margin:6px 0 4px">مرور جمعه — دو مفهوم صف و بروکر را دوباره ساختم.</p>
+                <div class="hstack"><button class="btn sm">ارتقا به مستند</button><span class="tiny muted">۱۱ مهر</span></div>
+              </div>
+              <div class="mcard tight">
+                <div class="mrow"><span class="badge n num">روز ۴۱</span><span class="spacer" style="flex:1"></span><span class="badge ai">کامل</span></div>
+                <p class="small" style="margin:6px 0 4px">مینی‌پروژه هفته ۹ — سرویس اعلان با Redis.</p>
+                <div class="hstack"><span class="chip tiny">📄 ۲ فایل</span><span class="tiny muted">۱۰ مهر</span></div>
+              </div>
+            </div>
+            <div class="m-nav">
+              <div><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div class="on"><span class="i">📁</span>مدارک</div>
+              <div><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="m-tag">S6 · حالت خالی (دو هفته اول)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۳۰</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div><div class="small strong">مدارک من</div><div class="tiny muted">هنوز چیزی نیست</div></div></div>
+            <div class="m-body">
+              <div class="mcard center" style="padding:20px">
+                <div class="ico lg" style="margin:0 auto 8px">📁</div>
+                <div class="small strong">اولین مدرک همین امروز ساخته می‌شود</div>
+                <p class="tiny muted" style="margin:6px 0 9px">یک خط یادداشت هم کافی است؛ ما در پایان دوره از همین‌ها پرتفولیو می‌سازیم.</p>
+                <button class="btn sm pri">رفتن به درس امروز</button>
+              </div>
+              <div class="mcard dash tight center">
+                <span class="tiny muted">پس از اولین ثبت، این صفحه به فهرست ردیف‌ها تبدیل می‌شود.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-set" data-kick="جریان‌های ۸، ۱۴، ۱۶ · S7" data-title="تنظیمات — کلید توقف و پشتیبان، همه در یک صفحه" data-desc="چهار بخش: روبیکا، توقف موقت، نمایش (تم تیره هم‌رتبه)، داده و پشتیبان. تغییرات وب و ربات روی یک منبع حقیقت می‌نویسند." data-who="👤 مسیر یادگیرنده · جریان‌های ۸، ۱۴، ۱۶">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">S7 · تنظیمات (۱ از ۲)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۳۵</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div class="small strong">تنظیمات</div><span class="spacer" style="flex:1"></span><span class="badge ok">فعال</span></div>
+            <div class="m-body">
+              <div class="mcard">
+                <div class="mrow"><span class="small strong">📱 روبیکا</span><span class="spacer" style="flex:1"></span><span class="badge ok">متصل · @mehdi_dev</span></div>
+                <div class="hstack" style="margin-top:9px"><span class="chip num on">صبح ۰۸:۰۰</span><span class="chip num">عصر ۱۸:۰۰</span></div>
+                <div class="hstack" style="margin-top:7px"><span class="chip on">شنبه</span><span class="chip on">یک‌شنبه</span><span class="chip on">دوشنبه</span><span class="chip on">سه‌شنبه</span><span class="chip on">چهارشنبه</span><span class="chip on">پنجشنبه</span><span class="chip">جمعه</span></div>
+                <span class="help">سقف سخت: ۳ پیام در روز · پنجره سکوت ۲۳:۰۰ تا ۰۷:۰۰.</span>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm">ارسال آزمایشی</button><button class="btn sm ghost">قطع اتصال</button></div>
+              </div>
+              <div class="mcard">
+                <div class="mrow"><span class="small strong">⏸ توقف موقت</span></div>
+                <div class="hstack" style="margin-top:8px"><span class="chip on">فعال</span><span class="chip num">۳ روز</span><span class="chip num">۷ روز</span><span class="chip">تا تاریخ</span></div>
+                <span class="help">روزهای توقف «ازدست‌رفته» حساب نمی‌شوند.</span>
+              </div>
+            </div>
+            <div class="m-nav">
+              <div><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div class="on"><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">S7 · تنظیمات (۲ از ۲)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۳۶</span><span class="tiny">قطره</span><span>▮▮▮</span></div>
+            <div class="m-head"><div class="small strong">نمایش و داده</div></div>
+            <div class="m-body">
+              <div class="mcard">
+                <div class="small strong" style="margin-bottom:7px">🎨 نمایش</div>
+                <div class="hstack"><span class="chip">روشن</span><span class="chip on">تیره</span><span class="chip">سیستم</span></div>
+                <div class="hstack" style="margin-top:7px"><span class="chip">کوچک</span><span class="chip on">متوسط</span><span class="chip">بزرگ</span></div>
+                <div class="hstack" style="margin-top:7px"><span class="chip on">کاهش انیمیشن</span><span class="chip on num">اعداد فارسی</span></div>
+                <div class="help">تم تیره هم‌رتبه است، چون مطالعه شبانه سناریوی اصلی من است.</div>
+              </div>
+              <div class="mcard">
+                <div class="small strong" style="margin-bottom:7px">🗄 داده و پشتیبان</div>
+                <div class="mrow tiny muted"><span>آخرین پشتیبان: ۶ روز پیش</span><span class="spacer" style="flex:1"></span><span class="badge warn">به‌موقع بگیر</span></div>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm">⬇ خروجی Zip</button><button class="btn sm ghost">⬆ بازیابی</button></div>
+                <span class="help">شامل فایل‌های درس · دیتابیس · مدارک.</span>
+              </div>
+              <div class="mcard">
+                <div class="small strong" style="margin-bottom:7px">⌨️ میانبرها (دسکتاپ)</div>
+                <div class="hstack"><span class="chip"><span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> ثبت</span><span class="chip"><span class="kbd">Esc</span> بستن شیت</span><span class="chip"><span class="kbd">←</span>/<span class="kbd">→</span> روز</span></div>
+              </div>
+              <div class="call bad" style="margin:0"><span class="ic">↺</span><p class="tiny" style="margin:0"><b>بازیابی:</b> اول گزارش پیش‌نمایش («۳ روز اضافه، ۱۲ جایگزین»)، بعد تأیید دو مرحله‌ای؛ در نیمه‌کاره، داده فعلی دست‌نخورده می‌ماند.</p></div>
+            </div>
+            <div class="m-nav">
+              <div><span class="i">🏠</span>امروز</div>
+              <div><span class="i">🗓</span>مسیر</div>
+              <div><span class="i">📁</span>مدارک</div>
+              <div class="on"><span class="i">⚙️</span>تنظیمات</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-r1" data-kick="جریان ۱ · روبیکا" data-title="پیام صبحگاهی — پنج سطر، یک لینک" data-desc="پیام باید در سه ثانیه سه چیز را بگوید: امروز روز چندم است، امروز چه کاری باید بکنم، از کجا شروع کنم. لینک، لینک عمیق به همان درس است؛ در نبود میزبانی، جایگزین «کد روز» طراحی شده." data-who="📱 پیام‌های روبیکا · جریان ۱">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">پیام ۰۸:۰۰ (حالت عادی)</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۰۰</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">هر روز ۰۸:۰۰</div></div></div>
+            <div class="chat">
+              <div class="bg them">
+                ☀️ <b>روز ۴۳ از ۱۸۰</b> — پایتون و معماری بک‌اند<br><br>
+                🎯 <b>هدف امروز:</b> یک کار سنگین را از مسیر درخواست جدا کنی.<br><br>
+                ⏱ مطالعه ۱۰ دقیقه · 🏋️ تمرین ۳۵ دقیقه
+                <span class="lnk">📖 مطالعه درس امروز و ثبت تمرین ←</span>
+                <div class="meta">۰۸:۰۰</div>
+              </div>
+              <div class="bg them" style="background:#fafbfc">
+                <span class="tiny muted">دستورهای همیشه در دسترس:</span>
+                <div class="kbdr"><span><span class="mono">وضعیت</span> · <span class="mono">توقف ۵</span> · <span class="mono">ساعت 21:00</span> · <span class="mono">امروز</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">جایگزین بدون میزبانی: «کد روز»</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۰۰</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">حالت B: وب لوکال</div></div></div>
+            <div class="chat">
+              <div class="bg them">
+                ☀️ <b>روز ۴۳ از ۱۸۰</b> — پایتون<br>
+                🎯 هدف امروز: صف کارها را از مسیر درخواست جدا کنی.<br><br>
+                💻 روی لپ‌تاپ، سامانه را باز کن و این کد را بزن:<br>
+                <b style="font-size:16px;letter-spacing:2px">Q-43</b>
+                <div class="meta">۰۸:۰۰</div>
+              </div>
+              <div class="bg them" style="background:#fafbfc">
+                <span class="tiny muted">کد در صفحه وب وارد می‌شود و مستقیم به همان درس می‌برد — بدترین حالت هم «یک کلیک» دارد.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 260px;min-width:250px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:8px">کالبدشکافی پنج سطر</div>
+            <div class="stack" style="gap:7px">
+              <div class="call" style="padding:8px 10px"><span class="ic">۱</span><p class="tiny" style="margin:0"><b>روز ۴۳ از ۱۸۰</b> — پایان‌پذیری و پیشرفت در یک عدد.</p></div>
+              <div class="call" style="padding:8px 10px"><span class="ic">۲</span><p class="tiny" style="margin:0"><b>هدف امروز</b> — یک جمله از متادیتای درس؛ بدون این فیلد، درس منتشر نمی‌شود.</p></div>
+              <div class="call" style="padding:8px 10px"><span class="ic">۳</span><p class="tiny" style="margin:0"><b>بودجه زمانی</b> — با تنظیم «۲۰ دقیقه» همان عدد نمایش داده می‌شود.</p></div>
+              <div class="call" style="padding:8px 10px"><span class="ic">۴</span><p class="tiny" style="margin:0"><b>لینک عمیق</b> — به <span class="mono">/day/43</span>، نه صفحه اصلی.</p></div>
+              <div class="call" style="padding:8px 10px"><span class="ic">۵</span><p class="tiny" style="margin:0"><b>خط دستورها</b> — کنترل از همان پیام‌رسان، بدون رفتن به وب.</p></div>
+            </div>
+            <hr class="sep">
+            <div class="strong small" style="margin-bottom:6px">اعتبارسنجی پیش از ارسال</div>
+            <div class="stack small">
+              <div class="between"><span>درس امروز منتشر شده؟</span><span class="badge ok">✓ لازم</span></div>
+              <div class="between"><span>در توقف هستم؟</span><span class="badge n">ارسال نمی‌شود</span></div>
+              <div class="between"><span>سقف ۳ پیام روز؟</span><span class="badge ok">۱ / ۳</span></div>
+              <div class="between"><span>در پنجره سکوت؟</span><span class="badge n">ارسال نمی‌شود</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-r2" data-kick="جریان ۵ · روبیکا" data-title="یادآوری عصرانه — ثبت سریع از داخل چت" data-desc="مهم‌ترین اهرم پایبندی: اگر در روبیکا بمانم و «۱» را بزنم، روز بسته می‌شود و Streak زنده می‌ماند. چهار پاسخ، چهار منطق — از انجام‌دادم تا «امشب نمی‌رسم» (ژتون)." data-who="📱 پیام‌های روبیکا · جریان ۵">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">یادآوری ۱۸:۰۰ + ثبت با یک رقم</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۱۸:۰۰</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">یادآوری عصرانه</div></div></div>
+            <div class="chat">
+              <div class="bg them">
+                ⏰ <b>۴ ساعت تا پایان امروز.</b><br>
+                تمرین روز ۴۳ ثبت نشده. با ۱۵ ثانیه هم می‌شود امروز را نگه داشت:
+                <div class="kbdr">
+                  <span><b>۱</b> · انجام دادم ✓</span>
+                  <span><b>۲</b> · اسکرین‌شات می‌فرستم</span>
+                  <span><b>۳</b> · ثبت در وب‌اپ</span>
+                  <span><b>۴</b> · امشب نمی‌رسم</span>
+                </div>
+                <div class="meta">۱۸:۰۰</div>
+              </div>
+              <div class="bg me">۱<div class="meta">۱۸:۰۲</div></div>
+              <div class="bg them" style="background:#eef8f1;border-color:#cfe9d9">
+                ثبت شد ✅ <b>Streak ۱۳ 🔥</b><br>
+                این «سطح ۱ — خوداظهاری» است. اگر بعداً اسکرین‌شات یا لینک بفرستی، به «مستند» ارتقا می‌گیرد.
+                <div class="meta">۱۸:۰۲</div>
+              </div>
+              <div class="bg me">چرا ۱۳ نشد؟ دیروز ۱۲ بود<div class="meta">۱۸:۰۳</div></div>
+              <div class="bg them">
+                چون دیروز را هم با مهلت جبران نگه داشتی 🙂 امروز ۱۳ است. فردا ۱۴.
+                <div class="meta">۱۸:۰۴</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">پاسخ ۴: «امشب نمی‌رسم»</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۱۸:۰۵</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">بدون سرزنش</div></div></div>
+            <div class="chat">
+              <div class="bg me">۴<div class="meta">۱۸:۰۵</div></div>
+              <div class="bg them">
+                مشکلی نیست. یکی از این دو:
+                <div class="kbdr">
+                  <span><b>۱</b> · ژتون مرخصی (۲ از ۲ مانده)</span>
+                  <span><b>۲</b> · تا فردا صبح فرصت جبران بدهم</span>
+                </div>
+                <div class="meta">۱۸:۰۵</div>
+              </div>
+              <div class="bg me">۱<div class="meta">۱۸:۰۶</div></div>
+              <div class="bg them" style="background:#fafbfc">
+                ✓ ژتون ثبت شد — امروز «مرخصی» شد، نه «ازدست‌رفته». Streak ۱۳ سالم ماند.<br>
+                💤 استراحت هم بخشی از برنامه است.
+                <div class="meta">۱۸:۰۶</div>
+              </div>
+            </div>
+            <div class="call" style="margin:11px 9px 9px"><span class="ic">🗓</span><p class="tiny" style="margin:0">فردا صبح، پیام روز بعد سر وقت می‌آید؛ بدون اشاره به دیشب.</p></div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 250px;min-width:240px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:7px">ماتریس ارسال یادآوری</div>
+            <table class="tbl">
+              <thead><tr><th>وضعیت</th><th>پیام عصر</th></tr></thead>
+              <tbody>
+                <tr><td class="small">امروز ثبت شده</td><td><span class="badge n">ارسال نمی‌شود</span></td></tr>
+                <tr><td class="small">ثبت نشده · روز عادی</td><td><span class="badge ok">یک پیام</span></td></tr>
+                <tr><td class="small">دیروز باز مانده</td><td><span class="badge warn">پیام مهلت جبران</span></td></tr>
+                <tr><td class="small">در توقف</td><td><span class="badge n">۰</span></td></tr>
+                <tr><td class="small">جمعه</td><td><span class="badge info">فقط کارنامه ۱۰:۰۰</span></td></tr>
+                <tr><td class="small">پس از ۲۱:۰۰</td><td><span class="badge n">سکوت کامل</span></td></tr>
+              </tbody>
+            </table>
+            <hr class="sep">
+            <p class="tiny muted" style="margin:0">هر پاسخ یعنی یک رکورد در <span class="mono">daily_logs</span> با <span class="mono">source=rubika</span> — یک منبع حقیقت، دو کانال ورود.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-r3" data-kick="جریان‌های ۷، ۸ · روبیکا" data-title="دستورات و بازگشت مهربان — هفت قالب پیام" data-desc="دستورهای PRD حفظ شده‌اند و یک دستور «امروز» اضافه شده است. کنار آن، کتابخانه هفت قالب پیام که لحن واحد محصول را تضمین می‌کند: کوتاه، بدون شعار، بدون سرزنش، هر پیام یک کنش." data-who="📱 پیام‌های روبیکا · جریان‌های ۷، ۸">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div>
+          <div class="m-tag">دستورات کنترلی</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۲۰:۱۱</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">کنترل کامل</div></div></div>
+            <div class="chat">
+              <div class="bg me">وضعیت<div class="meta">۲۰:۱۱</div></div>
+              <div class="bg them">
+                📊 <b>امروز</b> · 🐍 پایتون · روز <b>۴۳</b> از ۱۸۰ (۲۴٪)<br>
+                🔥 Streak <b>۱۳</b> · رکورد ۱۹<br>
+                📅 این هفته: ۴ از ۶ روز ✓<br>
+                ⏭ بعدی: زمان‌بند کارها و Retry
+                <div class="meta">۲۰:۱۱</div>
+              </div>
+              <div class="bg me">توقف ۵<div class="meta">۲۰:۱۲</div></div>
+              <div class="bg them" style="background:#fffdf5;border-color:#f0dcb4">
+                ⏸ یادآوری‌ها تا ۵ روز خاموش شد.<br>روزهای توقف «ازدست‌رفته» نمی‌شوند.<br>هر وقت خواستی: <span class="mono tiny">ادامه</span>
+                <div class="meta">۲۰:۱۲</div>
+              </div>
+              <div class="bg me">ساعت 21:30<div class="meta">۲۰:۱۳</div></div>
+              <div class="bg them">✅ یادآوری عصرانه → ۲۱:۳۰ (پیام صبح بدون تغییر: ۰۸:۰۰). همین حالا در وب هم اعمال شد.<div class="meta">۲۰:۱۳</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="m-tag">بازگشت پس از شکست + پایان فاز</div>
+          <div class="m">
+            <div class="m-top"><span class="num">۰۸:۰۰</span><span class="tiny">روبیکا</span><span>▮▮▮</span></div>
+            <div class="m-head"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">لحن حامی</div></div></div>
+            <div class="chat">
+              <div class="bg them">
+                سلام 👋 Streak دیروز صفر شد، ولی <b>رکورد ۱۹ روزه‌ات</b> سر جایش است.<br><br>
+                امروز روز ۴۴ است و کار سبکی داریم. با ۱۰ دقیقه شروع می‌کنیم:
+                <span class="lnk">شروع امروز ←</span>
+                <div class="meta">۰۸:۰۰</div>
+              </div>
+              <div class="bg them" style="background:#f4fdf7;border-color:#cfe9d9">
+                🏆 <b>فاز ۳ تمام شد.</b><br>
+                نشان «صف‌ساز» را گرفتی.<br>
+                فاز ۴: معماری سرویس — فردا ۰۸:۰۰ شروع می‌کنیم.
+                <div class="meta">دیروز ۱۹:۱۰</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 268px;min-width:255px">
+          <div class="card soft">
+            <div class="strong small" style="margin-bottom:7px">جدول دستورات</div>
+            <table class="tbl">
+              <thead><tr><th>دستور</th><th>عملکرد</th></tr></thead>
+              <tbody>
+                <tr><td class="mono tiny">وضعیت</td><td class="small">کارت امروز + رکورد + کنش بعدی</td></tr>
+                <tr><td class="mono tiny">دوره‌ها</td><td class="small">فهرست + سوئیچ دوره فعال</td></tr>
+                <tr><td class="mono tiny">توقف [n]</td><td class="small">خاموشی تا n روز</td></tr>
+                <tr><td class="mono tiny">ادامه</td><td class="small">فعال‌سازی مجدد</td></tr>
+                <tr><td class="mono tiny">ساعت HH:MM</td><td class="small">تغییر ساعت یادآوری</td></tr>
+                <tr><td class="mono tiny">امروز</td><td class="small">ارسال دوباره پیام روز</td></tr>
+                <tr><td class="mono tiny">راهنما</td><td class="small">فهرست دستورها</td></tr>
+              </tbody>
+            </table>
+            <hr class="sep">
+            <div class="strong small" style="margin-bottom:6px">کتابخانه قالب‌ها (لحن واحد)</div>
+            <div class="stack" style="gap:6px">
+              <div class="mrow tiny"><span class="badge n">۱</span><span>صبح · درس روز + هدف</span></div>
+              <div class="mrow tiny"><span class="badge n">۲</span><span>عصر · یادآوری + چهار پاسخ</span></div>
+              <div class="mrow tiny"><span class="badge n">۳</span><span>ثبت · تأیید + ارتقای سطح</span></div>
+              <div class="mrow tiny"><span class="badge n">۴</span><span>شکست · بازگشت بدون سرزنش</span></div>
+              <div class="mrow tiny"><span class="badge n">۵</span><span>توقف/ادامه · تأیید وضعیت</span></div>
+              <div class="mrow tiny"><span class="badge n">۶</span><span>پایان فاز · نشان</span></div>
+              <div class="mrow tiny"><span class="badge n">۷</span><span>جمعه · کارنامه هفته</span></div>
+            </div>
+            <p class="tiny muted" style="margin:9px 0 0">دستور ناشناس → فهرست گزینه‌ها؛ هرگز خطای خام یا سکوت.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-a1" data-kick="جریان‌های ۱۰، ۱۳، ۱۵ · A1" data-title="فهرست دروس و بافر — یک عدد که همه‌چیز را می‌گوید" data-desc="چون خودم سازنده‌ام، مهم‌ترین عدد زندگی روزمره‌ام «چند روز جلوترم» است. این صفحه با همان عدد شروع می‌شود، بعد نوار پوشش ۳۰ روز آینده، و بعد درخت دوره با وضعیت تولید هر روز." data-who="🔐 خط تولید محتوا · جریان‌های ۱۰، ۱۳، ۱۵">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">localhost:8000/admin/lessons</div>
+          <span class="tiny muted">دسکتاپ · خط تولید</span>
+        </div>
+        <div class="app">
+          <aside class="app-side">
+            <div class="grp">خط تولید</div>
+            <nav class="snav">
+              <a class="on">📚 دروس</a>
+              <a>✍️ ویرایشگر</a>
+              <a>📦 بارگذاری گروهی</a>
+              <a>🤖 پرامپت‌ها</a>
+              <a>🔔 لاگ اعلان‌ها</a>
+            </nav>
+            <div class="grp">یادگیری</div>
+            <nav class="snav"><a>🏠 امروز</a><a>🗓 مسیر</a><a>📁 مدارک</a><a>⚙️ تنظیمات</a></nav>
+          </aside>
+          <div class="app-main">
+            <div class="app-top">
+              <h2>🐍 پایتون و معماری بک‌اند</h2>
+              <span class="spacer" style="flex:1"></span>
+              <div class="seg tiny"><button class="on">درخت</button><button>جدول همه</button></div>
+              <button class="btn sm">⬇ خروجی Zip</button>
+              <button class="btn sm pri">+ روز جدید</button>
+            </div>
+
+            <div class="g2 sect">
+              <div class="card hero">
+                <div class="between">
+                  <div><div class="tiny muted">بافر محتوا — چند روز جلوترم؟</div><div class="big num" style="color:var(--ok)">۱۴ روز</div><div class="tiny muted">پایین‌ترین حد مطمئن: ۵ روز</div></div>
+                  <div class="stack" style="gap:5px;min-width:150px">
+                    <span class="badge ok">✓ امن</span>
+                    <span class="tiny muted num">۱۵۸ / ۱۸۰ منتشرشده</span>
+                    <span class="tiny muted num">۱ منتظر ویرایش من</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="between" style="margin-bottom:8px"><span class="small strong">پوشش ۳۰ روز آینده</span><span class="tiny muted">هر خانه = یک روز دوره</span></div>
+                <div class="cov">
+                  <i class="ok">۴۳</i><i class="ok">۴۴</i><i class="ok">۴۵</i><i class="ok">۴۶</i><i class="ok">۴۷</i><i class="ok">۴۸</i><i class="ok">۴۹</i>
+                  <i class="ok">۵۰</i><i class="ok">۵۱</i><i class="ok">۵۲</i><i class="ok">۵۳</i><i class="ok">۵۴</i><i class="ok">۵۵</i><i class="ok">۵۶</i>
+                  <i class="ai">۵۷</i><i class="dr">۵۸</i><i class="em">۵۹</i><i class="em">۶۰</i><i class="em">۶۱</i><i class="em">۶۲</i><i class="em">۶۳</i>
+                  <i class="em">۶۴</i><i class="em">۶۵</i><i class="em">۶۶</i><i class="em">۶۷</i><i class="em">۶۸</i><i class="em">۶۹</i><i class="em">۷۰</i>
+                </div>
+                <div class="lg" style="margin-top:9px">
+                  <span><i class="ok"></i>منتشرشده</span><span><i class="ai"></i>AI · ویرایش‌نشده</span><span><i class="dr"></i>پیش‌نویس</span><span><i class="em"></i>خالی</span><span><i class="ms"></i>شکاف</span>
+                </div>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm pri">پر کردن شکاف با پرامپت</button><button class="btn sm">بارگذاری گروهی Zip</button></div>
+              </div>
+            </div>
+
+            <div class="card" style="padding:9px">
+              <div class="tnode" style="background:#f5f7fb;font-weight:700"><span>📁 فاز ۳ · صف، کش و عملیات پس‌زمینه</span><span class="spacer" style="flex:1"></span><span class="badge ok">۲۷ / ۳۰</span><span class="tiny muted">بافر ۱۴ روز ✓</span></div>
+              <div class="tnode lv2"><span>🗓 هفته ۹ · صف کارها</span><span class="spacer" style="flex:1"></span><span class="badge ok">۴ / ۵</span><button class="btn sm">باز کردن</button></div>
+              <div class="tnode lv3"><span class="badge n num">۴۳</span><span>صف کارها با Redis و Celery</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۱۰+۳۵</span><span class="badge ok">منتشرشده</span><button class="btn sm">ویرایش</button></div>
+              <div class="tnode lv3 on"><span class="badge n num">۴۴</span><span>زمان‌بند کارها و Retry</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۱۰+۴۰</span><span class="badge ai">AI · ویرایش من</span><button class="btn sm pri">ویرایش</button></div>
+              <div class="tnode lv3"><span class="badge n num">۴۵</span><span>Idempotency در کارهای پس‌زمینه</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۱۰+۳۵</span><span class="badge warn">پیش‌نویس</span><button class="btn sm">ادامه</button></div>
+              <div class="tnode lv3"><span class="badge n num">۴۶</span><span>پایش صف با Flower</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۱۰+۳۰</span><span class="badge n">خالی</span><button class="btn sm">+ ساخت</button></div>
+              <div class="tnode lv3"><span class="badge n num">۴۷</span><span>🔨 مینی‌پروژه هفته ۹</span><span class="spacer" style="flex:1"></span><span class="tiny muted num">۶۰</span><span class="badge warn">پیش‌نویس</span><button class="btn sm">ادامه</button></div>
+              <div class="tnode lv2"><span>🗓 هفته ۱۰ · صف پیشرفته</span><span class="spacer" style="flex:1"></span><span class="badge n">۰ / ۵</span><button class="btn sm">باز کردن</button></div>
+              <div class="tnode" style="background:#f5f7fb"><span>📁 فاز ۴ · معماری سرویس</span><span class="spacer" style="flex:1"></span><span class="badge n">۰ / ۳۰</span><span class="badge n">جمع‌شده</span></div>
+            </div>
+
+            <div class="call info" style="margin-top:12px"><span class="ic">🎯</span><p class="small" style="margin:0">قاعده شخصی من: <b>هیچ‌وقت زیر ۵ روز بافر</b> نروم. زیر ۵ روز، یک تراشه هشدار در S1 ظاهر می‌شود تا پیش از خالی‌شدن متوجه شوم.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-a2" data-kick="جریان‌های ۱۰، ۱۲ · A2" data-title="ویرایشگر درس — چسباندن خروجی AI، ویرایش، انتشار" data-desc="دو ستون: متادیتای فارسی و بدنه مارک‌داون سمت راست، پیش‌نمایش زنده و اعتبارسنجی سمت چپ. گیت کیفیت این‌جا غیربلوکه‌کننده است — چون خودم منتشر می‌کنم، هشدار زرد کافی است، نه قفل." data-who="🔐 خط تولید محتوا · جریان‌های ۱۰، ۱۲">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">localhost:8000/admin/lessons/44</div>
+          <span class="tiny muted">دسکتاپ · ویرایشگر</span>
+        </div>
+        <div class="app-main" style="padding-bottom:0">
+          <div class="app-top">
+            <button class="btn sm">← دروس</button>
+            <span class="badge n num">روز ۴۴ · فاز ۳ · هفته ۹</span>
+            <span class="badge ai">AI · ویرایش‌نشده</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="tiny muted">💾 ذخیره خودکار · ۳۰ ثانیه پیش</span>
+            <button class="btn sm">👁 پیش‌نمایش کاربر</button>
+            <button class="btn sm pri">🚀 انتشار برای روز ۴۴</button>
+          </div>
+
+          <div class="g2">
+            <div>
+              <div class="card sect">
+                <div class="between" style="margin-bottom:8px"><span class="tiny muted strong">۱ · چسباندن خروجی AI</span><button class="btn sm">📋 کپی پرامپت این روز</button></div>
+                <div class="img" style="height:48px">خروجی ChatGPT / Claude را این‌جا بچسبان (Ctrl+V)</div>
+                <p class="tiny muted" style="margin:8px 0 0">متادیتا و بدنه، خودکار از هم جدا می‌شوند؛ فیلدهای خالی با رنگ هشدار می‌مانند.</p>
+              </div>
+              <div class="card sect">
+                <div class="tiny muted strong" style="margin-bottom:7px">۲ · متادیتای فارسی</div>
+                <div class="field"><label class="lbl">عنوان درس</label><input class="input" value="زمان‌بند کارها و Retry"></div>
+                <div class="g2">
+                  <div class="field"><label class="lbl">هدف امروز <span class="badge ok tiny">ضروری</span></label><input class="input" value="یک کار شکست‌خورده را هوشمندانه دوباره اجرا کنی."></div>
+                  <div class="field"><label class="lbl">نکته طلایی</label><input class="input" value="Retry بدون backoff، سرور را زیر بار حمله می‌برد."></div>
+                </div>
+                <div class="g2">
+                  <div class="field" style="margin-bottom:0"><label class="lbl">دقیقه مطالعه</label><input class="input num" value="۱۰"></div>
+                  <div class="field" style="margin-bottom:0"><label class="lbl">دقیقه تمرین</label><input class="input num" value="۴۰"></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="between" style="margin-bottom:7px"><span class="tiny muted strong">۳ · بدنه مارک‌داون</span><div class="seg tiny"><button class="on">ویرایش</button><button>پیش‌نمایش</button></div></div>
+                <div class="code" style="max-height:210px">## Retry با backoff
+
+```python
+@app.task(bind=True, max_retries=3)
+def send(self, chat_id):
+    raise self.retry(countdown=2 ** self.request.retries)
+```
+
+> ⚡ **نکته طلایی:** هر retry باید فاصله‌ی
+> نمایی داشته باشد، وگرنه صف قفل می‌شود.</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="card sect">
+                <div class="tiny muted strong" style="margin-bottom:7px">پیش‌نمایش زنده (همان S2)</div>
+                <div class="call info" style="margin:0 0 8px"><span class="ic">🎯</span><p class="tiny" style="margin:0"><b>هدف امروز:</b> یک کار شکست‌خورده را هوشمندانه دوباره اجرا کنی.</p></div>
+                <h3 style="font-size:13.5px">Retry با backoff</h3>
+                <div class="code" style="font-size:10.5px;padding:9px">raise self.retry(countdown=2 ** self.request.retries)</div>
+                <div class="call gold" style="margin-top:8px"><span class="ic">⚡</span><p class="tiny" style="margin:0">Retry بدون backoff، سرور را زیر بار حمله می‌برد.</p></div>
+                <div class="mcard tight" style="margin-top:8px;border-color:#ccdaff">
+                  <div class="mrow"><span class="badge info tiny">🏋️ تمرین · ۴۰ دقیقه</span><span class="spacer" style="flex:1"></span><span class="tiny muted">کپی صورت تمرین</span></div>
+                </div>
+              </div>
+
+              <div class="card sect">
+                <div class="tiny muted strong" style="margin-bottom:7px">گیت کیفیت (غیربلوکه‌کننده)</div>
+                <div class="stack small">
+                  <div class="between"><span>هدف امروز در یک جمله</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>کد اجراشدنی</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>تمرین با خروجی مشخص</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>جمع زمان بین ۲۰ تا ۵۰ دقیقه</span><span class="badge warn">۵۰ → مرز مینی‌پروژه</span></div>
+                </div>
+                <p class="tiny muted" style="margin:8px 0 0">هشدار زرد مانع انتشار نیست — اما در فهرست A1 می‌ماند تا بعداً اصلاح کنم.</p>
+              </div>
+
+              <div class="card">
+                <div class="between" style="margin-bottom:7px"><span class="tiny muted strong">نسخه‌ها</span><button class="btn sm">مقایسه دو نسخه</button></div>
+                <table class="tbl">
+                  <thead><tr><th>نسخه</th><th>زمان</th><th>تغییر</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td class="num">۳</td><td class="tiny muted num">۶ دقیقه پیش</td><td class="tiny">افزودن مثال backoff</td><td><button class="btn sm">بازگردانی</button></td></tr>
+                    <tr><td class="num">۲</td><td class="tiny muted num">دیروز</td><td class="tiny">ویرایش نکته طلایی</td><td><button class="btn sm">بازگردانی</button></td></tr>
+                    <tr><td class="num">۱</td><td class="tiny muted num">۳ روز پیش</td><td class="tiny">تولید AI، ویرایش‌نشده <span class="badge ai tiny">AI</span></td><td><button class="btn sm">بازگردانی</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="hstack" style="position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);margin:13px -17px 0;padding:10px 17px">
+            <span class="badge ok">وضعیت: آماده انتشار برای روز ۴۴</span>
+            <span class="tiny muted">ویرایش درس منتشرشده، به پیشرفت ثبت‌شده من کاری ندارد؛ فقط یک نسخه قبل‌تر نگه داشته می‌شود.</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="chip">🗓 انتشار زمان‌بندی‌شده</span>
+            <button class="btn pri sm">انتشار</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-a3" data-kick="جریان ۱۱ · A3" data-title="بارگذاری گروهی — Zip، اعتبارسنجی، تأیید" data-desc="مسیر پرسرعت برای وقتی که چند روز را یک‌جا با AI ساخته‌ام. پیش‌فرض امن: «فقط افزودن موارد جدید» تا کار ویرایش‌شده خراب نشود." data-who="🔐 خط تولید محتوا · جریان ۱۱">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">localhost:8000/admin/upload</div>
+          <span class="tiny muted">دسکتاپ · بارگذاری</span>
+        </div>
+        <div class="app-main">
+          <div class="app-top"><h2>بارگذاری گروهی</h2><span class="spacer" style="flex:1"></span><span class="badge n">پیش‌فرض: فقط افزودن موارد جدید</span></div>
+          <div class="g2">
+            <div>
+              <div class="card dash center" style="padding:26px 16px">
+                <div class="ico lg" style="margin:0 auto 9px;font-size:22px">📦</div>
+                <div class="strong small">فایل Zip یا پوشه Markdown را بکش و رها کن</div>
+                <p class="tiny muted" style="margin:7px 0 12px">ساختار پوشه‌ها خودکار به فاز/هفته/روز نگاشت می‌شود.</p>
+                <div class="hstack" style="justify-content:center"><button class="btn sm">انتخاب فایل…</button><button class="btn ghost sm">انتخاب پوشه</button></div>
+                <hr class="sep">
+                <div class="code" style="font-size:11px;text-align:left">phase-03/week-09/
+  day-043-queue.md
+  day-044-scheduler.md
+  day-045-idempotency.md</div>
+              </div>
+              <div class="card soft sect" style="margin-top:11px">
+                <div class="strong small" style="margin-bottom:7px">الگوی بارگذاری</div>
+                <div class="hstack"><span class="chip on">فقط افزودن موارد جدید</span><span class="chip">به‌روزرسانی موارد موجود</span><span class="chip">جایگزینی کامل</span></div>
+                <div class="hstack" style="margin-top:9px"><span class="chip on">اگر خطا بود، متوقف شو</span><span class="chip">انتشار به‌عنوان پیش‌نویس</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="between" style="margin-bottom:8px"><h3>گزارش اعتبارسنجی · phase-03.zip</h3><span class="badge bad">۲ خطا · ۱ هشدار</span></div>
+                <div class="stack">
+                  <div class="call bad" style="padding:9px 11px"><span class="ic">✕</span><p class="small" style="margin:0"><b>روز ۴۶ دو بار آمده.</b> دو فایل با شماره یکسان. <span class="hstack" style="display:inline-flex"><button class="btn sm">نگه‌داشتن اولی</button><button class="btn sm">نگه‌داشتن دومی</button></span></p></div>
+                  <div class="call bad" style="padding:9px 11px"><span class="ic">✕</span><p class="small" style="margin:0"><b>روز ۴۵ متادیتای ناقص.</b> فیلد <span class="mono">estimated_minutes</span> خالی است. <button class="btn sm">اعمال پیش‌فرض ۳۵</button></p></div>
+                  <div class="call warn" style="padding:9px 11px"><span class="ic">⚠</span><p class="small" style="margin:0"><b>روز مرور جمعه ۴۸ وجود ندارد.</b> با ساختار هفتگی پیش‌فرض ساخته شود؟ <button class="btn sm">بله، بساز</button></p></div>
+                  <div class="call ok" style="padding:9px 11px"><span class="ic">✓</span><p class="small" style="margin:0">۳ فایل سالم: روزهای ۴۳، ۴۴، ۴۶ · نگاشت فاز ۳ / هفته ۹ · وضعیت پیشنهادی: منتشرشده</p></div>
+                </div>
+                <hr class="sep">
+                <div class="between">
+                  <span class="tiny muted num">۶ فایل · ۱۴۸ کیلوبایت · پیش‌نمایش: ۳ جدید · ۱ به‌روزرسانی</span>
+                  <div class="hstack"><button class="btn sm ghost">گزارش CSV</button><button class="btn sm pri" disabled>تأیید بارگذاری (پس از رفع خطا)</button></div>
+                </div>
+              </div>
+              <div class="call info" style="margin-top:11px"><span class="ic">🧠</span><p class="small" style="margin:0">منطق سخت‌گیری که این‌جا هست، در نسخه شخصی هدفش «جلوگیری از اشتباه گذشته» است — نه کنترل کیفیت سازمانی. هر اصلاح، یک کلیک دارد و تأیید نهایی تا رفع خطاها بسته می‌ماند.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-a4" data-kick="جریان ۱۰ · A4" data-title="کتابخانه پرامپت — نسخه‌دار، با جای‌گذاری متغیر" data-desc="پرامپت‌ها دارایی اصلی خط تولید من هستند. هر پرامپت نسخه و آمار مصرف دارد، متغیرهایش خودکار پر می‌شوند و یک کلیک کپی، آماده استفاده در ChatGPT یا Claude است." data-who="🔐 خط تولید محتوا · جریان ۱۰">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">localhost:8000/admin/prompts</div>
+          <span class="tiny muted">دسکتاپ · پرامپت‌ها</span>
+        </div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>کتابخانه پرامپت</h2>
+            <span class="spacer" style="flex:1"></span>
+            <button class="chip a">برنامه‌نویسی</button><button class="chip">دواپس</button><button class="chip">مدیریت محصول</button><button class="chip">توسعه فردی</button>
+            <button class="btn sm pri">+ پرامپت جدید</button>
+          </div>
+          <div class="g2">
+            <div class="stack">
+              <div class="card" style="border-color:var(--accent)">
+                <div class="between">
+                  <div><div class="strong small">🤖 prompt-07 · درس روزانه برنامه‌نویسی</div><div class="tiny muted">نسخه ۳ · ۴۷ بار استفاده · آخرین ویرایش: دیروز · مدت‌زمان میانگین تأیید: ۹ دقیقه</div></div>
+                  <span class="badge info">برگزیده</span>
+                </div>
+                <div class="code" style="margin-top:9px;max-height:138px">تو یک مدرس ارشد برنامه‌نویسی هستی.
+برای دوره «{course_title}» روز {day_number} با موضوع «{topic}»
+یک درس ۱۰ دقیقه‌ای بنویس. سطح: {level} — لحن: معلم حامی، بدون شعار.
+
+ساختار اجباری:
+1) هدف امروز در یک جمله
+2) توضیح با مثال واقعی
+3) کد اجراشدنی (نسخه پایتون دوره)
+4) نکته طلایی (یک insight عملی)
+5) تمرین با خروجی مشخص</div>
+                <div class="hstack" style="margin-top:10px"><button class="btn sm pri">📋 کپی پرامپت</button><button class="btn sm">✏️ ویرایش</button><button class="btn sm">⬆ نسخه جدید</button><span class="spacer" style="flex:1"></span><span class="tiny muted">متغیرها: ۵</span></div>
+              </div>
+              <div class="card">
+                <div class="between"><div><div class="strong small">🔁 prompt-04 · ساخت ۵ درس هفته از یک سرفصل</div><div class="tiny muted">نسخه ۲ · ۳۱ بار استفاده</div></div><span class="badge n">عادی</span></div>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm">📋 کپی</button><button class="btn sm">✏️ ویرایش</button><button class="btn sm">نسخه‌ها (۲)</button><button class="btn sm">تنزل به نسخه ۱</button></div>
+              </div>
+              <div class="card">
+                <div class="between"><div><div class="strong small">🔨 prompt-09 · مینی‌پروژه پنجشنبه</div><div class="tiny muted">نسخه ۱ · ۱۱ بار استفاده</div></div><span class="badge n">عادی</span></div>
+                <div class="hstack" style="margin-top:9px"><button class="btn sm">📋 کپی</button><button class="btn sm">✏️ ویرایش</button></div>
+              </div>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">جای‌گذاری خودکار متغیرها</div>
+                <div class="field" style="margin-bottom:7px"><label class="lbl">course_title</label><input class="input" value="پایتون و معماری بک‌اند"></div>
+                <div class="g2">
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">day_number</label><input class="input num" value="۴۴"></div>
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">topic</label><input class="input" value="زمان‌بند کارها و Retry"></div>
+                </div>
+                <div class="g2">
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">level</label><select class="select"><option>متوسط</option><option>مقدماتی</option><option>پیشرفته</option></select></div>
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">tone</label><select class="select"><option>معلم حامی، بدون شعار</option><option>خشک و فنی</option></select></div>
+                </div>
+                <button class="btn pri blk sm">📋 کپی پرامپت پرشده</button>
+                <span class="help">جریان کامل: کپی → تولید در ChatGPT/Claude → چسباندن در A2 → انتشار.</span>
+              </div>
+              <div class="card soft">
+                <div class="strong small" style="margin-bottom:7px">چرا نسخه‌دار؟</div>
+                <ul class="small ink2" style="display:flex;flex-direction:column;gap:6px">
+                  <li>پرامپت موفق را با «ویرایش» خراب نمی‌کنم؛ نسخه جدید می‌سازم و مقایسه می‌کنم.</li>
+                  <li>آمار استفاده نشان می‌دهد کدام پرامپت واقعاً کار می‌کند.</li>
+                  <li>متغیرهای پرنشده، پیش از کپی هشدار می‌گیرند.</li>
+                </ul>
+              </div>
+              <div class="call info"><span class="ic">🔒</span><p class="small" style="margin:0">تولید محتوا داخل سامانه نیست و API کلیدی نگه‌داری نمی‌شود؛ ابزار AI بیرون است و این کتابخانه فقط «لحظه شروع» را ساده می‌کند.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-a5" data-kick="جریان ۱۷ · A5" data-title="لاگ اعلان‌ها — پاسخ به «چرا پیام صبح نرسید؟» در ۳۰ ثانیه" data-desc="یک جدول ساده با سه وضعیت، دکمه ارسال مجدد و ارسال آزمایشی که همیشه در دسترس است. حالت پرتکرار «محتوا نبود» به ویرایشگر لینک می‌خورد." data-who="🔐 خط تولید محتوا · جریان ۱۷">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">localhost:8000/admin/notifications</div>
+          <span class="tiny muted">دسکتاپ · اعلان‌ها</span>
+        </div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>لاگ اعلان‌ها</h2>
+            <span class="spacer" style="flex:1"></span>
+            <span class="badge ok">اتصال روبیکا: سالم</span>
+            <span class="badge n">آخرین پینگ: ۲ دقیقه پیش</span>
+            <button class="btn sm pri">📤 ارسال آزمایشی حالا</button>
+          </div>
+
+          <div class="g4 sect">
+            <div class="kpi"><div class="l">امروز</div><div class="v num">۲ / ۳</div><div class="tiny muted">سقف رعایت شده</div></div>
+            <div class="kpi"><div class="l">ناموفق (۲۴ ساعت)</div><div class="v num">۱</div><div class="tiny muted">دلیل: محتوا نبود</div></div>
+            <div class="kpi"><div class="l">در صف</div><div class="v num">۱</div><div class="tiny muted num">۱۸:۰۰ · یادآوری</div></div>
+            <div class="kpi"><div class="l">پنجره سکوت</div><div class="v small strong">۲۳:۰۰ – ۰۷:۰۰</div></div>
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <div class="between" style="padding:12px 13px 0"><h3>ارسال‌های امروز</h3><div class="seg tiny"><button class="on">امروز</button><button>هفته</button><button>ناموفق‌ها</button></div></div>
+            <table class="tbl">
+              <thead><tr><th>زمان</th><th>نوع</th><th>وضعیت</th><th>جزئیات</th><th></th></tr></thead>
+              <tbody>
+                <tr><td class="num">۰۸:۰۰</td><td class="small">☀️ پیام درس روز ۴۳</td><td><span class="badge ok">ارسال شد</span></td><td class="tiny muted">شناسه پیام ۴۴۹۱ · ۱ تلاش</td><td><button class="btn sm">متن</button></td></tr>
+                <tr><td class="num">۱۶:۴۰</td><td class="small">🏅 تأیید ثبت تمرین</td><td><span class="badge ok">ارسال شد</span></td><td class="tiny muted">پس از ثبت از وب</td><td><button class="btn sm">متن</button></td></tr>
+                <tr><td class="num">۱۸:۰۰</td><td class="small">⏰ یادآوری عصرانه</td><td><span class="badge info">در صف</span></td><td class="tiny muted">در صورت ثبت نشدن، لغو می‌شود</td><td><button class="btn sm">متن</button></td></tr>
+                <tr><td class="num">۰۸:۰۰</td><td class="small">☀️ پیام درس روز ۴۲</td><td><span class="badge bad">ناموفق</span></td><td class="tiny muted">دلیل: محتوا منتشر نشده بود</td><td><div class="hstack"><button class="btn sm">متن</button><button class="btn sm pri">ساخت درس</button></div></td></tr>
+              </tbody>
+            </table>
+            <div class="hstack" style="padding:11px 13px"><button class="btn sm">🔁 تلاش مجدد ناموفق‌ها</button><button class="btn sm">⏸ توقف ارسال (حالت تعمیر)</button><span class="spacer" style="flex:1"></span><span class="tiny muted">لاگ بعد از ۳۰ روز خودکار پاک می‌شود.</span></div>
+          </div>
+
+          <div class="g2" style="margin-top:13px">
+            <div class="call warn"><span class="ic">🧯</span><p class="small" style="margin:0"><b>پرستکرارترین خطا:</b> «درس منتشر نشده» — از همین‌جا با یک کلیک به ویرایشگر می‌روم. این حالت، همان «بافر صفر» است که در A1 هشدارش را می‌گیرم.</p></div>
+            <div class="call info"><span class="ic">🧾</span><p class="small" style="margin:0">هر رکورد شامل بدنه پیام هم هست تا مطمئن شوم متن واقعی چه بوده — نه فقط «موفق/ناموفق».</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-states" data-kick="سیستمی · همه جریان‌ها" data-title="حالت‌ها و ریزکپی — جایی که محصول واقعاً ساخته می‌شود" data-desc="قاعده واحد: هر پیام حالت = «چه شد + حالا چه کار کنم». هیچ بن‌بستی وجود ندارد و هیچ خطای خامی به من نشان داده نمی‌شود. این‌جا حالت‌های خالی، بارگذاری، خطا و دسترس‌پذیری یک‌جا آمده‌اند." data-who="🧩 سیستمی">
+  <div class="duo">
+    <div>
+      <div class="sec">
+        <h3 style="margin-bottom:9px">۱ · حالت‌های خالی</h3>
+        <div class="g3 sect">
+          <div class="card dash center" style="padding:18px">
+            <div class="ico lg" style="margin:0 auto 8px">🗂</div>
+            <div class="small strong">امروز محتوا ندارد</div>
+            <p class="tiny muted" style="margin:6px 0 9px">«درس روز ۴۴ منتشر نشده. از یادآوری‌ها خبرت می‌کنم.»</p>
+            <div class="hstack" style="justify-content:center"><button class="btn sm pri">ساخت با پرامپت</button><button class="btn sm">مرور هفته قبل</button></div>
+          </div>
+          <div class="card dash center" style="padding:18px">
+            <div class="ico lg" style="margin:0 auto 8px">📁</div>
+            <div class="small strong">هنوز مدرکی نیست</div>
+            <p class="tiny muted" style="margin:6px 0 9px">«اولین مدرک، امروز ساخته می‌شود — یک خط یادداشت هم کافی است.»</p>
+            <button class="btn sm pri">رفتن به درس امروز</button>
+          </div>
+          <div class="card dash center" style="padding:18px">
+            <div class="ico lg" style="margin:0 auto 8px">📚</div>
+            <div class="small strong">فهرست دروس خالی است</div>
+            <p class="tiny muted" style="margin:6px 0 9px">«با یک Zip یا فرم «روز جدید»، اولین درس در ۵ دقیقه ساخته می‌شود.»</p>
+            <div class="hstack" style="justify-content:center"><button class="btn sm pri">بارگذاری Zip</button><button class="btn sm">+ روز جدید</button></div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom:9px">۲ · بارگذاری</h3>
+        <div class="g2 sect">
+          <div class="card">
+            <div class="tiny muted" style="margin-bottom:8px">اسکلتانی (S1 و S4)، نه اسپینر</div>
+            <div class="stack" style="gap:8px">
+              <div class="skel" style="width:46%"></div>
+              <div class="skel" style="width:90%"></div>
+              <div class="skel" style="width:72%"></div>
+              <div class="g3" style="margin-top:4px"><div class="skel" style="height:46px"></div><div class="skel" style="height:46px"></div><div class="skel" style="height:46px"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tiny muted" style="margin-bottom:8px">کنش در جریان (ثبت مدرک / انتشار)</div>
+            <div class="hstack" style="margin-bottom:9px"><button class="btn pri" disabled>در حال ثبت… ۶۴٪</button><button class="btn" disabled>انصراف</button></div>
+            <div class="call bad" style="margin:0"><span class="ic">📎</span><p class="tiny" style="margin:0"><b>فایل بزرگ:</b> «حجم ۸.۲ مگابایت؛ سقف ۵. فشرده کن یا لینک بفرست.» — بقیه فرم دست‌نخورده می‌ماند.</p></div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom:9px">۳ · خطا و بازیابی — چهار سناریوی پرتکرار</h3>
+        <div class="g2 sect">
+          <div class="call bad"><span class="ic">📡</span><div><p class="small strong" style="margin-bottom:3px">قطع اینترنت هنگام ثبت</p><p class="tiny" style="margin:0">«یادداشتت روی همین دستگاه ذخیره شد؛ به‌محض وصل شدن ثبت می‌شود.» + تلاش مجدد خودکار. متن از دست نمی‌رود.</p></div></div>
+          <div class="call bad"><span class="ic">🔗</span><div><p class="small strong" style="margin-bottom:3px">لینک عمیق روز نامعتبر (روز بازآرایی شده)</p><p class="tiny" style="margin:0">«این روز جابه‌جا شده.» + دکمه <b>رفتن به روز جاری دوره</b> — هرگز صفحه ۴۰۴ خالی.</p></div></div>
+          <div class="call bad"><span class="ic">🤖</span><div><p class="small strong" style="margin-bottom:3px">خطای ارسال روبیکا</p><p class="tiny" style="margin:0">در A5 ثبت می‌شود با دکمه تلاش مجدد؛ من به‌عنوان کاربر پیام خطا از ربات نمی‌گیرم.</p></div></div>
+          <div class="call bad"><span class="ic">🗄</span><div><p class="small strong" style="margin-bottom:3px">بازیابی ناتمام / فایل ناسازگار</p><p class="tiny" style="margin:0">پیش‌نمایش پیش از اعمال + داده فعلی تا تأیید نهایی دست‌نخورده.</p></div></div>
+        </div>
+
+        <h3 style="margin-bottom:9px">۴ · دسترس‌پذیری، RTL و تم تیره</h3>
+        <div class="g3">
+          <div class="card">
+            <div class="tiny muted" style="margin-bottom:8px">کنتراست و هدف لمس</div>
+            <div class="hstack" style="margin-bottom:7px"><span class="chip" style="background:#2f5fe0;color:#fff;border-color:#2f5fe0">کنش روی سفید ۸.۱:۱ ✓</span><span class="chip" style="background:#1a8f4a;color:#fff;border-color:#1a8f4a">سبز ۵.۴:۱ ✓</span></div>
+            <div class="hstack"><button class="btn sm" style="outline:2px solid #2f5fe0;outline-offset:2px">فوکوس: ۲px + آفست</button><span class="chip">لمس ≥ ۴۴px</span></div>
+          </div>
+          <div class="card">
+            <div class="tiny muted" style="margin-bottom:8px">وضعیت = رنگ + نماد + متن</div>
+            <div class="hstack"><span class="daypill ok">✓ ثبت‌شده</span><span class="daypill miss">— ازدست‌رفته</span><span class="daypill rest">⏸ مرخصی</span><span class="daypill now">امروز</span></div>
+            <p class="tiny muted" style="margin:8px 0 0">کوررنگی هیچ اطلاعاتی را حذف نمی‌کند.</p>
+          </div>
+          <div class="card">
+            <div class="tiny muted" style="margin-bottom:8px">کد و URL در قاب RTL</div>
+            <div class="g2">
+              <div><div class="tiny muted">❌ بدون LTR</div><div class="img" style="height:44px">)x(send def</div></div>
+              <div><div class="tiny muted">✅ قاب LTR مستقل</div><div class="code" style="padding:6px;font-size:10px">def send(x):
+    return x</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sect" style="margin-top:13px">
+          <div class="strong small" style="margin-bottom:8px">۵ · جدول ریزکپی (چه شد + حالا چه کار کنم)</div>
+          <table class="tbl">
+            <thead><tr><th>موقعیت</th><th>متن نمایش‌داده‌شده</th><th>کنش همراه</th></tr></thead>
+            <tbody>
+              <tr><td class="small">روز بدون محتوا</td><td class="small">«درس امروز هنوز ساخته نشده.»</td><td><span class="chip tiny">ساخت با پرامپت</span></td></tr>
+              <tr><td class="small">ثبت تکراری</td><td class="small">«امروز ثبت شده — به‌روزرسانی‌اش کنم؟»</td><td><span class="chip tiny">به‌روزرسانی</span></td></tr>
+              <tr><td class="small">دیروزِ باز</td><td class="small">«تا آخر امروز فرصت جبران داری.»</td><td><span class="chip tiny">ثبت مدرک دیروز</span></td></tr>
+              <tr><td class="small">شکست Streak</td><td class="small">«رکوردت ۱۹ روز است و سر جایش می‌ماند.»</td><td><span class="chip tiny">شروع امروز</span></td></tr>
+              <tr><td class="small">بافر کم</td><td class="small">«۲ روز محتوا مانده.»</td><td><span class="chip tiny">پر کردن شکاف</span></td></tr>
+              <tr><td class="small">ارسال ناموفق ربات</td><td class="small">«ارسال انجام نشد: محتوا منتشر نشده بود.»</td><td><span class="chip tiny">ساخت درس</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-flows" data-kick="سیستمی" data-title="جریان‌ها، نقشه صفحات، کیت UI و اولویت ساخت" data-desc="مرجع نهایی: ۱۸ جریان در چهار گروه، ۱۲ صفحه وب + کانال روبیکا، اجزای پایه با تم روشن و تیره، و ترتیب ساخت فاز به فاز." data-who="🧩 سیستمی">
+  <div class="duo">
+    <div>
+      <div class="win" style="background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden">
+        <div class="win-bar" style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)">
+          <div class="dots" style="display:flex;gap:5px"><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i><i style="width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block"></i></div>
+          <div class="url" style="font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;flex:1;text-align:left;direction:ltr">design-system/flows</div>
+          <span class="tiny muted">مرجع طراحی</span>
+        </div>
+        <div style="padding:16px">
+          <h3 style="margin-bottom:9px">جریان ۱ و ۲ · حلقه روزانه (وب خالص / روبیکا-محور)</h3>
+          <div class="flow sect">
+            <div class="fbox"><b>پیام ۰۸:۰۰</b><span>s1 · هدف امروز</span></div><div class="arr">←</div>
+            <div class="fbox a"><b>لینک عمیق / کد روز</b><span>s2 مستقیم</span></div><div class="arr">←</div>
+            <div class="fbox"><b>مطالعه ۱۰ دقیقه</b><span>بدون حواس‌پرتی</span></div><div class="arr">←</div>
+            <div class="fbox"><b>تمرین روی لپ‌تاپ</b><span>خارج از سامانه</span></div><div class="arr">←</div>
+            <div class="fbox a"><b>شیت ثبت مدرک</b><span>سریع/مستند/کامل</span></div><div class="arr">←</div>
+            <div class="fbox"><b>روز بسته</b><span>Streak +۱</span></div>
+          </div>
+
+          <h3 style="margin-bottom:9px">جریان ۱۰ · خط تولید محتوا</h3>
+          <div class="flow sect">
+            <div class="fbox"><b>کپی پرامپت</b><span>a4 با متغیرها</span></div><div class="arr">←</div>
+            <div class="fbox"><b>تولید AI</b><span>ChatGPT/Claude</span></div><div class="arr">←</div>
+            <div class="fbox a"><b>چسباندن در ویرایشگر</b><span>a2</span></div><div class="arr">←</div>
+            <div class="fbox"><b>گیت کیفیت</b><span>هشدار زرد، نه قفل</span></div><div class="arr">←</div>
+            <div class="fbox"><b>انتشار روز n</b><span>صف پیام</span></div>
+          </div>
+
+          <div class="sm sect">
+            <div class="smbox">
+              <h4>👤 جریان‌های یادگیرنده</h4>
+              <button>۱ · شروع روز با پیام</button>
+              <button>۲ · مطالعه درس</button>
+              <button>۳ · انجام تمرین</button>
+              <button>۴ · ثبت مدرک و بسته‌شدن روز ★</button>
+              <button>۵ · یادآوری عصرانه</button>
+              <button>۶ · جبران روز جامانده</button>
+              <button>۷ · شروع دوباره</button>
+              <button>۸ · توقف و بازگشت</button>
+              <button>۹ · بستن هفته (جمعه)</button>
+            </div>
+            <div class="smbox">
+              <h4>✍️ جریان‌های تولید محتوا</h4>
+              <button>۱۰ · ساخت درس با AI</button>
+              <button>۱۱ · بارگذاری گروهی Zip</button>
+              <button>۱۲ · ویرایش درس منتشرشده</button>
+              <button>۱۳ · بازبینی بافر</button>
+              <button>۱۴ · راه‌اندازی اولیه</button>
+              <button>۱۵ · مدیریت دوره و روزها</button>
+            </div>
+            <div class="smbox">
+              <h4>🔧 جریان‌های نگهداشت</h4>
+              <button>۱۶ · پشتیبان‌گیری و بازیابی</button>
+              <button>۱۷ · عیب‌یابی اعلان‌ها</button>
+              <button>۱۸ · شروع دوره جدید</button>
+              <button style="border-style:solid;background:#fff7f0">💡 چک‌لیست پیش از طراحی هر صفحه → پایین</button>
+            </div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">نقشه صفحات</h3>
+          <div class="sm sect">
+            <div class="smbox">
+              <h4>👤 موبایل — یادگیرنده</h4>
+              <button>S0 ورود <span class="badge n tiny">یک‌بار</span></button>
+              <button>S1 امروز ★</button>
+              <button>S2 درس روز</button>
+              <button>S3 شیت ثبت مدرک</button>
+              <button>S4 مسیر دوره</button>
+              <button>S5 دوره‌های من</button>
+              <button>S6 مدارک من</button>
+              <button>S7 تنظیمات</button>
+            </div>
+            <div class="smbox">
+              <h4>💻 دسکتاپ — خط تولید</h4>
+              <button>A1 فهرست دروس + بافر ★</button>
+              <button>A2 ویرایشگر درس</button>
+              <button>A3 بارگذاری گروهی</button>
+              <button>A4 کتابخانه پرامپت</button>
+              <button>A5 لاگ اعلان‌ها</button>
+              <button style="border-style:solid;background:#fff">همان S1–S7 روی دسکتاپ هم کار می‌کند (ریسپانسیو)</button>
+            </div>
+            <div class="smbox">
+              <h4>📱 کانال روبیکا</h4>
+              <button>پیام صبحگاهی</button>
+              <button>یادآوری عصرانه + ثبت با یک رقم</button>
+              <button>دستورات: وضعیت / توقف / ادامه / ساعت</button>
+              <button>بازگشت مهربان پس از شکست</button>
+              <button>کارنامه جمعه</button>
+            </div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">کیت UI — رنگ‌های نقش‌دار (روشن و تیره)</h3>
+          <div class="g2 sect">
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">تم روشن</div>
+              <div class="sw">
+                <div><div class="cbox" style="background:#2f5fe0"></div><div class="nam">کنش #2F5FE0</div></div>
+                <div><div class="cbox" style="background:#1a8f4a"></div><div class="nam">موفق #1A8F4A</div></div>
+                <div><div class="cbox" style="background:#b7791f"></div><div class="nam">هشدار #B7791F</div></div>
+                <div><div class="cbox" style="background:#c0392b"></div><div class="nam">خطا #C0392B</div></div>
+                <div><div class="cbox" style="background:#7a4dc0"></div><div class="nam">AI · ویرایش‌نشده #7A4DC0</div></div>
+                <div><div class="cbox" style="background:#171a21"></div><div class="nam">متن #171A21</div></div>
+              </div>
+            </div>
+            <div class="card" style="background:#14161b;color:#e8eaf0;border-color:#2a2e37">
+              <div class="tiny strong" style="margin-bottom:7px;color:#aeb4c2">تم تیره (هم‌رتبه، نه افزودنی)</div>
+              <div class="sw">
+                <div style="border-color:#2a2e37"><div class="cbox" style="background:#14161b"></div><div class="nam" style="background:#1c1f26;color:#e8eaf0">سطح #14161B</div></div>
+                <div style="border-color:#2a2e37"><div class="cbox" style="background:#1c1f26"></div><div class="nam" style="background:#1c1f26;color:#e8eaf0">سطح۲ #1C1F26</div></div>
+                <div style="border-color:#2a2e37"><div class="cbox" style="background:#4f7cf0"></div><div class="nam" style="background:#1c1f26;color:#e8eaf0">کنش #4F7CF0</div></div>
+                <div style="border-color:#2a2e37"><div class="cbox" style="background:#e8eaf0"></div><div class="nam" style="background:#1c1f26;color:#e8eaf0">متن #E8EAF0</div></div>
+                <div style="border-color:#2a2e37"><div class="cbox" style="background:#2a2e37"></div><div class="nam" style="background:#1c1f26;color:#e8eaf0">مرز #2A2E37</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="g2 sect">
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">اجزای پایه</div>
+              <div class="hstack" style="margin-bottom:8px"><button class="btn pri">کنش اصلی</button><button class="btn">ثانویه</button><button class="btn ghost">ghost</button><button class="btn sm">کوچک</button></div>
+              <div class="hstack" style="margin-bottom:8px"><span class="badge ok">✓ ثبت‌شده</span><span class="badge info">تأییدشده</span><span class="badge warn">سریع</span><span class="badge ai">AI</span><span class="badge n">خالی</span></div>
+              <div class="hstack" style="margin-bottom:8px"><span class="chip on">انتخاب‌شده</span><span class="chip a">دوره فعال ▾</span><span class="daypill now">امروز</span><span class="daypill rest">مرخصی</span></div>
+              <div class="hstack"><div class="seg3" style="max-width:210px"><span class="on">سریع</span><span>مستند</span><span>کامل</span></div></div>
+            </div>
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">مقیاس تایپوگرافی</div>
+              <div class="stack" style="gap:5px">
+                <div style="font-size:21px;font-weight:800">۲۱/۸۰۰ سرتیتر صفحه</div>
+                <div style="font-size:17px;font-weight:700">۱۷/۷۰۰ عنوان بخش</div>
+                <div style="font-size:14.5px;font-weight:700">۱۴.۵/۷۰۰ عنوان کارت</div>
+                <div style="font-size:14px">۱۴/۴۰۰ متن · ارتفاع خط ۱.۷</div>
+                <div class="tiny muted">۱۱–۱۲ فقط برای متادیتا</div>
+                <div class="mono" style="font-size:11px">code: dir=ltr · tabular-nums</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">اولویت ساخت (به همین ترتیب طراحی و پیاده کن)</h3>
+          <div class="g4 sect">
+            <div class="card" style="border-color:var(--accent);background:var(--accent-soft)">
+              <div class="strong small">۱ · قلب تجربه</div>
+              <p class="tiny" style="margin:6px 0 0">S2 + S3 + S1 · جریان‌های ۱ تا ۴. اگر این‌جا اصطکاک بماند، بقیه بی‌فایده است.</p>
+            </div>
+            <div class="card">
+              <div class="strong small">۲ · عادت روزانه</div>
+              <p class="tiny muted" style="margin:6px 0 0">پیام‌های روبیکا + حالت‌های بازگشت · جریان‌های ۵، ۶، ۷، ۸.</p>
+            </div>
+            <div class="card">
+              <div class="strong small">۳ · موتور محتوا</div>
+              <p class="tiny muted" style="margin:6px 0 0">A1/A2/A4/A3 · جریان‌های ۱۰ تا ۱۳ و ۱۵ — برای اینکه صبح فردا محتوا داشته باشم.</p>
+            </div>
+            <div class="card">
+              <div class="strong small">۴ · نگهداشت</div>
+              <p class="tiny muted" style="margin:6px 0 0">S7، A5، S5 · جریان‌های ۱۶، ۱۷، ۱۸ و ۱۴.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="strong small" style="margin-bottom:7px">چک‌لیست پیش از طراحی هر صفحه</div>
+            <div class="hstack">
+              <span class="chip">صفحه و کنش اصلی</span><span class="chip">داده لازم</span><span class="chip">حالت خالی</span><span class="chip">حالت بارگذاری</span><span class="chip">حالت خطا</span><span class="chip">آفلاین</span><span class="chip">ریزکپی نهایی</span><span class="chip">تم روشن و تیره</span><span class="chip">RTL و بلوک LTR</span><span class="chip">هدف لمس و فوکوس</span>
+            </div>
+          </div>
+
+          <div class="legendbox" style="margin-top:13px">
+            <b>راهنمای خواندن:</b> مایل‌به‌خاکستری = متن نمونه · خط‌های متقاطع = تصویر/فایل · کادر خط‌چین = ناحیه کشیدن و رهاکردن ·
+            دکمه آبی = کنش اصلی · <span class="badge info">آبی</span> = مسیر روبیکا/لینک عمیق · <span class="badge ai">بنفش</span> = محتوای AI ویرایش‌نشده ·
+            <span class="badge ok">سبز</span> = ثبت/منتشرشده · <span class="badge warn">زرد</span> = خوداظهاری/پیش‌نویس · <span class="badge bad">قرمز</span> = خطا/ناموفق · <span class="badge n">خاکستری</span> = خالی/متادیتا.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+</div>
+
+<script>
+const NOTES = {
+"f-login": {who:"👤 جریان ۱۴ · S0 + راه‌اندازی", items:[
+ {t:"ورود با لینک جادویی: یک شماره، یک لینک، تمام — چون تک‌کاربره است، تنها «کاربر» من هستم و اتصال روبیکا از همین لحظه تضمین می‌شود.", hot:true},
+ {t:"راه‌اندازی سه‌کارتی، همه در یک صفحه: دوره، ساعت، اتصال. بدون تور، ویدیو و خوش‌آمدگویی — این‌ها برای کاربر دیگر است، نه برای من."},
+ {t:"«پیام آزمایشی» گام آخر است تا مطمئن شوم فردا صبح پیام می‌رسد؛ نتیجه همین‌جا نمایش داده می‌شود."},
+ {t:"حالت خطای لینک منقضی، کنش «ارسال لینک تازه» دارد — بن‌بست وجود ندارد."},
+ {t:"نشست ۳۰ روزه: روزی یک‌بار ورود هم زیاد است؛ ورود فقط وقتی مرورگر عوض شود."}]},
+"f-today": {who:"👤 جریان‌های ۱–۴ · S1", items:[
+ {t:"یک صفحه، یک تصمیم، یک کنش: «شروع درس امروز». همه چیز دیگر یا وضعیت است یا مسیر — نه کنش رقیب.", hot:true},
+ {t:"هدف امروز (یک جمله) بالای دکمه است؛ کیفیت آن یک الزام تولید محتواست، نه یک متن تزئینی."},
+ {t:"کارت Streak با نقشه هفته: عدد Streak تنها کافی نیست؛ باید ببینم «کجای هفته» هستم.", hot:true},
+ {t:"تراشه بافر محتوا در S1: چون خودم سازنده‌ام، وضعیت خط تولید همان‌جا کنار وضعیت یادگیری می‌آید."},
+ {t:"حالت پس از ثبت: کارت به «✓ ثبت‌شده» تبدیل می‌شود و کنش‌ها عوض می‌شوند — بدون رفتن به صفحه جدید."},
+ {t:"هیچ اعلان تزئینی، بنر و کارت پیشنهادی روی این صفحه نیست."}]},
+"f-today-st": {who:"👤 جریان‌های ۶، ۷، ۸، ۱۳ · S1", items:[
+ {t:"چهار حالت بحرانی که هرکدام می‌توانند باعث رهاکردن شوند؛ هر چهارتا این‌جا طراحی‌شده‌اند تا «دلیل توقف» نباشند.", hot:true},
+ {t:"جبران روز جامانده: کارت زرد ملایم + یک دکمه؛ مهلت یک‌روزه و شفاف."},
+ {t:"شکست Streak: لحن خنثی، بدون رنگ قرمز، با تأکید بر رکورد حفظ‌شده. صفر شدن عدد، یک روز عادی است نه رویداد.", hot:true},
+ {t:"توقف: از دو مسیر (دستور روبیکا یا تنظیمات) و روی یک وضعیت؛ روزها ازدست‌رفته حساب نمی‌شوند."},
+ {t:"بافر صفر: به‌جای پیام خالی، مسیر ساخت («ساخت با پرامپت») و مسیر جایگزین («مرور هفته قبل») داده می‌شود."}]},
+"f-day": {who:"👤 جریان‌های ۲ و ۳ · S2", items:[
+ {t:"تک‌ستون، عرض متن ~۷۰ کاراکتر، بدون سایدبار — مطالعه باید مثل خواندن یک یادداشت خوب باشد.", hot:true},
+ {t:"نوار کنش چسبان پایین؛ ناوبری پایین در این صفحه پنهان است تا حواس‌پرتی صفر شود."},
+ {t:"دکمه «کپی صورت تمرین»: تمرین خارج از سامانه انجام می‌شود؛ این دکمه پل بین وب و ترمینال است."},
+ {t:"بلوک کد در قاب LTR جدا؛ در RTL وارونه نمی‌شود.", hot:true},
+ {t:"روز بعد تا ثبت امروز قفل است و این قفل، شفاف نشان داده می‌شود («🔒 پس از ثبت») — بازدارنده‌ی جهش به جلو."},
+ {t:"«فقط مطالعه» به‌عنوان کنش ثانویه صریح است؛ بعضی روزها فقط خواندن ممکن است و باید مسیر رسمی داشته باشد."}]},
+"f-sheet": {who:"👤 جریان ۴ · S3", items:[
+ {t:"قلب محصول: بستن روز با کمترین اصطکاک. سگمنت سه‌سطحی بالا، پیش‌فرض را روی «سریع» می‌گذارد تا روز شلوغ با ۱۵ ثانیه بسته شود.", hot:true},
+ {t:"خط «با این ثبت: Streak ۱۳» پیامد را پیش از کنش شفاف می‌کند — همان شفافیتی که در PRD نبود."},
+ {t:"هر سه سطح Streak را حفظ می‌کنند؛ تفاوت فقط در نشان «تأییدشده» و ارزش مدرک است — نه در پاداش/مجازات.", hot:true},
+ {t:"اسکریم پشت شیت دیده می‌شود تا معلوم باشد کجای مسیر هستم؛ انصراف، پیش‌نویس را نگه می‌دارد."},
+ {t:"سه حالت خطای ولوله (آپلود، فایل بزرگ، قطع نت) همیشه در دسترس طراحی‌اند؛ هیچ‌کدام فرم را خالی نمی‌کنند."},
+ {t:"صفحه S2 پشت شیت ثابت می‌ماند؛ مطالعه و ثبت در یک نفس، بدون ترک صفحه و بدون رفرش."}]},
+"f-done": {who:"👤 جریان ۴ · نتیجه", items:[
+ {t:"لحظه پس از ثبت باید ساده و قطعی باشد: یک تیک، یک عدد، یک کنش («درس فردا»).", hot:true},
+ {t:"«ثبت تکراری» خطا نیست، بازنویسی است: «به‌روزرسانی‌اش کنم؟» — بدون محاسبه دوباره Streak."},
+ {t:"قاعده ضداسپم این‌جا هم دیده می‌شود: پس از ثبت موفق، یادآوری عصرانه لغو می‌شود — سمت ربات هم اجرا می‌شود."},
+ {t:"Undo پنج‌ثانیه‌ای برای ثبت اشتباه؛ بعد از آن، ویرایش عادی جای حذف را می‌گیرد."},
+ {t:"«ارتقا به مستند» به‌عنوان کنش ثانویه: سطح ۱ معتبر است ولی ارتقا همیشه ممکن."}]},
+"f-path": {who:"👤 جریان‌های ۶، ۷، ۹ · S4", items:[
+ {t:"هفته در یک نگاه: ستون اول شنبه؛ ۵ روز درس + مینی‌پروژه پنجشنبه + مرور جمعه بخشی از ساختارند، نه استثنا.", hot:true},
+ {t:"عدد روز درشت‌تر از تاریخ؛ در هفته‌های فعلی هر دو، در هفته‌های دور فقط عدد روز."},
+ {t:"وضعیت‌ها همیشه سه‌لایه: رنگ + نماد + متن (✓ / — / ⏸)."},
+ {t:"مرخصی و توقف، خاکستری خط‌چین‌اند — استراحت بخشی از طراحی است، نه شکست.", hot:true},
+ {t:"خروجی ICS: مسیر یادگیری می‌تواند در تقویم شخصی من هم زندگی کند."},
+ {t:"مرز فازها با نوارهای پررنگ جدا می‌شود تا حس «پیمودن مسیر» ایجاد شود."}]},
+"f-courses": {who:"👤 جریان ۱۸ · S5", items:[
+ {t:"قاعده «۱ فعال + n نگهداری» روی صفحه دیده می‌شود؛ بار روزانه هرگز به‌صورت تصادفی چند برابر نمی‌شود.", hot:true},
+ {t:"هشدار ملایم فعال‌کردن دوره جدید («دوره فعلی به نگهداری می‌رود») بدون بستن مسیر — تأیید ساده کافی است."},
+ {t:"دوره تمام‌شده: خروجی مدارک + مرور آزاد؛ یادگیری هیچ‌وقت «پاک» نمی‌شود."},
+ {t:"دوره نگهداری روزی ۵ دقیقه مرور دارد؛ همین باعث می‌شود بعد از دوره فعال، فراموشی رخ ندهد."}]},
+"f-evi": {who:"👤 جریان‌های ۴، ۱۲ · S6", items:[
+ {t:"هر ردیف = یک روز یادگیری: روز، یادداشت، سطح، ضمیمه. آرشیو، خاطره است نه فایل‌سرور.", hot:true},
+ {t:"فیلتر سطح + جست‌وجو: پیدا کردن «آن روزی که صف را یاد گرفتم» باید ۵ ثانیه‌ای باشد."},
+ {t:"خروجی Zip برای پشتیبان و حرف زدن درباره کارهای انجام‌شده (پرتفولیو)."},
+ {t:"حالت خالی، دعوت به کنش است نه توضیح؛ پس از اولین ثبت خودش به فهرست تبدیل می‌شود."}]},
+"f-set": {who:"👤 جریان‌های ۸، ۱۴، ۱۶ · S7", items:[
+ {t:"چهار بخش، یک صفحه: روبیکا، توقف، نمایش، داده. تنظیمات بیشتر از این، در نسخه شخصی معنا ندارد.", hot:true},
+ {t:"ساعت‌ها و روزهای یادآوری این‌جا و در روبیکا روی یک وضعیت می‌نویسند — دو سیستم موازی وجود ندارد."},
+ {t:"جمعه پیش‌فرض خاموش + سقف ۳ پیام: قواعد ضداسپم قابلیت خاموش‌کردن ندارند (هویت محصول‌اند، نه تنظیم)."},
+ {t:"تم تیره هم‌رتبه است، چون مطالعه شبانه سناریوی اصلی من است.", hot:true},
+ {t:"بازیابی با پیش‌نمایش پیش از اعمال + داده فعلی دست‌نخورده تا تأیید نهایی."},
+ {t:"میانبرهای دسکتاپ این‌جا فهرست می‌شوند: Ctrl+Enter ثبت · Esc بستن شیت · ←/→ جابه‌جایی روز."}]},
+"f-r1": {who:"📱 جریان ۱ · پیام صبحگاهی", items:[
+ {t:"پنج سطر، یک لینک: روز چندم، هدف، بودجه زمانی، شروع، دستورها. هیچ چیز اضافه‌ای در پیام نیست.", hot:true},
+ {t:"لینک، عمیق است: مستقیم به همان روز — نه صفحه اصلی. یک کلیک تا درس.", hot:true},
+ {t:"اگر وب میزبانی نشود، «کد روز» (Q-43) جایگزین می‌شود: بدترین حالت هم یک کلیک دارد، فقط جای لینک، کد است."},
+ {t:"اعتبارسنجی پیش از ارسال: درس منتشر نشده؟ در توقف؟ سقف پیام؟ — هیچ پیام اشتباهی فرستاده نمی‌شود."},
+ {t:"خط دستورها همیشه در پیام می‌ماند تا کنترل از همان‌جا در دسترس باشد."}]},
+"f-r2": {who:"📱 جریان ۵ · یادآوری عصرانه", items:[
+ {t:"مهم‌ترین اهرم پایبندی در یک پیام: پاسخ «۱» یعنی ثبت سطح ۱ از داخل چت، بدون باز کردن وب.", hot:true},
+ {t:"چهار پاسخ با چهار منطق: انجام دادم / مدرک می‌فرستم / ثبت در وب / امشب نمی‌رسم (ژتون یا مهلت)."},
+ {t:"پاسخ به سؤال من («چرا ۱۳ نشد؟») بخشی از طراحی است؛ ربات باید توضیح بدهد، نه فقط اعلام کند."},
+ {t:"ماتریس ارسال کامل است: پس از ثبت، هیچ یادآوری‌ای نمی‌آید؛ بعد از ۲۱:۰۰ سکوت مطلق.", hot:true},
+ {t:"ثبت از ربات همان رکورد وب را می‌سازد (source=rubika) — یک منبع حقیقت، دو کانال ورود."}]},
+"f-r3": {who:"📱 جریان‌های ۷، ۸ · دستورات", items:[
+ {t:"هفت دستور کافی است: وضعیت، دوره‌ها، توقف n، ادامه، ساعت HH:MM، امروز، راهنما.", hot:true},
+ {t:"پاسخ «وضعیت» یک کارت فشرده است: روز، پیشرفت، Streak، رکورد، این هفته، و کنش بعدی."},
+ {t:"بازگشت مهربان: «رکورد ۱۹ روزه‌ات سر جایش است» — جمله‌ای که تفاوت بین بازگشت و رهاکردن است.", hot:true},
+ {t:"کتابخانه هفت قالب پیام تضمین می‌کند لحن یک‌دست بماند: کوتاه، بدون شعار، بدون سرزنش."},
+ {t:"دستور ناشناس → فهرست گزینه‌ها؛ هرگز خطای خام یا سکوت."},
+ {t:"چون تک‌کاربره است، تأیید چندمرحله‌ای برای توقف وجود ندارد؛ کنترل سریع مهم‌تر از محافظت سازمانی است."}]},
+"f-a1": {who:"🔐 جریان‌های ۱۰، ۱۳، ۱۵ · A1", items:[
+ {t:"«بافر محتوا» یک عدد بزرگ است، چون مهم‌ترین سؤال روزمره من همین است: چند روز جلوترم؟", hot:true},
+ {t:"نوار پوشش ۳۰ روزه با چهار رنگ وضعیت: منتشرشده / AI ویرایش‌نشده / پیش‌نویس / خالی — نگاه یک‌نگاهی به شکاف‌ها."},
+ {t:"حالت AI و پیش‌نویس عمداً از «منتشرشده» جدا هستند: هیچ متن AI بدون ویرایش من منتشر نمی‌شود.", hot:true},
+ {t:"«پر کردن شکاف با پرامپت» و «بارگذاری Zip» دقیقاً کنار عدد بافر هستند — از هشدار تا عمل، یک قدم."},
+ {t:"درخت سه‌سطحی دوره/فاز/هفته/روز با ریزآمار؛ دکمه ویرایش روی روزِ «AI» پررنگ است چون کار پرتکرار من است."},
+ {t:"قاعده شخصی «هیچ‌وقت زیر ۵ روز بافر» به‌عنوان متن زنده در همین صفحه یادآوری می‌شود."}]},
+"f-a2": {who:"🔐 جریان‌های ۱۰، ۱۲ · A2", items:[
+ {t:"چیدمان دو ستون: متادیتا و مارک‌داون راست، پیش‌نمایش و اعتبارسنجی چپ — نوشتن و دیدن در یک قاب.", hot:true},
+ {t:"«چسباندن خروجی AI» گام اول است؛ متادیتا و بدنه خودکار از هم جدا می‌شوند تا کار دستی حذف شود."},
+ {t:"گیت کیفیت غیربلوکه‌کننده: هشدار زرد مانع انتشار نیست (چون خودم منتشر می‌کنم) ولی در A1 می‌ماند تا اصلاح کنم.", hot:true},
+ {t:"نسخه‌ها با بازگردانی: ویرایش درس منتشرشده هیچ‌وقت نابودکننده نیست."},
+ {t:"نوار کنش چسبان پایین: وضعیت آمادگی + انتشار + یادآوری اینکه ویرایش به پیشرفت من کاری ندارد."},
+ {t:"پیش‌نمایش دقیقاً همان S2 است تا آنچه می‌بینم، همان چیزی باشد که فردا صبح می‌خوانم."}]},
+"f-a3": {who:"🔐 جریان ۱۱ · A3", items:[
+ {t:"مسیر دو دقیقه‌ای برای وقتی چند روز را یک‌جا ساخته‌ام: رهاکردن Zip → گزارش → تأیید.", hot:true},
+ {t:"پیش‌فرض امن «فقط افزودن موارد جدید» است تا آپلود دوباره، ویرایش‌های دستی را خراب نکند.", hot:true},
+ {t:"گزارش خطا با راه‌حل در همان خط: دو فایل هم‌شماره → «کدام را نگه دارم؟»؛ متادیتای ناقص → «اعمال پیش‌فرض»."},
+ {t:"«ساخت خودکار روز مرور جمعه» نشان می‌دهد ساختار هفتگی یک قاعده است، نه محتوای دستی."},
+ {t:"تأیید نهایی تا رفع خطاها بسته است؛ پذیرش زودهنگام، منبع خطاهای پنهان است."}]},
+"f-a4": {who:"🔐 جریان ۱۰ · A4", items:[
+ {t:"کتابخانه پرامپت، دارایی اصلی خط تولید: نسخه‌دار، با آمار مصرف و «نسخه جدید» به‌جای ویرایش مخرب.", hot:true},
+ {t:"جای‌گذاری خودکار متغیرها: دوره، روز، موضوع، سطح و لحن — یک کلیک تا پرامپت پرشده در کلیپ‌بورد."},
+ {t:"جریان کامل در یک خط توضیح داده شده: کپی → تولید در ChatGPT/Claude → چسباندن در A2 → انتشار."},
+ {t:"آمار «مدت میانگین تا تأیید» به من می‌گوید کدام پرامپت واقعاً سریع به درس قابل انتشار می‌رسد."},
+ {t:"تولید درون سامانه نیست و API کلید نگه‌داری نمی‌شود — تصمیم آگاهانه برای سادگی و امنیت نسخه شخصی."}]},
+"f-a5": {who:"🔐 جریان ۱۷ · A5", items:[
+ {t:"پاسخ «چرا پیام صبح نرسید؟» باید در جدول، نه در حدس: وضعیت، دلیل، و متن واقعی ارسال‌شده.", hot:true},
+ {t:"بیشترین خطای واقعی «محتوا نبود» است و مستقیم به ویرایشگر لینک می‌خورد — حلقه بسته."},
+ {t:"«ارسال آزمایشی حالا» همیشه در دسترس است: سریع‌ترین راه تأیید اینکه اتصال روبیکا سالم است."},
+ {t:"ستون جزئیات، شناسه پیام و تعداد تلاش‌ها را نگه می‌دارد؛ عیب‌یابی بدون حدس."},
+ {t:"لاگ پس از ۳۰ روز خودکار پاک می‌شود؛ نگه‌داری ابدی داده، نیاز این نسخه نیست."}]},
+"f-states": {who:"🧩 سیستمی · همه جریان‌ها", items:[
+ {t:"قاعده واحد: هر پیام حالت = «چه شد + حالا چه کار کنم». هیچ بن‌بستی و هیچ خطای خامی وجود ندارد.", hot:true},
+ {t:"حالت‌های خالی همیشه یک کنش معتبر دارند: ساخت با پرامپت، رفتن به درس امروز، بارگذاری Zip."},
+ {t:"اسکلتانی نه اسپینر — خصوصاً روی اینترنت ناپایدار، حس پایداری مهم است."},
+ {t:"قطع نت هنگام ثبت: ذخیره محلی + تلاش مجدد خودکار؛ متن من هرگز از دست نمی‌رود.", hot:true},
+ {t:"وضعیت‌ها لایه‌بندی سه‌گانه دارند (رنگ + نماد + متن) و بلوک کد همیشه LTR جدا است."},
+ {t:"جدول ریزکپی، متن نهایی هر موقعیت را قفل می‌کند تا در پیاده‌سازی، لحن تغییر نکند."}]},
+"f-flows": {who:"🧩 سیستمی · مرجع", items:[
+ {t:"سه زنجیره کلیدی: حلقه روزانه (وب و روبیکا)، خط تولید محتوا، و نگهداشت.", hot:true},
+ {t:"۱۸ جریان در چهار گروه، با ستاره روی گلوگاه‌ها: جریان ۴ (ثبت مدرک) و جریان ۱۰ (ساخت درس).", hot:true},
+ {t:"نقشه صفحات: ۸ صفحه موبایل + ۵ صفحه دسکتاپ + کانال روبیکا؛ S1–S7 روی دسکتاپ هم کار می‌کند (ریسپانسیو)."},
+ {t:"کیت UI با تم روشن و تیره هم‌رتبه؛ رنگ AI (بنفش) نقش معنایی دارد، نه تزئینی."},
+ {t:"اولویت ساخت: ۱) S2+S3+S1  ۲) روبیکا و بازگشت  ۳) موتور محتوا  ۴) نگهداشت — به همین ترتیب جلو برو."},
+ {t:"چک‌لیست پیش از طراحی هر صفحه، ده مورد را تا نهایی نشدن، «تمام» علامت نمی‌زند."}]}
+};
+
+const order = Array.from(document.querySelectorAll('.nav button[data-goto]')).map(b => b.dataset.goto);
+const fa = n => Number(n).toLocaleString('fa-IR');
+
+document.querySelectorAll('.frame').forEach(sec => {
+  const duo = sec.querySelector('.duo');
+  if (duo) {
+    const fh = document.createElement('div');
+    fh.className = 'fhead';
+    fh.innerHTML = '<div class="kick">' + (sec.dataset.kick || '') + '</div>'
+      + '<h1>' + (sec.dataset.title || '') + '</h1>'
+      + '<p>' + (sec.dataset.desc || '') + '</p>';
+    sec.insertBefore(fh, duo);
+
+    const cfg = NOTES[sec.id];
+    if (cfg) {
+      let aside = duo.querySelector('aside.notes');
+      if (!aside) { aside = document.createElement('aside'); aside.className = 'notes'; duo.appendChild(aside); }
+      const h3 = document.createElement('h3');
+      h3.textContent = '🔎 انوتیشن UX · ' + fa(cfg.items.length) + ' مورد';
+      const ol = document.createElement('ol');
+      cfg.items.forEach((it, i) => {
+        const li = document.createElement('li');
+        if (it.hot) li.classList.add('hot');
+        li.innerHTML = '<span class="n">' + fa(i + 1) + '</span><span>' + it.t + '</span>';
+        ol.appendChild(li);
+      });
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = cfg.who;
+      aside.innerHTML = '';
+      aside.append(h3, ol, who);
+    }
+  }
+
+  const idx = order.indexOf(sec.id);
+  const pg = document.createElement('div');
+  pg.className = 'hstack';
+  pg.style.marginTop = '4px';
+  const prev = order[idx - 1], next = order[idx + 1];
+  pg.innerHTML = (prev ? '<button class="btn sm" data-goto="' + prev + '">→ فریم قبلی</button>' : '')
+    + (next ? '<button class="btn sm" data-goto="' + next + '">فریم بعدی ←</button>' : '')
+    + '<span class="tiny muted" style="margin-inline-start:auto">فریم ' + fa(idx + 1) + ' از ' + fa(order.length) + '</span>';
+  sec.appendChild(pg);
+});
+
+function show(id, push) {
+  const target = document.getElementById(id) ? id : order[0];
+  document.querySelectorAll('.frame').forEach(f => f.classList.toggle('on', f.id === target));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.goto === target));
+  if (push && location.hash !== '#' + target) { try { history.replaceState(null, '', '#' + target); } catch (e) {} }
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-goto]');
+  if (go) { show(go.dataset.goto, true); return; }
+  const ctrl = e.target.closest('[data-ctrl]');
+  if (ctrl) {
+    const k = ctrl.dataset.ctrl;
+    if (k === 'notes') {
+      const hidden = document.body.classList.toggle('hidenotes');
+      ctrl.setAttribute('aria-pressed', String(!hidden));
+      ctrl.textContent = hidden ? '📝 نمایش انوتیشن‌ها' : '📝 پنهان‌کردن انوتیشن‌ها';
+    }
+    if (k === 'print') window.print();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, select')) return;
+  const cur = order.findIndex(id => document.getElementById(id) && document.getElementById(id).classList.contains('on'));
+  if (e.key === 'ArrowLeft' && cur < order.length - 1) show(order[cur + 1], true);
+  if (e.key === 'ArrowRight' && cur > 0) show(order[cur - 1], true);
+});
+window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+show(location.hash.slice(1) || order[0], false);
+</script>
+</body>
+</html>

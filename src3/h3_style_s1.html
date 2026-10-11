@@ -1,0 +1,347 @@
+<section class="frame" id="f-style" data-kick="مبانی بصری" data-title="راهنمای بصری و کیت UI — زبانِ طراحی قطره" data-desc="قبل از هر صفحه، یک زبان واحد: پالت نقش‌دار (روشن و تیره)، مقیاس تایپوگرافی وزیرمتن، اجزای پایه در حالت‌های واقعی، و قواعد RTL و اعداد. این کیت، مرجع طراحی هر صفحه بعدی است — رنگ‌ها نقش دارند، نه فقط ظاهر." data-who="🎨 مبانی بصری">
+  <div class="duo">
+    <div>
+      <div class="g2 sect">
+        <div class="card">
+          <div class="row" style="gap:12px">
+            <span class="logo" style="width:52px;height:52px;border-radius:16px"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#fff"><use href="#i-drop"/></svg></span>
+            <div>
+              <div style="font-size:22px;font-weight:800;letter-spacing:-.02em">قطره</div>
+              <div class="cap muted">هر روز یک قطره — ابزار شخصی یادگیری</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <p class="small ink2" style="margin:0">لحن بصری: <b>آرام، خوانا، شب‌دوست</b>. فضای سفید زیاد، رنگ نقش‌دار کم اما معنادار، و تم تیره هم‌رتبه با روشن — چون مطالعه شبانه سناریوی اصلی است.</p>
+        </div>
+        <div class="card">
+          <div class="cap muted bold" style="margin-bottom:9px">مقیاس تایپوگرافی — Vazirmatn</div>
+          <div class="stack" style="gap:7px">
+            <div style="font-size:26px;font-weight:800;letter-spacing:-.02em">۲۶/۸۰۰ · سرتیتر hero</div>
+            <div style="font-size:21px;font-weight:800;letter-spacing:-.015em">۲۱/۸۰۰ · عنوان صفحه</div>
+            <div style="font-size:16.5px;font-weight:700">۱۶.۵/۷۰۰ · عنوان بخش</div>
+            <div style="font-size:14.5px;font-weight:700">۱۴.۵/۷۰۰ · عنوان کارت</div>
+            <div>۱۴.۵/۴۰۰ · متن اصلی، ارتفاع خط ۱.۹ برای خوانایی فارسی</div>
+            <div class="small ink2">۱۳/۴۰۰ · متن ثانویه</div>
+            <div class="cap muted num">۱۱.۵/۶۰۰ · متادیتا و اعداد — tabular-nums</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card sect">
+        <div class="between" style="margin-bottom:11px"><div class="xbold">پالت نقش‌دار</div><span class="cap muted">هر رنگ یک وظیفه دارد؛ رنگ تنها حامل معنا نیست (نماد و متن هم всегда هست)</span></div>
+        <div class="g2">
+          <div>
+            <div class="cap muted bold" style="margin-bottom:8px">☀️ روشن</div>
+            <div class="sw">
+              <div class="swc"><div class="box" style="background:#3555E6"></div><div class="nm">کنش اصلی<code>#3555E6</code></div></div>
+              <div class="swc"><div class="box" style="background:#EAEEFE"></div><div class="nm">زمینه تأکید<code>#EAEEFE</code></div></div>
+              <div class="swc"><div class="box" style="background:#158F58"></div><div class="nm">موفق / ثبت‌شده<code>#158F58</code></div></div>
+              <div class="swc"><div class="box" style="background:#C98A25"></div><div class="nm">نکته طلایی / هشدار<code>#C98A25</code></div></div>
+              <div class="swc"><div class="box" style="background:#CF4438"></div><div class="nm">خطا / ازدست‌رفته<code>#CF4438</code></div></div>
+              <div class="swc"><div class="box" style="background:#7A4DC0"></div><div class="nm">AI · ویرایش‌نشده<code>#7A4DC0</code></div></div>
+            </div>
+          </div>
+          <div class="ui dark" style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px">
+            <div class="cap bold" style="margin-bottom:8px;color:var(--ink2)">🌙 تیره</div>
+            <div class="sw">
+              <div class="swc"><div class="box" style="background:#6E88FF"></div><div class="nm">کنش اصلی<code>#6E88FF</code></div></div>
+              <div class="swc"><div class="box" style="background:#1B2350"></div><div class="nm">زمینه تأکید<code>#1B2350</code></div></div>
+              <div class="swc"><div class="box" style="background:#3FBF83"></div><div class="nm">موفق<code>#3FBF83</code></div></div>
+              <div class="swc"><div class="box" style="background:#E9B65C"></div><div class="nm">طلایی<code>#E9B65C</code></div></div>
+              <div class="swc"><div class="box" style="background:#F0736A"></div><div class="nm">خطا<code>#F0736A</code></div></div>
+              <div class="swc"><div class="box" style="background:#B08BEA"></div><div class="nm">AI<code>#B08BEA</code></div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="cap" style="color:var(--muted)">سطح‌ها: ‎#0E1015 → #15181F → #1B1F28 · مرز #262B36 · متن #EDEFF5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2 sect">
+        <div class="card">
+          <div class="xbold" style="margin-bottom:11px">دکمه‌ها</div>
+          <div class="stack">
+            <div class="row wrap"><button class="btn pri">شروع درس امروز <svg class="ic"><use href="#i-arrowl"/></svg></button><button class="btn tonal">ثانویه</button><button class="btn">معمولی</button></div>
+            <div class="row wrap"><button class="btn ghost">انصراف / کم‌اهمیت</button><button class="btn sm pri">کوچک اصلی</button><button class="btn sm">کوچک</button><button class="btn" disabled>غیرفعال</button></div>
+            <div class="cap muted">ارتفاع ۴۴ (هدف لمس) · شعاع ۱۴ · کنش اصلی دارای سایه رنگی؛ در هر قاب فقط یک دکمه اصلی.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="xbold" style="margin-bottom:11px">تراشه، برچسب و سگمنت</div>
+          <div class="stack">
+            <div class="row wrap"><span class="chip tint"><svg class="ic"><use href="#i-clock"/></svg>۱۰ دقیقه مطالعه</span><span class="chip on">انتخاب‌شده</span><span class="chip">گزینه</span><span class="chip sm">ریز</span></div>
+            <div class="row wrap"><span class="badge ok"><svg class="ic"><use href="#i-check"/></svg>ثبت‌شده</span><span class="badge info">روز ۴۷</span><span class="badge warn">مهلت جبران</span><span class="badge bad">ازدست‌رفته</span><span class="badge ai">AI · ویرایش‌نشده</span><span class="badge n">خالی</span></div>
+            <div class="seg" style="max-width:330px"><span class="on">سریع</span><span>مستند</span><span>کامل</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="xbold" style="margin-bottom:11px">ورودی‌ها و نوار پیشرفت</div>
+          <div class="stack">
+            <div><span class="label">یادداشت یک‌خطی</span><input class="input" value="کار سنگین را از مسیر درخواست جدا کردم."></div>
+            <div class="inputwrap"><svg class="ic"><use href="#i-link"/></svg><input class="input mono" dir="ltr" value="https://gist.github.com/mehdi/8f2a1"></div>
+            <div class="bar"><i style="width:26%"></i></div>
+            <div class="row" style="gap:9px"><span class="cap muted num">۲۶٪ · ۴۷ / ۱۸۰</span><span class="spacer"></span><span class="badge ok">Streak ۱۳</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="xbold" style="margin-bottom:11px">اعلان‌ها (Callout) — چهار نقش</div>
+          <div class="stack" style="gap:9px">
+            <div class="callout pri"><svg class="ic"><use href="#i-target"/></svg><div class="small"><b>هدف امروز:</b> کار سنگین را از مسیر درخواست جدا کنی.</div></div>
+            <div class="callout gold"><svg class="ic"><use href="#i-bolt"/></svg><div class="small"><b>نکته طلایی:</b> هر کار بیش از ۵۰۰ms، بیرون از مسیر درخواست.</div></div>
+            <div class="callout ok"><svg class="ic"><use href="#i-checkc"/></svg><div class="small"><b>قطره امروز بسته شد.</b></div></div>
+            <div class="callout bad"><svg class="ic"><use href="#i-alert"/></svg><div class="small"><b>حجم فایل ۸.۲ مگابایت</b> — سقف ۵.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card sect">
+        <div class="between" style="margin-bottom:10px"><div class="xbold">ست آیکون — خطی، ۱.۷px، هم‌خانواده با متن</div><span class="cap muted">اندازه پایه ۱۸px · در ناوبری ۱۷px · در برچسب‌ها ۱۳px</span></div>
+        <div class="g3" style="gap:10px">
+          <div class="row wrap" style="gap:14px;color:var(--ink2)">
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-home"/></svg><span class="cap">امروز</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-cal"/></svg><span class="cap">مسیر</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-folder"/></svg><span class="cap">مدارک</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-cog"/></svg><span class="cap">تنظیمات</span></span>
+          </div>
+          <div class="row wrap" style="gap:14px;color:var(--ink2)">
+            <span class="row" style="gap:6px"><svg class="ic lg" style="color:var(--gold)"><use href="#i-flame"/></svg><span class="cap">Streak</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-target"/></svg><span class="cap">هدف</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-clock"/></svg><span class="cap">زمان</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-dumbbell"/></svg><span class="cap">تمرین</span></span>
+          </div>
+          <div class="row wrap" style="gap:14px;color:var(--ink2)">
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-copy"/></svg><span class="cap">کپی</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-upload"/></svg><span class="cap">آپلود</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-pen"/></svg><span class="cap">ویرایش</span></span>
+            <span class="row" style="gap:6px"><svg class="ic lg"><use href="#i-lock"/></svg><span class="cap">قفل</span></span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="g3">
+          <div><div class="cap muted bold" style="margin-bottom:5px">شبکه ۸ پیکسلی</div><div class="cap ink2">فاصله‌ها: ۴ · ۸ · ۱۲ · ۱۶ · ۲۴</div></div>
+          <div><div class="cap muted bold" style="margin-bottom:5px">شعاع</div><div class="cap ink2">کارت ۱۸ · دکمه/ورودی ۱۴ · نشان ۹ · شیت ۲۶</div></div>
+          <div><div class="cap muted bold" style="margin-bottom:5px">سایه</div><div class="cap ink2">ش۱ کارت · ش۲ کارت قهرمان · ش۳ شیت و پنجره</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="xbold" style="margin-bottom:9px">قواعد RTL و اعداد (غیرقابل مذاکره)</div>
+        <div class="g2">
+          <div class="callout ok"><svg class="ic"><use href="#i-check"/></svg><div class="small"><b>بله:</b> فلش «بعدی» به چپ · نوار پیشرفت راست→چپ · اعداد UI فارسی با tabular-nums · کد و URL در قاب LTR مستقل · نقطه‌گذاری فارسی.</div></div>
+          <div class="callout bad"><svg class="ic"><use href="#i-x"/></svg><div class="small"><b>خیر:</b> کد مارک‌داون درون متن RTL بدون dir · اعداد لاتین در UI · رنگ به‌تنهایی برای انتقال وضعیت · بیش از یک CTA اصلی در یک قاب.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-s1l" data-kick="صفحه S1 · روشن" data-title="امروز — صفحه‌ای که هر روز یک تصمیم می‌گیرد" data-desc="نسخه بصری S1: کارت قهرمان با گرادیان ملایم و یک کنش اصلی، کارت Streak با نقشه هفته، تراشه بافر محتوا و درس فردا در حالت قفل. همه چیز با فونت وزیرمتن، اعداد فارسی و سیستم ۸ پیکسلی." data-who="👤 قلب تجربه · جریان‌های ۱–۴">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div class="cloneable ui light" style="display:inline-block">
+          <div class="ptag"><i></i> S1 · امروز · تم روشن</div>
+          <div class="phone">
+            <div class="screen">
+              <div class="statusbar">
+                <span class="num">۸:۱۲</span>
+                <span class="sbi"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="3" width="3" height="9" rx="1"/><rect x="13.5" y="0.5" width="3" height="11.5" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.2 1.2 4.6A9.6 9.6 0 0 1 14.8 4.6z"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="1" width="21" height="10" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="2.4" y="2.9" width="14" height="6.2" rx="2"/><path d="M23.4 4.6v2.8a2.2 2.2 0 0 0 0-2.8z"/></svg></span>
+              </div>
+              <div class="appbar">
+                <div>
+                  <div class="cap muted">چهارشنبه ۱۶ مهر</div>
+                  <div style="font-size:17px;font-weight:800">صبح بخیر مهدی</div>
+                </div>
+                <span class="spacer"></span>
+                <span class="avatar round" style="width:34px;height:34px">م</span>
+              </div>
+              <div class="content">
+                <div class="hero">
+                  <div class="between">
+                    <span class="row cap bold" style="gap:7px;color:var(--pri-ink)"><svg class="ic sm"><use href="#i-book"/></svg>پایتون و معماری بک‌اند</span>
+                    <span class="badge info num">روز ۴۷ از ۱۸۰</span>
+                  </div>
+                  <div style="font-size:21px;font-weight:800;line-height:1.5;margin:9px 0 6px;letter-spacing:-.015em">صف کارها با Redis و Celery</div>
+                  <div class="row" style="gap:8px;align-items:flex-start;margin-bottom:11px">
+                    <svg class="ic" style="color:var(--pri);margin-top:2px"><use href="#i-target"/></svg>
+                    <span class="small ink2" style="line-height:1.75">هدف امروز: یک کار سنگین را از مسیر درخواست جدا کنی و در پس‌زمینه اجرا کنی.</span>
+                  </div>
+                  <div class="row wrap" style="gap:7px;margin-bottom:13px">
+                    <span class="chip"><svg class="ic"><use href="#i-clock"/></svg><span class="num">۱۰</span> دقیقه مطالعه</span>
+                    <span class="chip"><svg class="ic"><use href="#i-dumbbell"/></svg><span class="num">۳۵</span> دقیقه تمرین</span>
+                  </div>
+                  <button class="btn pri blk">شروع درس امروز<svg class="ic"><use href="#i-arrowl"/></svg></button>
+                  <div class="row" style="gap:9px;margin-top:11px">
+                    <div class="bar" style="flex:1"><i style="width:26%"></i></div>
+                    <span class="cap muted num">۲۶٪</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="row" style="gap:11px">
+                    <span class="ico gold"><svg class="ic lg"><use href="#i-flame"/></svg></span>
+                    <div class="metric">
+                      <span class="v num" style="font-size:24px">۱۳</span>
+                      <span class="l">روز پیوسته — رکورد <span class="num">۱۹</span></span>
+                    </div>
+                    <span class="spacer"></span>
+                    <a class="cap bold" style="color:var(--pri);text-decoration:none">مسیر دوره
+                      <svg class="ic sm" style="vertical-align:-3px"><use href="#i-chevl"/></svg></a>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="week">
+                    <span class="day done"><i><svg class="ic sm"><use href="#i-check"/></svg></i><span class="s">ش ۴۳</span></span>
+                    <span class="day done"><i><svg class="ic sm"><use href="#i-check"/></svg></i><span class="s">ی ۴۴</span></span>
+                    <span class="day done"><i><svg class="ic sm"><use href="#i-check"/></svg></i><span class="s">د ۴۵</span></span>
+                    <span class="day ms"><i><svg class="ic sm"><use href="#i-x"/></svg></i><span class="s">س ۴۶</span></span>
+                    <span class="day today"><i><span class="num">۴۷</span></i><span class="s">امروز</span></span>
+                    <span class="day pj"><i><svg class="ic sm"><use href="#i-bolt"/></svg></i><span class="s">پ ۴۸</span></span>
+                    <span class="day rs"><i><svg class="ic sm"><use href="#i-refresh"/></svg></i><span class="s">ج ۴۹</span></span>
+                  </div>
+                  <div class="cap muted" style="margin-top:9px">سه‌شنبه جا ماند — <b style="color:var(--gold-ink)">تا آخر امروز فرصت جبران</b> داری.</div>
+                </div>
+
+                <div class="card" style="padding:12px">
+                  <div class="row" style="gap:10px">
+                    <span class="ico sm ok"><svg class="ic sm"><use href="#i-layers"/></svg></span>
+                    <div>
+                      <div class="small bold num">۱۴ روز محتوا آماده است</div>
+                      <div class="tiny muted">بافر خط تولید — از همین‌جا مدیریت کن</div>
+                    </div>
+                    <span class="spacer"></span>
+                    <span class="badge ok">امن</span>
+                  </div>
+                </div>
+
+                <div class="card" style="padding:12px;background:var(--surface2)">
+                  <div class="row" style="gap:10px;opacity:.75">
+                    <span class="ico sm"><svg class="ic sm"><use href="#i-lock"/></svg></span>
+                    <div>
+                      <div class="small bold">درس فردا — زمان‌بند کارها و Retry</div>
+                      <div class="tiny muted">پس از ثبت قطره امروز باز می‌شود</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tabbar">
+                <span class="on"><span class="pillwrap"><svg class="ic"><use href="#i-home"/></svg></span>امروز</span>
+                <span><svg class="ic"><use href="#i-cal"/></svg>مسیر</span>
+                <span><svg class="ic"><use href="#i-folder"/></svg>مدارک</span>
+                <span><svg class="ic"><use href="#i-cog"/></svg>تنظیمات</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-s1d" data-kick="صفحه S1 · تیره" data-title="امروز — تم تیره (هم‌رتبه، نه افزودنی)" data-desc="همان صفحه با توکن‌های تیره: سطح‌های تیره‌تر برای کارت قهرمان، آبی روشن‌تر برای کنش، و طلایی گرم برای Streak. سناریوی اصلی این تم، مطالعه شب است — کنتراست متن ۱۲.۴:۱ و بدون سفید خالص." data-who="👤 قلب تجربه">
+  <div class="duo">
+    <div>
+      <div class="phones" id="s1d-holder"></div>
+      <div class="card" style="margin-top:14px">
+        <div class="xbold" style="margin-bottom:8px">سه تصمیم تم تیره</div>
+        <div class="g3">
+          <div class="callout"><svg class="ic"><use href="#i-moon"/></svg><div class="small"><b>بدون سفید خالص و مشکی خالص:</b> متن <span class="mono">#EDEFF5</span> روی <span class="mono">#0E1015</span> — نور کمتر، خوانایی بیشتر.</div></div>
+          <div class="callout"><svg class="ic"><use href="#i-drop"/></svg><div class="small"><b>آبی کنش روشن‌تر:</b> <span class="mono">#6E88FF</span> تا روی زمینه تیره کنتراست هدف لمس حفظ شود.</div></div>
+          <div class="callout"><svg class="ic"><use href="#i-flame"/></svg><div class="small"><b>طلایی گرم‌تر:</b> Streak در شب باید «گرم» دیده شود، نه زرد تیز.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-s2l" data-kick="صفحه S2 · روشن" data-title="درس روز — خواندن تا تمرین در یک نفس" data-desc="نسخه بصری S2: عرض متن محدود، هدف امروز در کادر تأکید، بلوک کد با نوار فایل و دکمه کپی، نمودار مسیر درخواست، نکته طلایی، کارت تمرین با خروجی مشخص، و نوار کنش چسبان پایین." data-who="👤 قلب تجربه · جریان‌های ۲، ۳">
+  <div class="duo">
+    <div>
+      <div class="phones">
+        <div class="cloneable ui light" style="display:inline-block">
+          <div class="ptag"><i></i> S2 · درس روز · تم روشن</div>
+          <div class="phone">
+            <div class="screen">
+              <div class="statusbar">
+                <span class="num">۸:۱۴</span>
+                <span class="sbi"><svg viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="3" width="3" height="9" rx="1"/><rect x="13.5" y="0.5" width="3" height="11.5" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.2 1.2 4.6A9.6 9.6 0 0 1 14.8 4.6z"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="1" width="21" height="10" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".5"/><rect x="2.4" y="2.9" width="14" height="6.2" rx="2"/><path d="M23.4 4.6v2.8a2.2 2.2 0 0 0 0-2.8z"/></svg></span>
+              </div>
+              <div class="appbar" style="padding-bottom:10px">
+                <button class="btn sm" style="width:36px;padding:0;border-radius:12px"><svg class="ic"><use href="#i-arrowr"/></svg></button>
+                <div>
+                  <div class="small bold num">روز ۴۷ از ۱۸۰</div>
+                  <div class="tiny muted">فاز ۳ · هفته ۹ · مطالعه ۱۰ دقیقه</div>
+                </div>
+                <span class="spacer"></span>
+                <span class="chip tint sm num">۳/۶ این هفته</span>
+              </div>
+              <div class="content" style="padding-bottom:10px">
+                <div class="callout pri"><svg class="ic"><use href="#i-target"/></svg><div class="small"><b>هدف امروز:</b> یک کار سنگین را از مسیر درخواست جدا کنی و در پس‌زمینه اجرا کنی.</div></div>
+
+                <div>
+                  <div style="font-size:16.5px;font-weight:800;margin-bottom:6px">۱) چرا صف کار لازم داریم؟</div>
+                  <p class="small ink2" style="margin:0;line-height:1.95">اگر ارسال ایمیل یا پردازش تصویر داخل مسیر درخواست اجرا شود، کاربر باید منتظر بماند و یک خطای ساده، کل درخواست را می‌خواباند. راه‌حل استاندارد: درخواست را در صف بگذار و پاسخ را فوری برگردان.</p>
+                </div>
+
+                <div class="codebox">
+                  <div class="codebar">
+                    <span class="ico sm" style="background:var(--pri-soft);color:var(--pri-ink);width:24px;height:24px;border-radius:8px"><svg class="ic sm"><use href="#i-file"/></svg></span>
+                    <span class="fn">app/tasks.py</span>
+                    <span class="spacer"></span>
+                    <button class="btn sm" style="height:28px;padding:0 9px"><svg class="ic sm"><use href="#i-copy"/></svg>کپی</button>
+                  </div>
+<pre><span class="tk-c"># تعریف کار پس‌زمینه</span>
+<span class="tk-k">from</span> celery <span class="tk-k">import</span> Celery
+
+app = Celery(<span class="tk-s">"drip"</span>, broker=<span class="tk-s">"redis://localhost:6379/0"</span>)
+
+<span class="tk-f">@app.task</span>
+<span class="tk-k">def</span> <span class="tk-f">send_daily_lesson</span>(chat_id: <span class="tk-n">str</span>, day: <span class="tk-n">int</span>):
+    <span class="tk-c"># ارسال خلاصه درس در روبیکا</span>
+    ...</pre>
+                </div>
+
+                <div class="card" style="padding:12px">
+                  <div class="cap muted bold" style="margin-bottom:9px">مسیر درخواست، بعد از جداسازی</div>
+                  <div class="mono" style="display:flex;align-items:center;gap:6px;font-size:10.5px;flex-wrap:wrap">
+                    <span style="padding:6px 9px;border-radius:10px;background:var(--surface3)">FastAPI</span>
+                    <svg class="ic sm" style="color:var(--muted)"><use href="#i-arrowl"/></svg>
+                    <span style="padding:6px 9px;border-radius:10px;background:var(--pri-soft);color:var(--pri-ink);font-weight:700">Broker · Redis</span>
+                    <svg class="ic sm" style="color:var(--muted)"><use href="#i-arrowl"/></svg>
+                    <span style="padding:6px 9px;border-radius:10px;background:var(--surface3)">Worker · Celery</span>
+                    <svg class="ic sm" style="color:var(--muted)"><use href="#i-arrowl"/></svg>
+                    <span style="padding:6px 9px;border-radius:10px;background:var(--ok-soft);color:var(--ok);font-weight:700">Rubika API</span>
+                  </div>
+                </div>
+
+                <div class="callout gold"><svg class="ic"><use href="#i-bolt"/></svg><div class="small"><b>نکته طلایی:</b> هر کاری که بیش از ۵۰۰ میلی‌ثانیه طول بکشد، از مسیر درخواست بیرون است — حتی اگر «الان کار می‌کند».</div></div>
+
+                <div class="card" style="border-color:var(--hero-line)">
+                  <div class="between" style="margin-bottom:8px">
+                    <span class="row small xbold" style="gap:7px"><svg class="ic" style="color:var(--pri)"><use href="#i-dumbbell"/></svg>تمرین امروز <span class="badge n num">۳۵ دقیقه</span></span>
+                    <button class="btn sm"><svg class="ic sm"><use href="#i-copy"/></svg>کپی صورت تمرین</button>
+                  </div>
+                  <p class="small" style="margin:0 0 7px">یک صف Redis بساز، سه کار نمونه به آن بفرست و با یک Worker اجرا کن. زمان اجرای هر کار را لاگ بگیر.</p>
+                  <div class="row wrap" style="gap:6px">
+                    <span class="chip sm mono">tasks.py</span><span class="chip sm">🖼 اسکرین‌شات لاگ</span><span class="chip sm">✍️ یک خط یادداشت</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:9px;padding:11px 16px 16px;border-top:1px solid var(--line);background:var(--surface)">
+                <button class="btn pri" style="flex:1">ثبت تمرین امروز</button>
+                <button class="btn ghost">فقط مطالعه</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-s2d" data-kick="صفحه S2 · تیره" data-title="درس روز — تم تیره (شب‌خوان)" data-desc="بلوک کد در تم تیره روی سطح تیره‌تر می‌نشیند و رنگ‌های سینتکس روشن‌تر می‌شوند تا ساعت ۲۳ هم چشم اذیت نشود. نمودار و کارت تمرین همان ساختار روشن را حفظ می‌کنند." data-who="👤 قلب تجربه">
+  <div class="duo">
+    <div>
+      <div class="phones" id="s2d-holder"></div>
+    </div>
+  </div>
+</section>

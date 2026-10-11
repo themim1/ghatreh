@@ -1,0 +1,2255 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وایرفریم‌های «قطره» — Drip LMS نسخه ۲.۰</title>
+<style>
+:root{
+  --bg:#f1f2f5; --surface:#fff; --ink:#171a21; --ink2:#4b5262; --muted:#8b93a5;
+  --line:#dcdfe6; --line2:#eceef3; --ph:#e9ebf0;
+  --accent:#2f5fe0; --accent-soft:#e8eeff;
+  --ok:#1a8f4a; --ok-soft:#e6f6ec;
+  --warn:#b7791f; --warn-soft:#fdf3e0;
+  --bad:#c0392b; --bad-soft:#fdecea;
+  --r:12px; --r-sm:9px;
+  --font:"Vazirmatn","IRANSansX","IRANSans","Segoe UI",Tahoma,system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;line-height:1.5;font-weight:700}
+h1{font-size:21px}h2{font-size:17px}h3{font-size:14.5px}
+p{margin:0 0 10px}
+ul,ol{margin:0;padding:0;list-style:none}
+a{color:inherit}
+.mono,code,pre{font-family:var(--mono);direction:ltr;text-align:left}
+.muted{color:var(--muted)}.ink2{color:var(--ink2)}.strong{font-weight:700}
+.small{font-size:12px}.tiny{font-size:11px}.num{font-variant-numeric:tabular-nums}
+.center{text-align:center}
+/* ---------- topbar ---------- */
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:9px 18px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800}
+.brand .logo{width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:15px;flex:0 0 auto}
+.brand small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);line-height:1.2}
+.spacer{flex:1}
+.tbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:#fff;font:inherit;font-size:12.5px;cursor:pointer}
+.tbtn:hover{border-color:#c3c9d4}
+.hint{font-size:11.5px;color:var(--muted)}
+/* ---------- layout ---------- */
+.layout{display:grid;grid-template-columns:268px minmax(0,1fr);align-items:start}
+.nav{position:sticky;top:57px;height:calc(100vh - 57px);overflow:auto;padding:12px 10px 40px;background:#fff;border-inline-end:1px solid var(--line)}
+.nav h4{font-size:10.5px;letter-spacing:.05em;color:var(--muted);margin:14px 10px 5px;font-weight:700}
+.nav h4:first-child{margin-top:4px}
+.nav button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 9px;border:0;background:transparent;border-radius:9px;font:inherit;font-size:12.5px;color:var(--ink2);cursor:pointer;text-align:start;line-height:1.5}
+.nav button:hover{background:#f3f5f9;color:var(--ink)}
+.nav button.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav .n{width:22px;height:22px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;font-size:10.5px;background:#fff;flex:0 0 auto;color:var(--muted)}
+.nav button.on .n{border-color:var(--accent);color:var(--accent)}
+@media (max-width:1080px){.layout{grid-template-columns:1fr}.nav{position:static;height:auto;max-height:230px}}
+.stage{padding:20px 22px 80px;min-width:0}
+.frame{display:none}
+.frame.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.fhead{margin:0 0 16px;max-width:96ch}
+.fhead .kick{font-size:11.5px;color:var(--accent);font-weight:700;letter-spacing:.02em}
+.fhead h1{margin:3px 0 7px}
+.fhead p{color:var(--ink2);margin:0}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:18px;align-items:start}
+@media (max-width:1300px){.duo{grid-template-columns:minmax(0,1fr)}}
+/* ---------- notes ---------- */
+.notes{position:sticky;top:76px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.notes h3{display:flex;align-items:center;gap:8px;margin-bottom:11px;font-size:13.5px}
+.notes ol{display:flex;flex-direction:column;gap:9px}
+.notes li{display:flex;gap:8px;font-size:12.5px;color:var(--ink2);line-height:1.7;border-radius:8px;padding:2px 3px;transition:background .2s}
+.notes li .n{flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:#eef1f6;color:var(--ink);font-size:10.5px;font-weight:700;display:grid;place-items:center;margin-top:3px}
+.notes li.hot{background:#fffbe8;outline:1.5px solid #ffe9a8}
+.notes .who{margin-top:12px;border-top:1px solid var(--line2);padding-top:10px;font-size:12px;color:var(--muted)}
+body.hidenotes .notes{display:none}
+body.hidenotes .duo{grid-template-columns:minmax(0,1fr)}
+.an{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;cursor:pointer;border:0;padding:0;font-family:inherit;vertical-align:middle;margin:0 3px}
+.an:hover{filter:brightness(1.15)}
+/* ---------- window chrome ---------- */
+.win{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(23,30,54,.07);margin-bottom:14px}
+.win-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7f8fa;border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#d5d9e0;display:block}
+.url{font-size:11px;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 11px;direction:ltr;text-align:left;font-family:var(--mono);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.win-tag{font-size:10.5px;color:var(--muted);white-space:nowrap}
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:206px minmax(0,1fr);min-height:560px}
+@media (max-width:860px){.app{grid-template-columns:1fr}.app-side{display:none}}
+.app-side{background:#fafbfc;border-inline-end:1px solid var(--line);padding:13px 11px}
+.app-main{padding:15px 17px;min-width:0}
+.app-top{display:flex;align-items:center;gap:10px;padding-bottom:11px;border-bottom:1px solid var(--line2);margin-bottom:14px;flex-wrap:wrap}
+.snav{display:flex;flex-direction:column;gap:2px}
+.snav a{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;font-size:12.5px;color:var(--ink2);text-decoration:none;cursor:pointer}
+.snav a:hover{background:#f2f4f9}
+.snav a.on{background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:700}
+.app-side .grp{font-size:10.5px;color:var(--muted);margin:12px 8px 4px;font-weight:700}
+/* ---------- primitives ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:13px}
+.card.soft{background:#fbfcfe}
+.card.dash{border-style:dashed;background:#fdfefe}
+.card.hero{background:linear-gradient(180deg,#fafcff,#fff);padding:17px}
+.sect{margin-bottom:15px}
+.sect>h3{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.row{display:flex;gap:12px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:10px}
+.hstack{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sep{border:0;border-top:1px solid var(--line2);margin:12px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;line-height:1.4;text-decoration:none}
+.btn:hover{border-color:#c3c9d4}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(1.07)}
+.btn.dark{background:#20242c;border-color:#20242c;color:#fff}
+.btn.ghost{border-style:dashed;color:var(--ink2)}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn.blk{display:flex;width:100%}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.chip.on{background:#20242c;border-color:#20242c;color:#fff}
+.chip.a{background:var(--accent-soft);border-color:#c9d8ff;color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:7px;font-size:11px;font-weight:700;border:1px solid transparent;white-space:nowrap}
+.badge.ok{background:var(--ok-soft);color:var(--ok);border-color:#bfe6cd}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:#f0dcb4}
+.badge.bad{background:var(--bad-soft);color:var(--bad);border-color:#f3c8c3}
+.badge.info{background:var(--accent-soft);color:var(--accent);border-color:#ccdaff}
+.badge.n{background:#f2f4f8;color:var(--ink2);border-color:var(--line)}
+label.lbl{display:block;font-size:12px;color:var(--ink2);font-weight:700;margin-bottom:4px}
+.input,.ta,.select{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px;background:#fff;color:var(--ink)}
+.ta{min-height:76px;resize:vertical;line-height:1.8}
+.field{margin-bottom:11px}
+.help{font-size:11.5px;color:var(--muted);margin-top:4px;display:block}
+.seg{display:inline-flex;padding:3px;background:#f2f4f8;border-radius:10px;gap:3px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;font:inherit;font-size:12.5px;padding:6px 11px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.seg button.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.seg.tiny button{font-size:11.5px;padding:4px 9px}
+.ph{background:repeating-linear-gradient(45deg,#eff1f5,#eff1f5 7px,#e7eaef 7px,#e7eaef 14px);border:1px dashed var(--line);border-radius:8px}
+.ph-txt{display:grid;place-items:center;font-size:11px;color:var(--muted);padding:8px;text-align:center}
+.img{position:relative;background:#f1f3f7;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;padding:8px;
+ background-image:linear-gradient(to top right,transparent calc(50% - 1px),#d9dde5 50%,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),#d9dde5 50%,transparent calc(50% + 1px))}
+.bar{height:8px;border-radius:999px;background:#eef0f5;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.bar.ok>i{background:var(--ok)}.bar.warn>i{background:#e0a83c}
+.avatar{width:30px;height:30px;border-radius:50%;background:#e7eaf0;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--ink2);font-weight:700;flex:0 0 auto}
+.ico{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fbfcfe;display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+.ico.lg{width:44px;height:44px;font-size:20px;border-radius:12px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff}
+.kpi .v{font-size:21px;font-weight:800;line-height:1.3}
+.kpi .l{font-size:11.5px;color:var(--muted)}
+.call{border-radius:10px;border:1px solid var(--line);padding:11px 12px;display:flex;gap:10px;background:#fbfcfe}
+.call .ic{flex:0 0 auto;width:27px;height:27px;border-radius:8px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:14px}
+.call.gold{background:var(--warn-soft);border-color:#f0dcb4}
+.call.info{background:var(--accent-soft);border-color:#ccdaff}
+.call.ok{background:var(--ok-soft);border-color:#bfe6cd}
+.call.bad{background:var(--bad-soft);border-color:#f3c8c3}
+.call p:last-child{margin-bottom:0}
+.code{direction:ltr;text-align:left;background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12px;line-height:1.65;overflow:auto;white-space:pre}
+.code .c{color:#98a0b0}
+.code .s{color:#8a5a1f}
+.code .k{color:#2f5fe0}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:start;font-size:11px;color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line);background:#fafbfc;white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.thumb{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.thumb .tb{height:96px;background:#f1f3f7;display:grid;place-items:center;
+ background-image:linear-gradient(to top right,transparent calc(50% - 1px),#dde1e8 50%,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),#dde1e8 50%,transparent calc(50% + 1px))}
+.thumb .tt{padding:9px 10px}
+.skel{height:11px;border-radius:6px;background:linear-gradient(90deg,#eef0f5,#e1e5ed,#eef0f5);background-size:200% 100%;animation:sh 1.3s linear infinite}
+@keyframes sh{from{background-position:200% 0}to{background-position:-200% 0}}
+.daypill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;background:#fff}
+.daypill.ok{background:var(--ok-soft);border-color:#bfe6cd}
+.daypill.miss{background:var(--bad-soft);border-color:#f3c8c3}
+.daypill.now{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.daypill.rest{background:#f8f9fb;border-style:dashed}
+/* ---------- calendar ---------- */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .h{font-size:10.5px;color:var(--muted);text-align:center;padding-bottom:2px;font-weight:700}
+.cel{position:relative;border:1px solid var(--line);border-radius:9px;background:#fff;padding:6px;min-height:56px;font-size:11px;display:flex;flex-direction:column;gap:2px}
+.cel b{font-weight:700;font-size:12.5px}
+.cel .tag{font-size:9.5px;color:var(--muted)}
+.cel.done{border-color:#bfe6cd;background:var(--ok-soft)}
+.cel.today{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.cel.miss{border-color:#f3c8c3;background:var(--bad-soft)}
+.cel.fut{color:var(--muted);background:#fbfcfd}
+.cel.off{background:var(--warn-soft);border-color:#f0dcb4}
+.cel.proj{border-color:#ccdaff;background:var(--accent-soft)}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2)}
+.lg i{width:11px;height:11px;border-radius:4px;display:inline-block;border:1px solid var(--line);vertical-align:-1px;margin-inline-end:4px}
+.lg i.done{background:var(--ok-soft);border-color:#bfe6cd}
+.lg i.today{background:var(--accent-soft);border-color:var(--accent)}
+.lg i.miss{background:var(--bad-soft);border-color:#f3c8c3}
+.lg i.fut{background:#fbfcfd}
+.lg i.off{background:var(--warn-soft);border-color:#f0dcb4}
+.lg i.proj{background:var(--accent-soft);border-color:#ccdaff}
+/* ---------- tree ---------- */
+.tnode{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;border:1px solid transparent;cursor:default}
+.tnode:hover{background:#f5f7fb}
+.tnode.on{background:#fff;border-color:var(--line)}
+.tnode .gr{padding-inline-start:0}
+.lv2{margin-inline-start:18px}
+.lv3{margin-inline-start:38px}
+.handle{width:12px;height:16px;flex:0 0 auto;border-inline-start:2px dotted #c8ccd6;position:relative}
+/* ---------- phone ---------- */
+.phone{width:344px;max-width:100%;border:9px solid #232830;border-radius:34px;background:#fff;overflow:hidden;box-shadow:0 16px 36px rgba(20,25,40,.18)}
+.phone .p-top{background:#232830;color:#fff;padding:9px 13px;display:flex;align-items:center;gap:9px;font-size:12px}
+.phone .p-top .avatar{background:#3a4150;border-color:#4b5262;color:#fff}
+.chat{padding:12px;display:flex;flex-direction:column;gap:8px;background:#f7f8fa;min-height:430px}
+.bg{max-width:88%;padding:9px 11px;border-radius:13px;background:#fff;border:1px solid var(--line);font-size:12.5px;line-height:1.75}
+.bg.them{align-self:flex-start}
+.bg.me{align-self:flex-end;background:#eef3ff;border-color:#d7e2ff}
+.bg .lnk{display:block;margin-top:7px;border:1px solid #c9d8ff;background:#fff;border-radius:9px;padding:7px 9px;font-size:12px;color:var(--accent);text-align:center}
+.bg .meta{font-size:9.5px;color:var(--muted);margin-top:4px;text-align:end;direction:ltr}
+.kbdr{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.kbdr span{display:block;border:1px solid var(--line);background:#fafbfc;border-radius:8px;padding:5px;text-align:center;font-size:11.5px;color:var(--ink2)}
+/* ---------- flow / map ---------- */
+.flow{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}
+.fbox{flex:1 1 128px;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff;font-size:12px;text-align:center;min-width:112px}
+.fbox.a{background:var(--accent-soft);border-color:#ccdaff}
+.fbox b{display:block;font-size:12px}
+.fbox span{font-size:10.5px;color:var(--muted)}
+.arr{display:grid;place-items:center;color:var(--muted);flex:0 0 auto;font-size:15px}
+.sm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.sm{grid-template-columns:minmax(0,1fr)}}
+.smbox{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px}
+.smbox h4{font-size:12.5px;margin-bottom:7px}
+.smbox button{display:block;width:100%;text-align:start;border:1px dashed var(--line);background:#fbfcfe;border-radius:8px;padding:6px 9px;margin-bottom:5px;font:inherit;font-size:12px;color:var(--ink2);cursor:pointer}
+.smbox button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.legendbox{border:1px dashed var(--line);border-radius:11px;padding:11px 13px;background:#fbfcfe;font-size:12.5px;color:var(--ink2)}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;background:#fff}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.sw div{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:10.5px;color:var(--ink2)}
+.sw .cbox{height:38px}
+.sw .nam{padding:5px 7px;background:#fff}
+@media print{
+  .topbar,.nav{display:none}
+  .frame{display:block !important;page-break-after:always}
+  .layout{grid-template-columns:1fr}
+  .notes{position:static}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">💧</span>
+    <span>قطره<small>وایرفریم‌های نسخه ۲.۰ — Drip LMS</small></span>
+  </div>
+  <span class="spacer"></span>
+  <span class="hint">۲۳ فریم · فارسی · RTL</span>
+  <button class="tbtn" data-ctrl="notes" aria-pressed="true">📝 نمایش انوتیشن‌ها</button>
+  <button class="tbtn" data-ctrl="print">🖨 خروجی گرفتن</button>
+</header>
+
+<div class="layout">
+  <aside class="nav">
+    <h4>👤 بخش یادگیرنده</h4>
+    <button data-goto="f-login"><span class="n">۱</span> ورود با لینک جادویی</button>
+    <button data-goto="f-onb"><span class="n">۲</span> آنبوردینگ و انتخاب ساعت</button>
+    <button data-goto="f-dash"><span class="n">۳</span> داشبورد «امروز»</button>
+    <button data-goto="f-courses"><span class="n">۴</span> دوره‌های من</button>
+    <button data-goto="f-day"><span class="n">۵</span> درس روز و ثبت تمرین</button>
+    <button data-goto="f-done"><span class="n">۶</span> نتیجه ثبت مدرک</button>
+    <button data-goto="f-cal"><span class="n">۷</span> تقویم و مسیر دوره</button>
+    <button data-goto="f-evi"><span class="n">۸</span> مدارک من</button>
+    <button data-goto="f-week"><span class="n">۹</span> کارنامه هفتگی (جمعه)</button>
+    <button data-goto="f-set"><span class="n">۱۰</span> تنظیمات و روبیکا</button>
+    <h4>🔐 پنل مدیریت محتوا</h4>
+    <button data-goto="f-adash"><span class="n">۱۱</span> داشبورد پوشش محتوا</button>
+    <button data-goto="f-acourses"><span class="n">۱۲</span> مدیریت دوره‌ها</button>
+    <button data-goto="f-atree"><span class="n">۱۳</span> درخت دروس و فازها</button>
+    <button data-goto="f-aedit"><span class="n">۱۴</span> ویرایشگر درس (Markdown)</button>
+    <button data-goto="f-apro"><span class="n">۱۵</span> کتابخانه پرامپت AI</button>
+    <button data-goto="f-aup"><span class="n">۱۶</span> بارگذاری گروهی</button>
+    <button data-goto="f-anotif"><span class="n">۱۷</span> اعلان‌ها و صف ارسال</button>
+    <h4>📱 بازوی روبیکا</h4>
+    <button data-goto="f-r1"><span class="n">۱۸</span> پیام صبحگاهی</button>
+    <button data-goto="f-r2"><span class="n">۱۹</span> یادآوری عصرانه</button>
+    <button data-goto="f-r3"><span class="n">۲۰</span> وضعیت و ادامهٔ محتوا</button>
+    <button data-goto="f-r4"><span class="n">۲۱</span> جریان‌های پیام</button>
+    <h4>🧩 سیستمی</h4>
+    <button data-goto="f-states"><span class="n">۲۲</span> حالت‌های صفحه (States)</button>
+    <button data-goto="f-flows"><span class="n">۲۳</span> جریان‌های کاربری و کیت UI</button>
+  </aside>
+
+  <main class="stage">
+<section class="frame" id="f-login" data-kick="۰ ورود" data-title="ورود با لینک جادویی — بدون رمز" data-desc="خطر بحرانی PRD ۲.۰: جدول کاربران نه رمز داشت نه نقش. راه‌حل: روبیکا به‌عنوان تأمین‌کننده هویت. کاربر یک شماره روبیکا می‌دهد، یک لینک یک‌بارمصرف ۱۵ دقیقه‌ای دریافت می‌کند و نشست ۳۰ روزه می‌گیرد — و اتصال بازوی پیگیری از همان لحظه اول تضمین می‌شود." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/login</div><span class="win-tag">وب‌اپ · احراز هویت</span></div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px">
+          <div style="padding:26px 22px">
+            <div class="center" style="max-width:400px;margin:0 auto 18px">
+              <div class="ico lg" style="margin:0 auto 10px">💧</div>
+              <h2>ورود به قطره</h2>
+              <p class="small muted">بدون رمز. فقط یک لینک یک‌بارمصرف که در روبیکا برایت می‌فرستیم.</p>
+            </div>
+            <div class="card" style="max-width:400px;margin:0 auto">
+              <div class="seg" style="width:100%;margin-bottom:13px">
+                <button class="on" style="flex:1">📱 ورود با روبیکا</button>
+                <button style="flex:1">✉️ ورود با ایمیل</button>
+              </div>
+              <div class="field">
+                <label class="lbl">شناسه یا شماره روبیکا</label>
+                <input class="input" value="@mehdi_dev" dir="ltr">
+                <span class="help">اگر قبلاً ربات قطره را در روبیکا باز کرده باشی، با همین شناسه پیدا می‌شوی.</span>
+              </div>
+              <button class="btn pri blk">ارسال لینک ورود در روبیکا <span>←</span></button>
+              <p class="tiny muted center" style="margin:9px 0 0">اعتبار لینک: ۱۵ دقیقه · یک‌بارمصرف · بدون نیاز به رمز</p>
+            </div>
+            <div style="max-width:400px;margin:14px auto 0" class="call bad">
+              <span class="ic">⚠</span>
+              <div><p class="small strong" style="margin-bottom:2px">نمونه حالت خطا: لینک منقضی شده</p><p class="tiny" style="margin:0">«این لینک دیگر معتبر نیست.» + دکمه «ارسال لینک تازه» — کاربر هرگز بن‌بست نمی‌شود.</p></div>
+            </div>
+          </div>
+          <div style="padding:22px 18px;background:#fafbfc;border-inline-start:1px solid var(--line)">
+            <p class="tiny muted strong">در همین لحظه در روبیکا…</p>
+            <div class="card soft" style="margin-top:8px">
+              <div class="hstack" style="margin-bottom:6px"><span class="avatar">💧</span><div><div class="small strong">ربات قطره</div><div class="tiny muted">۰۹:۱۲</div></div></div>
+              <p class="small" style="margin:0">سلام مهدی 👋 لینک ورود تو:</p>
+              <span class="btn pri blk sm" style="margin-top:8px">ورود به قطره <span>←</span></span>
+              <p class="tiny muted" style="margin:7px 0 0">آیا این لینک را خودت درخواست کرده‌ای؟ اگر نه، نادیده بگیر.</p>
+            </div>
+            <hr class="sep">
+            <p class="tiny ink2" style="margin:0">پس از کلیک: نشست ۳۰ روزه در وب‌اپ · اتصال `rubika_chat_id` به پروفایل · ورود مستقیم به همان درسی که در پیام بود.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-onb" data-kick="۰ آنبوردینگ" data-title="آنبوردینگ سه‌گامی — انتخاب دوره، بودجه روزانه، ساعت یادآوری" data-desc="اولین تجربه کاربر در ۹۰ ثانیه باید به یک تعهد مشخص برسد. سه گام: کدام دوره، چقدر وقت روزانه (بودجه)، و چه ساعتی یادآوری بگیرد. گام سوم با پیش‌نمایش زنده پیام صبحگاهی تمام می‌شود تا کاربر دقیقاً بداند فردا چه دریافت می‌کند." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/onboarding</div><span class="win-tag">وب‌اپ · گام ۲ از ۳</span></div>
+        <div class="app-main">
+          <div class="hstack" style="margin-bottom:14px">
+            <span class="badge ok">✓ گام ۱: تیک شد</span><span class="badge info">گام ۲ از ۳</span><span class="badge n">گام ۳</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="tiny muted">حدود ۹۰ ثانیه</span>
+          </div>
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px">
+            <div>
+              <div class="sect">
+                <h3>۱ · کدام دوره را قطره‌قطره یاد بگیری؟</h3>
+                <div class="g3">
+                  <div class="card" style="border-color:var(--accent);background:var(--accent-soft)">
+                    <div class="between"><span class="ico">🐍</span><span class="badge info">انتخاب‌شده</span></div>
+                    <div class="strong small" style="margin-top:7px">پایتون و معماری بک‌اند</div>
+                    <div class="tiny muted">۱۸۰ روز · جامع · سطح متوسط</div>
+                  </div>
+                  <div class="card">
+                    <span class="ico">🌿</span>
+                    <div class="strong small" style="margin-top:7px">Git و GitHub</div>
+                    <div class="tiny muted">۳۰ روز · فشرده · مقدماتی</div>
+                  </div>
+                  <div class="card">
+                    <span class="ico">🎨</span>
+                    <div class="strong small" style="margin-top:7px">مبانی فرانت‌اند</div>
+                    <div class="tiny muted">۹۰ روز · میان‌مدت · مقدماتی</div>
+                  </div>
+                </div>
+                <p class="tiny muted" style="margin:8px 0 0">⚙ قاعده محصول: در هر زمان فقط <b>۱ دوره فعال</b> قابل انتخاب است تا بار روزانه از کنترل خارج نشود.</p>
+              </div>
+              <div class="sect">
+                <h3>۲ · بودجه زمانی روزانه‌ات چقدر است؟</h3>
+                <div class="seg" style="width:100%">
+                  <button style="flex:1">۲۰ دقیقه<br><span class="tiny">درس + تیک سریع</span></button>
+                  <button class="on" style="flex:1">۴۵ دقیقه<br><span class="tiny">درس + تمرین</span></button>
+                  <button style="flex:1">۹۰ دقیقه<br><span class="tiny">درس + تمرین + پروژه</span></button>
+                </div>
+                <div class="card soft" style="margin-top:11px">
+                  <div class="strong small" style="margin-bottom:6px">حداقل سطح اثبات تمرین، پیش‌فرض روزهای شلوغ:</div>
+                  <div class="hstack">
+                    <span class="chip on">سطح ۱ — تیک + یک خط (۱۵ ثانیه)</span>
+                    <span class="chip">سطح ۲ — اسکرین‌شات یا لینک</span>
+                    <span class="chip">سطح ۳ — فایل کامل پروژه</span>
+                  </div>
+                  <p class="tiny muted" style="margin:8px 0 0">هر سه سطح Streak را حفظ می‌کنند؛ سطح بالاتر نشان «تأییدشده» می‌گیرد. (تصمیم محصولی برای حل تنش پایبندی ↔ صداقت)</p>
+                </div>
+              </div>
+              <div class="sect">
+                <h3>۳ · چه ساعتی یادآوری بگیریم؟</h3>
+                <div class="g2">
+                  <div class="card">
+                    <label class="lbl">ساعت درس صبحگاهی</label>
+                    <input class="input num" value="۰۸:۰۰" style="max-width:130px">
+                    <label class="lbl" style="margin-top:10px">ساعت یادآوری عصرانه</label>
+                    <input class="input num" value="۱۸:۰۰" style="max-width:130px">
+                    <span class="help">سقف سخت: حداکثر ۳ پیام در روز از سمت ربات.</span>
+                  </div>
+                  <div class="card">
+                    <p class="small strong" style="margin-bottom:7px">یا انتخاب سریع:</p>
+                    <div class="hstack"><span class="chip">صبح: ۰۷:۰۰</span><span class="chip on">صبح: ۰۸:۰۰</span><span class="chip">صبح: ۰۹:۰۰</span><span class="chip">عصر: ۱۷:۳۰</span><span class="chip on">عصر: ۱۸:۰۰</span><span class="chip">عصر: ۲۱:۰۰</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="hstack" style="justify-content:flex-end">
+                <button class="btn ghost">بعداً تنظیم می‌کنم</button>
+                <button class="btn pri">پایان و شروع دوره <span>←</span></button>
+              </div>
+            </div>
+            <div>
+              <p class="tiny muted strong">پیش‌نمایش پیام فردا صبح:</p>
+              <div class="phone" style="width:100%">
+                <div class="p-top"><span class="avatar">💧</span><div class="small strong">ربات قطره</div></div>
+                <div class="chat" style="min-height:0;padding:10px">
+                  <div class="bg them">
+                    ☀️ <b>روز ۱ از ۱۸۰</b> — پایتون و معماری بک‌اند<br>
+                    🎯 هدف امروز: اولین اسکریپت اجراشدنی‌ات را بسازی.<br>
+                    ⏱ مطالعه ۱۰ دقیقه · تمرین ۳۰ دقیقه
+                    <span class="lnk">مطالعه درس امروز ←</span>
+                    <div class="meta">۰۸:۰۰</div>
+                  </div>
+                </div>
+              </div>
+              <div class="call info" style="margin-top:11px"><span class="ic">💡</span><p class="tiny" style="margin:0">لینک پیام یک «لینک عمیق» به همان درس است — یعنی برای کارکردنِ مسیر ۲، وب‌اپ باید روی یک آدرس در دسترس موبایل میزبانی شود (تصمیم ۷ سند).</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-dash" data-kick="۱ بخش یادگیرنده" data-title="داشبورد «امروز» — تک‌کنشی، نه تابلوی آمار" data-desc="داشبورد نه‌فقط داشبورد است، بلکه صفحه تصمیم‌گیری روزانه است: یک CTA اصلی «شروع درس امروز»، یک عدد Streak، و در ادامه تصویر هفته. قاعده: هرگز دو CTA هم‌وزن در یک قاب." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/dashboard</div><span class="win-tag">وب‌اپ · داشبورد</span></div>
+        <div class="app">
+          <aside class="app-side">
+            <div class="grp">آموزش</div>
+            <nav class="snav">
+              <a class="on">🏠 امروز</a>
+              <a>📚 دوره‌های من</a>
+              <a>🗓 تقویم دوره</a>
+              <a>📁 مدارک من</a>
+              <a>🏅 کارنامه هفتگی</a>
+            </nav>
+            <div class="grp">حساب</div>
+            <nav class="snav"><a>⚙️ تنظیمات و روبیکا</a><a>🔐 پنل مدیریت</a></nav>
+            <div class="card soft" style="margin-top:12px">
+              <div class="small strong">💧 قطره</div>
+              <p class="tiny muted" style="margin:4px 0 0">نسخه ۲.۰ · لو-فای</p>
+            </div>
+          </aside>
+          <div class="app-main">
+            <div class="app-top">
+              <div><div class="small muted">شنبه ۱۲ مهر ۱۴۰۳</div><div class="strong">سلام مهدی 👋</div></div>
+              <span class="spacer" style="flex:1"></span>
+              <button class="chip a">دوره فعال: 🐍 پایتون ▾</button>
+              <span class="avatar">م‍</span>
+            </div>
+
+            <div class="card hero sect">
+              <div class="between" style="align-items:flex-start">
+                <div>
+                  <div class="hstack" style="margin-bottom:6px">
+                    <span class="badge n">روز ۴۳ از ۱۸۰</span><span class="badge info">فاز ۳ · هفته ۹</span><span class="badge n">شنبه</span>
+                  </div>
+                  <h2>تمرین: پیاده‌سازی صف کارها با Redis</h2>
+                  <p class="small muted" style="margin:4px 0 0">🎯 هدف امروز: یک کار سنگین را از مسیر درخواست جدا کنی و در پس‌زمینه اجرا کنی.</p>
+                </div>
+                <div class="card" style="text-align:center;min-width:132px;padding:11px">
+                  <div style="font-size:25px">🔥</div>
+                  <div class="strong num" style="font-size:19px">۱۲ روز</div>
+                  <div class="tiny muted">رکوردت: ۱۹ روز</div>
+                </div>
+              </div>
+              <div style="margin-top:12px">
+                <div class="between tiny muted"><span>پیشرفت دوره: ۲۴٪</span><span class="num">۴۳ / ۱۸۰ روز</span></div>
+                <div class="bar" style="margin-top:5px"><i style="width:24%"></i></div>
+              </div>
+              <div class="hstack" style="margin-top:13px">
+                <button class="btn pri" style="padding:10px 18px">شروع درس امروز <span>· ۱۰ دقیقه</span></button>
+                <button class="btn">📎 ثبت مدرک دیروز (تأخیری)</button>
+                <span class="spacer" style="flex:1"></span>
+                <span class="tiny muted">میانگین زمانی‌ات: ۱۴ دقیقه مطالعه</span>
+              </div>
+            </div>
+
+            <div class="g3 sect">
+              <div class="kpi"><div class="l">کل روزهای طی‌شده</div><div class="v num">۳۹</div></div>
+              <div class="kpi"><div class="l">روزهای تأییدشده (سطح ۲+)</div><div class="v num">۲۱</div></div>
+              <div class="kpi"><div class="l">نرخ پایبندی هفته</div><div class="v num">۴ / ۶</div></div>
+            </div>
+
+            <div class="two" style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:13px">
+              <div class="card">
+                <div class="between" style="margin-bottom:9px"><h3>نقشه هفته</h3><a class="tiny muted">مشاهده تقویم کامل ←</a></div>
+                <div class="hstack">
+                  <span class="daypill ok">شنبه ✓</span><span class="daypill ok">یکشنبه ✓</span><span class="daypill ok">دوشنبه ✓</span>
+                  <span class="daypill miss">سه‌شنبه —</span><span class="daypill ok">چهارشنبه ✓</span>
+                  <span class="daypill now">پنجشنبه · مینی‌پروژه</span><span class="daypill rest">جمعه · مرور</span>
+                </div>
+                <div class="call gold" style="margin-top:11px"><span class="ic">🔨</span><p class="tiny" style="margin:0">فردا پنجشنبه است: مینی‌پروژه هفته ۹ (ترکیب ۵ درس). <b>۲ روز فرصت جبران</b> برای سه‌شنبه داری.</p></div>
+              </div>
+              <div class="card">
+                <h3 style="margin-bottom:9px">دوره‌های دیگر (حالت نگهداری)</h3>
+                <div class="stack">
+                  <div class="hstack between"><span class="small">🌿 Git و GitHub <span class="badge ok tiny">تمام‌شده</span></span><a class="tiny">گواهی ←</a></div>
+                  <div class="hstack between"><span class="small">🎨 مبانی فرانت‌اند <span class="badge n tiny">نگهداری · ۵ دقیقه/روز</span></span><a class="tiny">ورود ←</a></div>
+                </div>
+                <hr class="sep">
+                <p class="tiny muted" style="margin:0">⚙ قاعده: فقط یک دوره «فعال» می‌تواند درس جدید تولید کند؛ بقیه روزی ۵ دقیقه مرور می‌شوند تا بار روزانه از کنترل خارج نشود.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-courses" data-kick="۱ بخش یادگیرنده" data-title="دوره‌های من — فعال، در نگهداری، تمام‌شده" data-desc="کارت‌های دو-سطحی: یک دوره «فعال» (پررنگ، با CTA)، بقیه در نوارهای فشرده. Striped خط‌خورده = تصویر/آیکون دوره. این صفحه همان‌جا است که قاعده «۱ فعال + n نگهداری» به کاربر شفاف می‌شود." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/courses</div><span class="win-tag">وب‌اپ · دوره‌های من</span></div>
+        <div class="app-main">
+          <div class="app-top"><h2>دوره‌های من</h2><span class="spacer" style="flex:1"></span><button class="btn sm ghost">+ افزودن دوره جدید</button></div>
+
+          <div class="sect">
+            <h3 style="margin-bottom:8px">دوره فعال</h3>
+            <div class="card" style="border-inline-start:4px solid var(--accent);padding:15px">
+              <div class="two" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:15px">
+                <div class="img" style="min-height:126px">تصویر دوره ۱۶:۹</div>
+                <div>
+                  <div class="between">
+                    <div><div class="badge info">🐍 فعال</div><h2 style="margin-top:6px">پایتون و معماری بک‌اند</h2><div class="tiny muted">۱۸۰ روز · فاز ۳ از ۶ · سطح متوسط</div></div>
+                    <button class="btn pri">ادامه روز ۴۳ <span>←</span></button>
+                  </div>
+                  <div style="margin-top:11px"><div class="bar"><i style="width:24%"></i></div><div class="between tiny muted" style="margin-top:4px"><span>۲۴٪ · ۳۹ روز طی‌شده</span><span class="num">Streak: ۱۲ 🔥</span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sect">
+            <h3 style="margin-bottom:8px">دوره‌های دیگر</h3>
+            <div class="stack">
+              <div class="card soft"><div class="between">
+                <div class="hstack"><span class="ico">🌿</span><div><div class="strong small">Git و GitHub <span class="badge ok tiny">تمام‌شده</span></div><div class="tiny muted">۳۰ روز · پایان: ۲۴ مرداد</div></div></div>
+                <div class="hstack"><span class="chip">📁 ۱۲ مدرک</span><button class="btn sm">دریافت گواهی</button></div>
+              </div></div>
+              <div class="card soft"><div class="between">
+                <div class="hstack"><span class="ico">🎨</span><div><div class="strong small">مبانی فرانت‌اند <span class="badge n tiny">حالت نگهداری</span></div><div class="tiny muted">روزی ۵ دقیقه مرور · روز ۵۸ از ۹۰ · Streak مختص: ۳</div></div></div>
+                <div class="hstack"><span class="chip">مرور ۵ دقیقه‌ای</span><button class="btn sm">فعال‌کردن به‌جای دوره فعلی</button></div>
+              </div></div>
+              <div class="card soft"><div class="between">
+                <div class="hstack"><span class="ico">📦</span><div><div class="strong small">دواپس عملی</div><div class="tiny muted">۹۰ روز · شروع‌نشده · آماده ثبت‌نام</div></div></div>
+                <button class="btn sm pri">شروع دوره</button>
+              </div></div>
+              <div class="card dash center" style="padding:18px">
+                <div class="muted small">+ افزودن از فهرست دوره‌ها (۳ دوره دیگر در دسترس)</div>
+                <div class="tiny muted" style="margin-top:4px">پیشنهاد محصول: دوره جدید تا پایان دوره فعال پیشنهاد نشود — مگر کاربر «بودجه ۹۰ دقیقه» را انتخاب کرده باشد. <button class="an" data-note="0">✎</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-day" data-kick="۲ قلب محصول" data-title="درس روز و ثبت تمرین — یک نفس، بدون فاصله" data-desc="مهم‌ترین صفحه محصول. چیدمان خطی: متادیتا → هدف امروز → بدنه درس → نکته طلایی → تمرین → فرم ثبت. فرم ثبت با HTMX بدون رفرش انجام می‌شود و در همان قاب باقی می‌ماند تا لحظه مطالعه و لحظه ثبت از هم جدا نشوند." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/course/python-backend/day/43</div><span class="win-tag">وب‌اپ · درس روز</span></div>
+        <div class="app">
+          <aside class="app-side">
+            <div class="grp">این دوره</div>
+            <nav class="snav"><a>🏠 امروز</a><a class="on">📘 درس روز ۴۳</a><a>🗓 تقویم دوره</a><a>🗂 سرفصل‌ها</a><a>📁 مدارک من</a></nav>
+            <div class="card soft" style="margin-top:12px"><div class="tiny muted">فاز ۳ · هفته ۹</div><div class="small strong">صف کارها و Redis</div><div class="bar" style="margin-top:7px"><i style="width:24%"></i></div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-top">
+              <button class="btn sm">→ درس قبلی</button>
+              <button class="chip a">🐍 پایتون ▾</button>
+              <span class="badge n">روز ۴۳ از ۱۸۰</span>
+              <span class="spacer" style="flex:1"></span>
+              <button class="btn sm">درس بعدی ←</button>
+            </div>
+
+            <div class="card sect" style="background:#fbfcff">
+              <div class="hstack" style="margin-bottom:5px"><span class="badge info">📅 روز ۴۳</span><span class="badge n">فاز ۳ · هفته ۹</span><span class="badge n">⏱ مطالعه ۱۰ دقیقه</span><span class="badge n">🏋️ تمرین ۳۵ دقیقه</span></div>
+              <h1>صف کارها با Redis و Celery</h1>
+              <div class="call info" style="margin-top:9px"><span class="ic">🎯</span><p class="small" style="margin:0"><b>هدف امروز:</b> یک کار سنگین را از مسیر درخواست جدا کنی و در پس‌زمینه اجرا کنی.</p></div>
+            </div>
+
+            <article style="max-width:74ch">
+              <h3 style="margin-bottom:6px">۱) چرا صف کار لازم داریم؟</h3>
+              <p class="small ink2">اگر ارسال ایمیل یا پردازش تصویر داخل مسیر درخواست اجرا شود، کاربر باید منتظر بماند و یک خطای ساده، کل درخواست را می‌خواباند. راه‌حل استاندارد: درخواست را در صف بگذار و پاسخ فوری برگردان.</p>
+              <div class="code"><span class="c"># app/tasks.py — تعریف کار پس‌زمینه</span>
+<span class="k">from</span> celery <span class="k">import</span> Celery
+
+app = Celery(<span class="s">"drip"</span>, broker=<span class="s">"redis://localhost:6379/0"</span>)
+
+<span class="s">@app.task</span>
+<span class="k">def</span> send_daily_lesson(chat_id: str, day: int):
+    <span class="c"># ارسال خلاصه درس در روبیکا</span>
+    ...
+</div>
+              <div class="call gold" style="margin-top:11px"><span class="ic">⚡</span><p class="small" style="margin:0"><b>نکته طلایی:</b> هر کاری که بیش از ۵۰۰ میلی‌ثانیه طول بکشد، از مسیر درخواست بیرون است — حتی اگر «الان کار می‌کند».</p></div>
+              <h3 style="margin:14px 0 6px">۲) انتخاب صف مناسب</h3>
+              <p class="small ink2">Redis برای صف‌های سبک و پرتعداد، RabbitMQ برای مسیرهای حساس. برای این دوره Redis کافی است؛ دلیل انتخاب را در دفترچه تصمیم‌ها ثبت کن.</p>
+              <div class="ph ph-txt" style="height:74px">نمودار: درخواست → صف → Worker → نتیجه</div>
+            </article>
+
+            <hr class="sep">
+            <div class="card sect" style="border-color:#ccdaff;border-width:1.5px">
+              <div class="between" style="margin-bottom:9px"><h3>🏋️ تمرین امروز <span class="badge n tiny">۳۵ دقیقه</span></h3><span class="tiny muted">فعلاً ذخیره‌نشده</span></div>
+              <p class="small" style="margin-bottom:5px"><b>صورت تمرین:</b> یک صف Redis بساز، سه کار نمونه به آن بفرست و با یک Worker اجرا کن. زمان اجرای هر کار را لاگ بگیر.</p>
+              <p class="tiny muted"><b>خروجی مورد انتظار:</b> فایل <span class="mono">tasks.py</span> + اسکرین‌شات لاگ + یک خط توضیح از آنچه یاد گرفتی.</p>
+
+              <div class="seg tiny" style="margin:10px 0 11px">
+                <button>سطح ۱ · تیک سریع</button>
+                <button class="on">سطح ۲ · مستند</button>
+                <button>سطح ۳ · کامل</button>
+              </div>
+              <div class="field">
+                <label class="lbl">امروز چه یاد گرفتی؟ (یک خط)</label>
+                <textarea class="ta" style="min-height:56px" placeholder="مثلاً: فهمیدم اگر کار داخل صف بماند و Worker نخوابد…">کارهای سنگین را باید از مسیر درخواست جدا کنم، وگرنه تایم‌اوت می‌خوریم.</textarea>
+              </div>
+              <div class="g2">
+                <div>
+                  <label class="lbl">اسکرین‌شات یا فایل</label>
+                  <div class="ph ph-txt" style="height:72px">کشیدن و رهاکردن · PNG / JPG · حداکثر ۵ مگابایت</div>
+                </div>
+                <div>
+                  <label class="lbl">لینک (مخزن، گیت‌هاب، جیست)</label>
+                  <input class="input" dir="ltr" value="https://gist.github.com/mehdi/8f2a1">
+                  <label class="lbl" style="margin-top:9px">وضعیت</label>
+                  <div class="hstack"><span class="chip on">✓ آماده ثبت</span><span class="tiny muted">نشان «تأییدشده» می‌گیری</span></div>
+                </div>
+              </div>
+              <div class="hstack" style="margin-top:12px;justify-content:flex-end">
+                <span class="tiny muted">میان‌بر: <span class="kbd">Ctrl</span> + <span class="kbd">Enter</span></span>
+                <button class="btn ghost">فقط مطالعه (بدون ثبت مدرک)</button>
+                <button class="btn pri" style="padding:10px 18px">✓ ثبت تمرین و ثبت قطره امروز</button>
+              </div>
+              <p class="tiny muted" style="margin:9px 0 0">سطح ۱ در روزهای شلوغ Streak را حفظ می‌کند اما نشان «تأییدشده» نمی‌گیرد. ثبت در همان ثانیه با HTMX انجام می‌شود؛ صفحه رفرش نمی‌شود.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-done" data-kick="۲ قلب محصول" data-title="نتیجه ثبت مدرک — پاداش متغیر و سناریوی بازیابی" data-desc="لحظه‌ای که Hooked شکست می‌خورد: اگر پاداش فقط یک تیک خشک باشد، کاربر فرنمی. اینجا پاداش متغیر می‌دهیم (ورقِ سه‌گانه: Streak، نشان تأیید، پیشرفت فاز) — و در ستون کنار، حالت‌های «تأخیری» و «پس از شکست» را برای پیام مهربان بازگشت طراحی کرده‌ایم." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/course/python-backend/day/43?status=done</div><span class="win-tag">وب‌اپ · پس از ثبت</span></div>
+        <div class="app">
+          <aside class="app-side">
+            <nav class="snav"><a class="on">🏠 امروز</a><a>📚 دوره‌های من</a><a>🗓 تقویم دوره</a><a>📁 مدارک من</a></nav>
+            <div class="card soft" style="margin-top:12px"><div class="tiny muted">آخرین فعالیت</div><div class="small strong">همین حالا ✓</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="card hero" style="text-align:center;padding:22px;border-color:#bfe6cd;background:linear-gradient(180deg,#f4fdf7,#fff)">
+              <div style="font-size:30px">✅</div>
+              <h2 style="margin-top:4px">قطره امروز ثبت شد</h2>
+              <p class="small muted">سه‌شنبه هنوز باز است — اگر تا آخر امشب ثبت کنی، هفته‌ات بی‌نقص می‌شود.</p>
+            </div>
+            <div class="g3 sect">
+              <div class="kpi" style="border-color:#bfe6cd"><div class="l">Streak فعال</div><div class="v num">۱۳ 🔥 <span class="small" style="color:var(--ok)">+۱</span></div><div class="tiny muted">رکورد: ۱۹ · ۶ روز تا رکورد جدید</div></div>
+              <div class="kpi"><div class="l">سطح اثبات امروز</div><div class="v small strong">سطح ۲ — تأییدشده</div><div class="tiny muted">۲۱ روز تأییدشده از ۳۹</div></div>
+              <div class="kpi"><div class="l">پیشرفت دوره</div><div class="v num">۲۴٪</div><div class="tiny muted">۳ روز تا پایان فاز ۳</div></div>
+            </div>
+            <div class="g2">
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">این هفته</div>
+                <div class="hstack"><span class="daypill ok">ش ✓</span><span class="daypill ok">ی ✓</span><span class="daypill ok">د ✓</span><span class="daypill miss">س —</span><span class="daypill now">چ ✓ امروز</span><span class="daypill fut">پ مینی‌پروژه</span><span class="daypill rest">ج مرور</span></div>
+                <div class="call gold" style="margin-top:11px"><span class="ic">🏅</span><p class="small" style="margin:0">شگفتی متغیر: امروز <b>۴ روز پیش از موعد</b> درس فردا را هم باز کرده‌ایم — «صف کار پیشرفته». یکی از ۳ ورق پاداش متغیر که بر اساس الگوی کاربر انتخاب می‌شود.</p></div>
+              </div>
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">ادامه مسیر</div>
+                <div class="stack">
+                  <button class="btn pri blk">درس فردا: زمان‌بند کارها و Retry <span>←</span></button>
+                  <button class="btn blk">مشاهده مدارک و ویرایش یادداشت امروز</button>
+                  <button class="btn ghost blk">دیدن نقشه فاز ۳</button>
+                </div>
+                <hr class="sep">
+                <p class="tiny muted" style="margin:0">اصل: فقط <b>یک</b> CTA پررنگ. «ویرایش یادداشت» چون کاربر تازه چیزی نوشته، مهم‌ترین کنش ثانویه است.</p>
+              </div>
+            </div>
+            <div class="sect" style="margin-top:14px">
+              <h3 style="margin-bottom:8px">حالت‌های دیگر همین صفحه <span class="badge n">۴ سناریو</span></h3>
+              <div class="sm">
+                <div class="smbox">
+                  <h4>الف) ثبت تأخیری (Grace) — روز باز</h4>
+                  <div class="call warn" style="display:none"></div>
+                  <div class="call"><span class="ic">🕗</span><p class="tiny" style="margin:0">«مدرک دیروز را ثبت می‌کنی. مهلت جبران امروز تمام می‌شود — با ثبت آن، Streak ۱۲ می‌ماند.» دکمه: ثبت مدرک دیروز.</p></div>
+                </div>
+                <div class="smbox">
+                  <h4>ب) شکست Streak و بازگشت</h4>
+                  <div class="call"><span class="ic">🤝</span><p class="tiny" style="margin:0">«Streak از صفر شروع شد، ولی چیزی از دست نرفته. <b>رکورد ۱۹ روزه‌ات سر جایش است.</b> امروز؟» — بدون بچه‌گانه‌گی، بدون سرزنش. دکمه: شروع دوباره امروز.</p></div>
+                </div>
+                <div class="smbox">
+                  <h4>ج) خوداظهاری سطح ۱ در روز شلوغ</h4>
+                  <div class="call"><span class="ic">✓</span><p class="tiny" style="margin:0">ثبت یک‌کلیکی: «درس را خواندم و تمرین را انجام دادم.» حذف مدرک، نه از Streak — «فردا مدرکش را بفرست تا تأییدشده شود.»</p></div>
+                </div>
+                <div class="smbox">
+                  <h4>د) ثبت تکراری / پرامپت</h4>
+                  <div class="call"><span class="ic">♻️</span><p class="tiny" style="margin:0">اگر همین درس قبلاً ثبت شده باشد: «امروز ثبت شده. می‌خواهی مدرک را به‌روزرسانی کنی؟» — هیچ‌وقت پیام «خطا» خشک نشان نمی‌دهیم.</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-cal" data-kick="۳ تداوم" data-title="تقویم و مسیر دوره — شبکه ۱۸۰ روزه (نمای فازها و هفته‌ها)" data-desc="رنگ + نماد + متن، هرگز فقط رنگ. سلول‌ها در نمای هفته‌ای گروه‌بندی شده‌اند و شنبه ستون اول شبکه است. مرز فازها با خط پررنگ مشخص است تا کاربر حس «پیمودن مسیر» داشته باشد، نه یک لیست بی‌انتها." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/course/python-backend/calendar</div><span class="win-tag">وب‌اپ · تقویم ۱۸۰ روزه</span></div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>تقویم دوره · پایتون و معماری بک‌اند</h2>
+            <span class="spacer" style="flex:1"></span>
+            <button class="chip a">🐍 پایتون ▾</button>
+            <div class="seg tiny"><button class="on">نمای فازها</button><button>فهرست</button></div>
+          </div>
+
+          <div class="card sect">
+            <div class="between" style="margin-bottom:9px">
+              <div class="hstack"><span class="badge info">فاز ۲ تکمیل</span><span class="badge info">فاز ۳ · فعال — روز ۴۳</span><span class="badge n">فاز ۴</span><span class="badge n">فاز ۵</span><span class="badge n">فاز ۶</span></div>
+              <span class="tiny muted num">۳۹ / ۱۸۰ روز · ۲۴٪</span>
+            </div>
+            <div class="hstack" style="margin-bottom:12px">
+              <div class="bar" style="flex:1;min-width:220px"><i style="width:24%"></i></div>
+              <span class="chip">🗂 ۶ فاز</span><span class="chip">۳۰ هفته</span>
+            </div>
+
+            <div class="cal" style="margin-bottom:12px">
+              <div class="h">شنبه</div><div class="h">یکشنبه</div><div class="h">دوشنبه</div><div class="h">سه‌شنبه</div><div class="h">چهارشنبه</div><div class="h">پنجشنبه</div><div class="h">جمعه</div>
+              <div class="cel done"><b>۳۶</b><span class="tag">✓ سطح ۲</span></div>
+              <div class="cel done"><b>۳۷</b><span class="tag">✓ سطح ۳</span></div>
+              <div class="cel done"><b>۳۸</b><span class="tag">✓ سطح ۱</span></div>
+              <div class="cel done"><b>۳۹</b><span class="tag">✓ سطح ۲</span></div>
+              <div class="cel done"><b>۴۰</b><span class="tag">✓ سطح ۲</span></div>
+              <div class="cel proj"><b>۴۱</b><span class="tag">🔨 مینی‌پروژه</span></div>
+              <div class="cel off"><b>۴۲</b><span class="tag">🔁 مرور</span></div>
+              <div class="cel done"><b>۴۳</b><span class="tag">✓ امروز</span></div>
+              <div class="cel today"><b>۴۴</b><span class="tag">⌛ فردا · زمان‌بند</span></div>
+              <div class="cel fut"><b>۴۵</b><span class="tag">صف پیشرفته</span></div>
+              <div class="cel fut"><b>۴۶</b><span class="tag">—</span></div>
+              <div class="cel fut"><b>۴۷</b><span class="tag">—</span></div>
+              <div class="cel proj"><b>۴۸</b><span class="tag">🔨 مینی‌پروژه</span></div>
+              <div class="cel off"><b>۴۹</b><span class="tag">🔁 مرور</span></div>
+              <div class="cel miss"><b>۵۰</b><span class="tag">— ازدست‌رفته</span></div>
+              <div class="cel fut"><b>۵۱</b><span class="tag">—</span></div>
+              <div class="cel fut"><b>۵۲</b><span class="tag">—</span></div>
+              <div class="cel fut"><b>۵۳</b><span class="tag">—</span></div>
+              <div class="cel fut"><b>۵۴</b><span class="tag">—</span></div>
+              <div class="cel fut"><b>۵۵</b><span class="tag">🔨 مینی‌پروژه</span></div>
+              <div class="cel off"><b>۵۶</b><span class="tag">🔁 مرور</span></div>
+            </div>
+
+            <div class="between">
+              <div class="lg">
+                <span><i class="done"></i>تکمیل‌شده</span><span><i class="today"></i>امروز</span><span><i class="miss"></i>ازدست‌رفته</span><span><i class="fut"></i>آینده</span><span><i class="off"></i>مرور جمعه</span><span><i class="proj"></i>مینی‌پروژه</span>
+              </div>
+              <div class="hstack">
+                <button class="btn sm">⬇ خروجی ICS</button>
+                <button class="btn sm">📄 مشاهده فهرست سرفصل‌ها</button>
+              </div>
+            </div>
+            <p class="tiny muted" style="margin:10px 0 0">نمونه‌ی سلول تکمیل‌شده، سطح اثبات را هم نشان می‌دهد؛ با کلیک روی هر روز، درس، یادداشت و مدارک همان روز باز می‌شود (نه فقط متن درس).</p>
+          </div>
+
+          <div class="sect">
+            <h3 style="margin-bottom:8px">حالت‌های جایگزین تقویم</h3>
+            <div class="sm">
+              <div class="smbox"><h4>روز مرخصی (ژتون)</h4><div class="hstack"><span class="daypill rest">۴۶ · مرخصی ژتون‌دار</span><span class="chip">۲ ژتون در ماه</span></div><p class="tiny muted" style="margin:8px 0 0">سفر یا بیماری: با ژتون، روز «نشکن» می‌شود و استراحت واقعی است.</p></div>
+              <div class="smbox"><h4>تعطیلی برنامه‌ریزی‌شده</h4><div class="hstack"><span class="daypill rest">۷۶–۸۰ · توقف برنامه‌ریزی‌شده</span></div><p class="tiny muted" style="margin:8px 0 0">کاربر از تنظیمات یا روبیکا («توقف ۵ روز») می‌تواند موقتاً اعلان‌ها را خاموش کند؛ روزها «ازدست‌رفته» نمی‌شوند.</p></div>
+              <div class="smbox"><h4>مقیاس ۱۸۰ روزه</h4><p class="tiny muted" style="margin:0">در ۳۰ هفته، نمای کامل فشرده می‌شود؛ فاز فعال باز و بقیه جمع‌شده. جست‌وجوی «روز ۱۱۰» هم از همین صفحه ممکن است.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-evi" data-kick="۳ سرمایه‌گذاری" data-title="مدارک من — آرشیو به‌عنوان پرتفولیو" data-desc="افزوده این سند به PRD: مرحله چهارم مدل عادت (Investment) نازک بود. اینجا مدارک کاربر قابل جست‌وجو، برچسب‌گذاری و خروجی‌گیری هستند و در پایان دوره به یک پرتفولیوی قابل ارائه تبدیل می‌شوند." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/course/python-backend/evidence</div><span class="win-tag">وب‌اپ · آرشیو مدارک</span></div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>مدارک من</h2>
+            <span class="spacer" style="flex:1"></span>
+            <input class="input" placeholder="جست‌وجو در یادداشت‌ها و برچسب‌ها…" style="max-width:240px">
+            <button class="chip a">🐍 پایتون ▾</button>
+            <button class="chip">همه سطوح ▾</button>
+            <button class="btn sm">⬇ خروجی Zip / PDF</button>
+          </div>
+
+          <div class="g4 sect">
+            <div class="kpi"><div class="l">کل مدارک</div><div class="v num">۳۹</div></div>
+            <div class="kpi"><div class="l">تأییدشده (سطح ۲+)</div><div class="v num">۲۱</div></div>
+            <div class="kpi"><div class="l">لینک مخزن</div><div class="v num">۹</div></div>
+            <div class="kpi"><div class="l">حجم فایل‌ها</div><div class="v num">۴۸ مگابایت</div></div>
+          </div>
+
+          <div class="card" style="padding:0;overflow:hidden">
+            <table class="tbl">
+              <thead><tr><th style="width:70px">روز</th><th>یادداشت یک‌خطی</th><th style="width:110px">سطح</th><th style="width:130px">ضمیمه</th><th style="width:110px">تاریخ</th><th style="width:120px"></th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="num strong">۴۳</td>
+                  <td>کارهای سنگین را باید از مسیر درخواست جدا کنم، وگرنه تایم‌اوت می‌خوریم.</td>
+                  <td><span class="badge ok">۲ · تأییدشده</span></td>
+                  <td><span class="chip tiny">🖼 اسکرین‌شات</span> <span class="chip tiny">🔗 gist</span></td>
+                  <td class="tiny muted num">۱۲ مهر</td>
+                  <td><button class="btn sm">مشاهده</button></td>
+                </tr>
+                <tr>
+                  <td class="num strong">۴۲</td>
+                  <td>مرور جمعه: دو مفهوم صف و بروکر را دوباره ساختم.</td>
+                  <td><span class="badge warn">۱ · خوداظهاری</span></td>
+                  <td><span class="tiny muted">—</span></td>
+                  <td class="tiny muted num">۱۱ مهر</td>
+                  <td><button class="btn sm">به‌روزرسانی</button></td>
+                </tr>
+                <tr>
+                  <td class="num strong">۴۱</td>
+                  <td>مینی‌پروژه هفته ۹ — سرویس ارسال اعلان با Redis.</td>
+                  <td><span class="badge ok">۳ · کامل</span></td>
+                  <td><span class="chip tiny">📁 ۲ فایل</span></td>
+                  <td class="tiny muted num">۱۰ مهر</td>
+                  <td><button class="btn sm">مشاهده</button></td>
+                </tr>
+                <tr>
+                  <td class="num strong">۴۰</td>
+                  <td>نکته: تنظیم prefetch و concurrency روی زمان اجرا اثر مستقیم دارد.</td>
+                  <td><span class="badge ok">۲ · تأییدشده</span></td>
+                  <td><span class="chip tiny">🔗 repo</span></td>
+                  <td class="tiny muted num">۹ مهر</td>
+                  <td><button class="btn sm">مشاهده</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="call info" style="margin-top:12px"><span class="ic">🎓</span><p class="small" style="margin:0">در پایان دوره، از همین آرشیو یک <b>پرتفولیوی یک‌صفحه‌ای</b> (PDF با نمودار پیشرفت، فهرست پروژه‌ها و بهترین یادداشت‌ها) ساخته می‌شود — خروجی ملموس برای کارفرما یا رزومه.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-week" data-kick="۳ پاداش متغیر" data-title="کارنامه هفتگی (جمعه) — پاداش متغیری که در PRD نبود" data-desc="اگر یک پاداش متغیر ثابت هفتگی نباشد، انگیزه صرفاً به Streak وابسته می‌شود و با یک شکست فرو می‌ریزد. کیفیت تمرین، دو مفهوم سختِ هفته و یک کارت قابل‌اشتراک، سه لایه پاداش این صفحه‌اند. اشتراک‌گذاری از اینجا به روبیکا هم می‌رود." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/course/python-backend/report/week-9</div><span class="win-tag">وب‌اپ · کارنامه هفته ۹</span></div>
+        <div class="app-main">
+          <div class="app-top"><h2>کارنامه هفته ۹ · پایتون و معماری بک‌اند</h2><span class="spacer" style="flex:1"></span><span class="badge n">۱۲ تا ۱۸ مهر</span></div>
+
+          <div class="g2 sect">
+            <div class="card hero">
+              <div class="strong small" style="margin-bottom:8px">آنچه این هفته ساختی</div>
+              <ul class="small ink2" style="list-style:disc;padding-inline-start:18px;display:flex;flex-direction:column;gap:5px">
+                <li>۵ درس پایتون در فاز ۳ (صف کارها)</li>
+                <li>۱ مینی‌پروژه: سرویس اعلان با Redis</li>
+                <li>۳۱ ساعت… نه — <b>۲ ساعت و ۴۰ دقیقه</b> وقت صرف یادگیری شد (عدد قابل‌افتخار، نه برچسب)</li>
+              </ul>
+              <hr class="sep">
+              <div class="between small"><span>نسبت به هفته قبل</span><span class="badge ok">↑ ۱ روز بیشتر</span></div>
+            </div>
+            <div class="card">
+              <div class="strong small" style="margin-bottom:8px">سه مفهوم سختِ این هفته را در نیم‌صفحه بگو <span class="badge info tiny">۱۸/۲۰</span></div>
+              <div class="stack">
+                <div class="card soft"><div class="tiny muted">۱ · تفاوت صف و بروکر</div><div class="small">بروکر ابزار تحویل پیام است، صف محل نگه‌داری… <span class="badge ok tiny">✓ دقیق</span></div></div>
+                <div class="card soft"><div class="tiny muted">۲ · Retry با backoff</div><div class="small">تلاش مجدد را با فاصله‌ی نمایی… <span class="badge ok tiny">✓ دقیق</span></div></div>
+                <div class="card soft"><div class="tiny muted">۳ · Idempotency در کار</div><div class="small muted">بی‌پاسخ — جمعه بعد تکمیل کن <button class="an" data-note="0">✎</button></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card sect" style="background:linear-gradient(180deg,#fffdf5,#fff);border-color:#f0dcb4">
+            <div class="between">
+              <div>
+                <div class="strong small">🎁 کارت پیشرفت هفته</div>
+                <p class="tiny muted" style="margin:4px 0 0">«۵ درس · ۱ پروژه · ۱۳ روز پیوسته» — آماده ارسال به روبیکا یا اشتراک‌گذاری با تیم.</p>
+              </div>
+              <div class="hstack">
+                <button class="btn sm">🖼 دانلود تصویر کارت</button>
+                <button class="btn sm pri">📱 ارسال در روبیکا</button>
+              </div>
+            </div>
+            <div class="ph ph-txt" style="height:96px;margin-top:11px">پیش‌نمایش کارت ۱۲۰۰×۶۳۰ — لوگو، نام دوره، شماره هفته، سه عدد کلیدی، نمودار میله‌ای ۷ روز</div>
+          </div>
+
+          <div class="card sect">
+            <div class="strong small" style="margin-bottom:8px">توقع هفته آینده</div>
+            <div class="hstack">
+              <span class="chip on">۱۴ روز بدون شکست</span><span class="chip">۲ ژتون مرخصی</span><span class="chip">پایان فاز ۳ → نشان «صف‌ساز»</span>
+            </div>
+            <p class="tiny muted" style="margin:9px 0 0">اشتراک‌گذاری اجتماعی اختیاری است و پیش‌فرض خاموش — تا فشار مقایسه‌ای به وجود نیاید.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-set" data-kick="۳ کنترل کاربر" data-title="تنظیمات و روبیکا — کلید توقف در دست کاربر" data-desc="دستورات روبیکا از تنظیمات وب و برعکس، روی یک منبع حقیقت واحد کار می‌کنند. همه ساعت‌ها و روزهای تعطیل در یک صفحه دیده می‌شوند تا کاربر مطمئن باشد ربات اسپم نمی‌کند. اتصال/قطع روبیکا اینجاست و قطع اتصال یعنی «از دست دادن پیام‌های صبحگاهی»، هشدار صریح دارد." data-who="👤 بخش یادگیرنده">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/settings</div><span class="win-tag">وب‌اپ · تنظیمات</span></div>
+        <div class="app-main">
+          <div class="app-top"><h2>تنظیمات حساب و روبیکا</h2><span class="spacer" style="flex:1"></span><span class="badge ok">وضعیت: فعال</span></div>
+          <div class="g2">
+            <div>
+              <div class="card sect">
+                <h3 style="margin-bottom:9px">📱 اتصال روبیکا</h3>
+                <div class="hstack between"><span class="small">ربات قطره</span><span class="badge ok">✓ متصل · @mehdi_dev</span></div>
+                <hr class="sep">
+                <div class="field" style="margin-bottom:8px"><label class="lbl">ساعت پیام درس صبحگاهی</label><input class="input num" value="۰۸:۰۰" style="max-width:130px"></div>
+                <div class="field" style="margin-bottom:8px"><label class="lbl">ساعت یادآوری عصرانه</label><input class="input num" value="۱۸:۰۰" style="max-width:130px"></div>
+                <label class="lbl">روزهای یادآوری</label>
+                <div class="hstack"><span class="chip on">شنبه</span><span class="chip on">یکشنبه</span><span class="chip on">دوشنبه</span><span class="chip on">سه‌شنبه</span><span class="chip on">چهارشنبه</span><span class="chip on">پنجشنبه</span><span class="chip">جمعه</span></div>
+                <p class="tiny muted" style="margin:8px 0 0">جمعه پیش‌فرض خاموش است (روز مرور). حداکثر ۳ پیام در روز — این سقف را نمی‌توانیم بشکنیم.</p>
+              </div>
+              <div class="card sect">
+                <h3 style="margin-bottom:9px">⏸ کنترل موقت</h3>
+                <div class="hstack"><span class="chip on">فعال</span><span class="chip">توقف ۳ روز</span><span class="chip">توقف ۷ روز</span><span class="chip">توقف تا اطلاع</span></div>
+                <p class="tiny muted" style="margin:8px 0 0">همین کنترل با دستورهای روبیکا نیز کار می‌کند: <span class="mono">توقف ۵</span> · <span class="mono">ادامه</span> · <span class="mono">ساعت 21:00</span> — هر دو مسیر روی یک وضعیت واحد می‌نویسند.</p>
+              </div>
+              <div class="card">
+                <h3 style="margin-bottom:9px">🎫 ژتون مرخصی</h3>
+                <div class="between"><span class="small">ژتون باقی‌مانده این ماه</span><span class="strong num">۲ از ۲</span></div>
+                <p class="tiny muted" style="margin:8px 0 0">ژتون روزهای سفر یا بیماری را «نشکن» می‌کند؛ با ژتون، استراحت واقعی است نه عقب‌افتادگی.</p>
+              </div>
+            </div>
+            <div>
+              <div class="card sect">
+                <h3 style="margin-bottom:9px">🧾 حساب و داده</h3>
+                <div class="stack small">
+                  <div class="between"><span class="ink2">نام نمایشی</span><span class="strong">مهدی ر.</span></div>
+                  <div class="between"><span class="ink2">منطقه زمانی</span><span class="strong">تهران (GMT+3:30)</span></div>
+                  <div class="between"><span class="ink2">واحد نمایش تاریخ</span><span class="strong">شمسی</span></div>
+                  <div class="between"><span class="ink2">خروجی همه مدارک</span><span class="badge n">Zip / PDF</span></div>
+                </div>
+              </div>
+              <div class="card sect">
+                <h3 style="margin-bottom:9px">🎨 نمایش</h3>
+                <div class="stack small">
+                  <div class="between"><span class="ink2">تم</span><span class="hstack"><span class="chip on">روشن</span><span class="chip">تیره</span><span class="chip">سیستم</span></span></div>
+                  <div class="between"><span class="ink2">کاهش انیمیشن</span><span class="chip on">فعال</span></div>
+                  <div class="between"><span class="ink2">اندازه متن</span><span class="hstack"><span class="chip">کوچک</span><span class="chip on">متوسط</span><span class="chip">بزرگ</span></span></div>
+                  <div class="between"><span class="ink2">حالت کم‌حواس‌پرتی</span><span class="chip">خاموش</span></div>
+                </div>
+              </div>
+              <div class="card sect">
+                <h3 style="margin-bottom:9px">🔐 امنیت</h3>
+                <p class="small ink2" style="margin:0">ورود بدون رمز، با لینک یک‌بارمصرف روبیکا · نشست فعال: ۲ دستگاه</p>
+                <div class="hstack" style="margin-top:8px"><button class="btn sm">خروج از همه دستگاه‌ها</button><button class="btn sm">تولید لینک ورود جدید</button></div>
+              </div>
+              <div class="call bad"><span class="ic">⚠</span><div><p class="small strong" style="margin-bottom:2px">قطع اتصال روبیکا</p><p class="tiny" style="margin:0">بدون روبیکا، پیام صبحگاهی و یادآوری عصرانه ارسال نمی‌شود؛ وب‌اپ کامل کار می‌کند اما طبق مدل عادت، احتمال رهاکردن دوره چند برابر می‌شود. تأیید دو مرحله‌ای دارد.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-adash" data-kick="۴ پنل مدیریت" data-title="داشبورد پوشش محتوا — ریسک شماره‌یک پروژه" data-desc="افزوده این سند: بزرگ‌ترین ریسک محصول، خودِ نرم‌افزار نیست؛ بار تولید ۱۸۰ درس در چند دوره است. این داشبورد وضعیت «بافر محتوا» را نشان می‌دهد: چند روز جلوتر از کاربر محتوا آماده است، کدام درس‌ها پیش‌نویس یا منتشرنشده‌اند و امروز کدام پیام‌ها باید ارسال شوند." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin</div><span class="win-tag">پنل مدیریت</span></div>
+        <div class="app">
+          <aside class="app-side">
+            <nav class="snav">
+              <a class="on">📊 داشبورد پوشش</a>
+              <a>📚 دوره‌ها</a>
+              <a>🗂 درخت دروس</a>
+              <a>✍️ ویرایشگر درس</a>
+              <a>🤖 کتابخانه پرامپت</a>
+              <a>📦 بارگذاری گروهی</a>
+              <a>🔔 اعلان‌ها و صف ارسال</a>
+              <a>🧾 لاگ روبیکا</a>
+              <a>🔄 تاریخچه نسخه‌ها</a>
+            </nav>
+            <div class="card soft" style="margin-top:12px"><div class="tiny muted">نقش شما</div><div class="small strong">مدیر محتوا (Admin)</div></div>
+          </aside>
+          <div class="app-main">
+            <div class="app-top">
+              <h2>داشبورد پوشش محتوا</h2>
+              <span class="spacer" style="flex:1"></span>
+              <span class="chip">امروز: شنبه ۱۲ مهر</span>
+              <button class="btn sm pri">+ درس جدید</button>
+            </div>
+
+            <div class="g4 sect">
+              <div class="kpi"><div class="l">بافر محتوا · پایتون</div><div class="v num">۱۴ روز</div><div class="tiny" style="color:var(--ok)">✓ بالاتر از حد امن (۱۴ روز) <button class="an" data-note="0">✎</button></div></div>
+              <div class="kpi"><div class="l">بافر محتوا · فرانت‌اند</div><div class="v num">۳ روز</div><div class="tiny" style="color:var(--warn)">⚠ هشدار — زیر حد امن</div></div>
+              <div class="kpi"><div class="l">درخت فارسی: منتشرشده</div><div class="v num">۲۹۱ / ۳۰۰</div></div>
+              <div class="kpi"><div class="l">پیش‌نویس / AI بدون ویرایش</div><div class="v num">۹</div></div>
+            </div>
+
+            <div class="two" style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:13px">
+              <div class="card">
+                <div class="between" style="margin-bottom:9px"><h3>تقویم ۳۰ روز آینده · پوشش</h3><span class="tiny muted">هر خانه = یک روز دوره</span></div>
+                <div class="cal" style="grid-template-columns:repeat(10,minmax(0,1fr))">
+                  <div class="cel done" style="min-height:44px"><b>۱۴۶</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۴۷</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۴۸</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۴۹</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۵۰</b><span class="tag">✓</span></div>
+                  <div class="cel proj" style="min-height:44px"><b>۱۵۱</b><span class="tag">پ</span></div>
+                  <div class="cel off" style="min-height:44px"><b>۱۵۲</b><span class="tag">م</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۵۳</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۵۴</b><span class="tag">✓</span></div>
+                  <div class="cel done" style="min-height:44px"><b>۱۵۵</b><span class="tag">✓</span></div>
+                  <div class="cel today" style="min-height:44px"><b>۱۵۶</b><span class="tag">AI</span></div>
+                  <div class="cel" style="min-height:44px;background:#fdf7ff;border-color:#e6d4f5"><b>۱۵۷</b><span class="tag">پیش‌نویس</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۵۸</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۵۹</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۰</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۱</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۲</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۳</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۴</b><span class="tag">خالی</span></div>
+                  <div class="cel ph" style="min-height:44px"><b>۱۶۵</b><span class="tag">خالی</span></div>
+                </div>
+                <div class="lg" style="margin-top:10px">
+                  <span><i class="done"></i>منتشرشده</span><span><i class="today"></i>AI · نیازمند ویرایش</span><span><i class="fut"></i>پیش‌نویس</span><span><i class="fut"></i>خالی</span>
+                </div>
+              </div>
+
+              <div class="stack">
+                <div class="card">
+                  <h3 style="margin-bottom:8px">امروز چه اتفاقی می‌افتد؟</h3>
+                  <div class="stack">
+                    <div class="between small"><span>📤 پیام صبحگاهی ارسال‌شده</span><span class="badge ok">۳ / ۳</span></div>
+                    <div class="between small"><span>⏰ یادآوری عصرانه در صف</span><span class="badge info">۱۸:۰۰</span></div>
+                    <div class="between small"><span>⚠ خطای ارسال</span><span class="badge n">۰</span></div>
+                    <div class="between small"><span>👤 کاربران فعال امروز</span><span class="badge n">۱</span></div>
+                  </div>
+                  <button class="btn sm blk" style="margin-top:10px">مشاهده صف ارسال و لاگ</button>
+                </div>
+                <div class="card">
+                  <h3 style="margin-bottom:8px">اقدام‌های پیشنهادی</h3>
+                  <div class="call warn"><span class="ic">⚠</span><p class="small" style="margin:0">بافر «مبانی فرانت‌اند» ۳ روز است. دو درس را با پرامپت «نسخه‌دار» بساز و بافر را به ۱۰ برسان.</p></div>
+                  <button class="btn sm blk" style="margin-top:8px">رفتن به کتابخانه پرامپت</button>
+                </div>
+                <div class="card soft">
+                  <h3 style="margin-bottom:6px">یادآوری قاعده</h3>
+                  <p class="tiny muted" style="margin:0">قاعده‌ی اجرایی: همیشه ۱۴ روز بافر جلوتر از یادگیرنده. ساختار پیشنهادی روز = درس + تمرین + خروجی مشخص.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-acourses" data-kick="۴ پنل مدیریت" data-title="مدیریت دوره‌ها — فرم فارسی‌سازِ Frontmatter" data-desc="PRD می‌گفت «فرم متنی»؛ اما کاربر واقعی این فرم، آرش است که روزی ۱–۲ ساعت وقت دارد. پس فرم‌ها فارسی، با آمار زنده و اعتبارسنجی هستند و در پشت صحنه، فایل‌های md + Frontmatter تولید می‌کنند. نوار کنار، ساختار پوشه‌ای واقعی روی دیسک را نشان می‌دهد تا بین «پنل» و «فایل‌ها» شکاف ذهنی نماند." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/courses</div><span class="win-tag">پنل مدیریت · دوره‌ها</span></div>
+        <div class="app-main">
+          <div class="app-top"><h2>مدیریت دوره‌ها</h2><span class="spacer" style="flex:1"></span><button class="btn sm">📦 بارگذاری گروهی</button><button class="btn sm pri">+ دوره جدید</button></div>
+
+          <div class="g3 sect">
+            <div class="card dash center" style="padding:16px"><div class="ico lg" style="margin:0 auto 7px">＋</div><div class="small strong">ایجاد دوره جدید</div><div class="tiny muted">نام · طول روز · آیکون · ساعت پیش‌فرض</div></div>
+            <div class="card" style="border-color:var(--accent)">
+              <div class="between"><span class="ico">🐍</span><span class="badge info">فعال</span></div>
+              <div class="strong small" style="margin-top:7px">پایتون و معماری بک‌اند</div>
+              <div class="tiny muted">۱۸۰ روز · ۶ فاز · ۳۰ هفته · /python-backend</div>
+              <div class="bar" style="margin-top:8px"><i style="width:88%"></i></div>
+              <div class="between tiny muted" style="margin-top:4px"><span>منتشرشده ۱۵۸ / ۱۸۰</span><span>بافر ۱۴ روز</span></div>
+            </div>
+            <div class="card">
+              <div class="between"><span class="ico">🎨</span><span class="badge warn">در حال ساخت</span></div>
+              <div class="strong small" style="margin-top:7px">مبانی فرانت‌اند</div>
+              <div class="tiny muted">۹۰ روز · ۴ فاز · /frontend</div>
+              <div class="bar warn" style="margin-top:8px"><i style="width:31%"></i></div>
+              <div class="between tiny muted" style="margin-top:4px"><span>منتشرشده ۲۸ / ۹۰</span><span style="color:var(--warn)">بافر ۳ روز ⚠</span></div>
+            </div>
+            <div class="card">
+              <div class="between"><span class="ico">🌿</span><span class="badge ok">منتشرشده</span></div>
+              <div class="strong small" style="margin-top:7px">Git و GitHub</div>
+              <div class="tiny muted">۳۰ روز · ۲ فاز · /git</div>
+              <div class="bar ok" style="margin-top:8px"><i style="width:100%"></i></div>
+              <div class="between tiny muted" style="margin-top:4px"><span>منتشرشده ۳۰ / ۳۰</span><span>۱ کاربر تمام‌کرده</span></div>
+            </div>
+            <div class="card">
+              <div class="between"><span class="ico">📦</span><span class="badge n">غیرفعال</span></div>
+              <div class="strong small" style="margin-top:7px">دواپس عملی</div>
+              <div class="tiny muted">۹۰ روز · ۴ فاز · /devops</div>
+              <div class="bar" style="margin-top:8px"><i style="width:0%"></i></div>
+              <div class="between tiny muted" style="margin-top:4px"><span>منتشرشده ۰ / ۹۰</span><span>پیشنهاد: بعد از فرانت‌اند</span></div>
+            </div>
+          </div>
+
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:13px">
+            <div class="card">
+              <h3 style="margin-bottom:9px">پیش‌نمایش فرم ایجاد دوره · دو زبانه هم پشتیبانی می‌شود</h3>
+              <div class="g2">
+                <div class="field"><label class="lbl">عنوان دوره (fa)</label><input class="input" value="پایتون و معماری بک‌اند"></div>
+                <div class="field"><label class="lbl">Slug (لاتین، مسیر URL)</label><input class="input mono" dir="ltr" value="python-backend"></div>
+              </div>
+              <div class="g2">
+                <div class="field"><label class="lbl">تعداد روزها</label><input class="input num" value="۱۸۰"></div>
+                <div class="field"><label class="lbl">تعداد فازها</label><input class="input num" value="۶"></div>
+              </div>
+              <div class="g2">
+                <div class="field"><label class="lbl">آیکون</label><input class="input" value="🐍"></div>
+                <div class="field"><label class="lbl">ساختار هفته</label><select class="select"><option>۵ درس + مینی‌پروژه + مرور (پیش‌فرض)</option><option>۷ درس پشت‌سرهم</option></select></div>
+              </div>
+              <div class="field"><label class="lbl">توضیح کوتاه (برای کارت دوره و پیام روبیکا، حداکثر ۱۲۰ کاراکتر)</label><textarea class="ta" style="min-height:52px">از صفر تا معماری سرویس‌های واقعی: پایتون، دیتابیس، صف کار، تست و استقرار — هر روز یک قطره.</textarea></div>
+              <div class="hstack" style="justify-content:flex-end"><button class="btn ghost">انصراف</button><button class="btn pri">ایجاد و رفتن به درخت دروس</button></div>
+            </div>
+            <div class="card soft">
+              <h3 style="margin-bottom:7px">روی دیسک چه اتفاقی می‌افتد؟</h3>
+              <div class="code">courses_data/
+└─ python-backend/
+   ├─ course.yml        <span class="c"># متادیتای دوره</span>
+   ├─ phase-03/
+   │  ├─ week-09/
+   │  │  ├─ day-043-queue.md
+   │  │  └─ day-044-scheduler.md
+   │  └─ week-10/
+   └─ phase-04/</div>
+              <p class="tiny muted" style="margin:9px 0 0">هر فایل <span class="mono">.md</span> با Frontmatter شروع می‌شود (روز، فاز، عنوان، هدف، زمان تخمینی، برچسب خودکار). ویرایش در پنل، همان فایل را می‌نویسد؛ تاریخچه نسخه هم نگه داشته می‌شود.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-atree" data-kick="۴ پنل مدیریت" data-title="درخت دروس و فازها — وضعیت هر درس در یک نگاه" data-desc="درخت سه‌سطحی دوره ← فاز ← هفته با ریزآمار و وضعیت تولید برای هر درس. دقیقاً همان صفحه‌ای که PRD با عنوان «درخت سرفصل‌ها» خط زده بود، اما با ستون‌های وضعیت تولید که ادمین برای برنامه‌ریزی هفتگی لازم دارد. ستون چپ خالی است تا نشان دهد اینجا تعریف هفتگی/جابه‌جایی هم اتفاق می‌افتد." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/courses/python-backend/tree</div><span class="win-tag">پنل مدیریت · درخت دروس</span></div>
+        <div class="app-main">
+          <div class="app-top">
+            <button class="btn sm">← دوره‌ها</button>
+            <h2>🐍 پایتون و معماری بک‌اند</h2>
+            <span class="spacer" style="flex:1"></span>
+            <div class="seg tiny"><button class="on">نمای درخت</button><button>جدول تمام دروس</button></div>
+            <button class="btn sm">↕ جابه‌جایی هفته‌ها</button>
+          </div>
+
+          <div class="hstack" style="margin-bottom:11px">
+            <span class="badge ok">۱۵۸ منتشرشده</span><span class="badge info">۱ آماده ویرایش (AI)</span><span class="badge warn">۲ پیش‌نویس</span><span class="badge n">۱۹ خالی</span>
+            <span class="spacer" style="flex:1"></span>
+            <button class="chip">📄 خروجی همه به Markdown/Zip</button>
+            <button class="chip">🕘 تاریخچه نسخه‌ها</button>
+          </div>
+
+          <div class="card" style="padding:9px">
+            <div class="tnode" style="background:#f5f7fb;font-weight:700">
+              <span>📁 فاز ۱ · مبانی پایتون</span><span class="spacer" style="flex:1"></span><span class="badge ok">۳۰/۳۰ منتشرشده</span><span class="badge n">۶ هفته</span>
+            </div>
+            <div class="tnode" style="background:#f5f7fb;font-weight:700">
+              <span>📁 فاز ۲ · دیتابیس و API</span><span class="spacer" style="flex:1"></span><span class="badge ok">۳۰/۳۰ منتشرشده</span><span class="badge n">۶ هفته</span>
+            </div>
+            <div class="tnode" style="background:var(--accent-soft);font-weight:700;border-color:#ccdaff;border-style:solid">
+              <span>📂 فاز ۳ · صف، کش و عملیات پس‌زمینه (باز)</span><span class="spacer" style="flex:1"></span><span class="badge info">۲۷/۳۰ منتشرشده</span><span class="badge warn">بافر ۱۴ روز ✓</span>
+            </div>
+            <div class="tnode lv2"><span>🗓 هفته ۸ · Redis مقدماتی</span><span class="spacer" style="flex:1"></span><span class="badge ok">۵/۵ ✓</span><button class="btn sm">باز کردن</button></div>
+            <div class="tnode lv2 on"><span>🗓 هفته ۹ · صف کارها</span><span class="spacer" style="flex:1"></span><span class="badge ok">۴/۵</span><span class="badge info">۱ آماده ویرایش</span><button class="btn sm">باز کردن</button></div>
+            <div class="tnode lv3">
+              <span class="handle"></span><span class="badge n">۴۳</span><span>صف کارها با Redis و Celery</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="tiny muted num">۱۰+۳۵ دقیقه</span><span class="badge ok">منتشرشده ✓</span><button class="btn sm">ویرایش</button>
+            </div>
+            <div class="tnode lv3">
+              <span class="handle"></span><span class="badge n">۴۴</span><span>زمان‌بند کارها و Retry</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="tiny muted num">۱۰+۴۰ دقیقه</span><span class="badge info">AI · نیازمند ویرایش</span><button class="btn sm pri">ویرایش</button>
+            </div>
+            <div class="tnode lv3">
+              <span class="handle"></span><span class="badge n">۴۵</span><span>Idempotency در کارهای پس‌زمینه</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="tiny muted num">۱۰+۳۵ دقیقه</span><span class="badge warn">پیش‌نویس</span><button class="btn sm">ادامه</button>
+            </div>
+            <div class="tnode lv3">
+              <span class="handle"></span><span class="badge n">۴۶</span><span>پایش صف با Flower</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="tiny muted num">۱۰+۳۰ دقیقه</span><span class="badge n">خالی</span><button class="btn sm">+ ساخت</button>
+            </div>
+            <div class="tnode lv3">
+              <span class="handle"></span><span class="badge n">۴۷</span><span>🔨 مینی‌پروژه هفته ۹</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="tiny muted num">۶۰ دقیقه</span><span class="badge warn">پیش‌نویس</span><button class="btn sm">ادامه</button>
+            </div>
+            <div class="tnode lv2"><span>🗓 هفته ۱۰ · صف پیشرفته</span><span class="spacer" style="flex:1"></span><span class="badge n">۰/۵</span><button class="btn sm">باز کردن</button></div>
+            <div class="tnode" style="background:#f5f7fb"><span>📁 فاز ۴ · معماری سرویس</span><span class="spacer" style="flex:1"></span><span class="badge n">۰/۳۰</span><span class="badge n">جمع‌شده</span></div>
+            <div class="tnode" style="background:#f5f7fb"><span>📁 فاز ۵ · تست و کیفیت</span><span class="spacer" style="flex:1"></span><span class="badge n">۰/۳۰</span></div>
+            <div class="tnode" style="background:#f5f7fb"><span>📁 فاز ۶ · استقرار و پروژه پایانی</span><span class="spacer" style="flex:1"></span><span class="badge n">۰/۳۰</span></div>
+          </div>
+
+          <div class="call info" style="margin-top:12px"><span class="ic">💡</span><p class="small" style="margin:0">هر درس سه برچسب زمانی و یک وضعیت تولید دارد؛ همین دو ستون، «برنامه هفته»ی ادمین را می‌سازد. نمای جدولی برای ویرایش دسته‌ای وضعیت هم وجود دارد (انتخاب چند درس → «انتشار گروهی»).</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-aedit" data-kick="۴ پنل مدیریت" data-title="ویرایشگر درس — Markdown با پیش‌نمایش زنده و تاریخچه نسخه" data-desc="برای اینکه CMS به «جهنم فرم‌ها» تبدیل نشود: سمت راست بدنه Markdown، وسط پیش‌نمایش زنده با رندر کد، سمت چپ (بالا) فیلدهای Frontmatter فارسی‌ساز. نوار پایین: وضعیت، زمان تخمینی، انتشار برنامه‌ریزی‌شده، و تاریخچه نسخه. جدول مقایسه نسخه‌ها نمای diff ساده دارد." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/lessons/day-043</div><span class="win-tag">پنل مدیریت · ویرایشگر درس</span></div>
+        <div class="app-main" style="padding-bottom:0">
+          <div class="app-top">
+            <button class="btn sm">← درخت دروس</button>
+            <span class="badge n">روز ۴۳ · فاز ۳ · هفته ۹</span>
+            <span class="badge ok">منتشرشده</span>
+            <span class="spacer" style="flex:1"></span>
+            <button class="btn sm">👁 پیش‌نمایش کاربر</button>
+            <button class="btn sm">💾 ذخیره</button>
+            <button class="btn sm pri">🚀 انتشار</button>
+          </div>
+
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px">
+            <div>
+              <div class="card" style="margin-bottom:10px">
+                <div class="tiny muted strong" style="margin-bottom:7px">فیلدهای ساختاری (Frontmatter)</div>
+                <div class="field"><label class="lbl">عنوان درس</label><input class="input" value="صف کارها با Redis و Celery"></div>
+                <div class="g2">
+                  <div class="field"><label class="lbl">روز</label><input class="input num" value="۴۳"></div>
+                  <div class="field"><label class="lbl">هدف امروز (یک جمله)</label><input class="input" value="یک کار سنگین را از مسیر درخواست جدا کنی…"></div>
+                </div>
+                <div class="field" style="margin-bottom:0"><label class="lbl">نکته طلایی</label><input class="input" value="هر کاری بیش از ۵۰۰ms طول بکشد، از مسیر درخواست بیرون است."></div>
+              </div>
+
+              <div class="card">
+                <div class="between" style="margin-bottom:7px">
+                  <span class="tiny muted strong">بدنه درس · Markdown</span>
+                  <div class="seg tiny"><button class="on">ویرایش</button><button>پیش‌نمایش</button><button>کنار هم</button></div>
+                </div>
+                <div class="code" style="max-height:236px">## ۱) چرا صف کار لازم داریم؟
+
+درخواست کاربر نباید منتظر کار سنگین بماند.
+
+```python
+@app.task
+def send_daily_lesson(chat_id: str, day: int):
+    ...
+```
+
+> ⚡ **نکته طلایی:** هر کاری بیش از ۵۰۰ میلی‌ثانیه
+> طول بکشد، از مسیر درخواست بیرون است.
+
+- بروکر و صف
+- Worker و concurrency
+- Retry با backoff</div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:10px">
+                <div class="tiny muted strong" style="margin-bottom:7px">پیش‌نمایش زنده</div>
+                <h3>۱) چرا صف کار لازم داریم؟</h3>
+                <p class="small ink2">درخواست کاربر نباید منتظر کار سنگین بماند.</p>
+                <div class="code" style="font-size:11.5px">@app.task
+def send_daily_lesson(chat_id: str, day: int):
+    ...</div>
+                <div class="call gold" style="margin-top:9px"><span class="ic">⚡</span><p class="tiny" style="margin:0"><b>نکته طلایی:</b> هر کاری بیش از ۵۰۰ms طول بکشد، از مسیر درخواست بیرون است.</p></div>
+              </div>
+
+              <div class="card" style="margin-bottom:10px">
+                <div class="tiny muted strong" style="margin-bottom:7px">تولید با AI · پرامپت متصل</div>
+                <div class="hstack"><span class="chip a">🤖 prompt-07 · درس پایتون نسخه ۳</span><button class="btn sm">کپی پرامپت</button><button class="btn sm">تولید پیش‌نویس جایگزین</button></div>
+                <p class="tiny muted" style="margin:8px 0 0">متغیرها به‌صورت خودکار جایگذاری می‌شوند: نام دوره، شماره روز، موضوع، سطح. وضعیت درس پس از تولید: «AI · نیازمند ویرایش» — هرگز مستقیم منتشر نمی‌شود.</p>
+              </div>
+
+              <div class="card">
+                <div class="between" style="margin-bottom:7px"><span class="tiny muted strong">تاریخچه نسخه‌ها · ۲۰ نسخه آخر</span><button class="btn sm">مقایسه دو نسخه</button></div>
+                <table class="tbl">
+                  <thead><tr><th>نسخه</th><th>زمان</th><th>تغییر</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td class="num">۱۲</td><td class="tiny muted num">امروز ۱۴:۲۰</td><td class="tiny">افزودن مثال Idempotency</td><td><button class="btn sm">بازگردانی</button></td></tr>
+                    <tr><td class="num">۱۱</td><td class="tiny muted num">دیروز ۰۹:۰۵</td><td class="tiny">ویرایش نکته طلایی</td><td><button class="btn sm">بازگردانی</button></td></tr>
+                    <tr><td class="num">۱۰</td><td class="tiny muted num">۳ روز پیش</td><td class="tiny">تولید با AI، ویرایش نشده <span class="badge warn tiny">AI</span></td><td><button class="btn sm">بازگردانی</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div style="position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);margin:13px -17px 0;padding:10px 17px" class="hstack">
+            <span class="badge ok">✓ اعتبارسنجی گیت کیفیت: هدف ✓ · کد اجراشدنی ✓ · تمرین با خروجی ✓ · زمان ✓</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="chip">🗓 انتشار برنامه‌ریزی‌شده</span>
+            <span class="chip">💾 ذخیره خودکار فعال</span>
+            <button class="btn pri sm">انتشار و ارسال در صف پیام</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-apro" data-kick="۴ پنل مدیریت" data-title="کتابخانه پرامپت AI — نسخه‌دار، دسته‌بندی‌شده، متغیردار" data-desc="پرامپت‌ها دارایی اصلی تولید محتوا هستند: هر پرامپت دسته‌بندی، نسخه، و متغیرهای قابل‌جایگذاری دارد (نام دوره، شماره روز، سطح، لحن). متغیرها به‌صورت خودکار فقط برای معلم‌های من، پر می‌شوند تا خطای متن خام به محتوا وارد نشود. پنل کنار: کیفیت‌سنجی خودکار پیش از انتشار." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/prompts</div><span class="win-tag">پنل مدیریت · کتابخانه پرامپت</span></div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>کتابخانه پرامپت‌های تولید محتوا</h2>
+            <span class="spacer" style="flex:1"></span>
+            <button class="chip">برنامه‌نویسی</button><button class="chip a">دواپس</button><button class="chip">مدیریت محصول</button><button class="chip">توسعه فردی</button>
+            <button class="btn sm pri">+ پرامپت جدید</button>
+          </div>
+
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:13px">
+            <div class="stack">
+              <div class="card" style="border-color:var(--accent)">
+                <div class="between">
+                  <div><div class="strong small">🤖 prompt-07 · تولید درس روزانه برنامه‌نویسی</div><div class="tiny muted">دسته: برنامه‌نویسی · نسخه ۳ · ۴۷ بار استفاده · آخرین ویرایش: دیروز</div></div>
+                  <span class="badge info">برگزیده</span>
+                </div>
+                <div class="code perf" style="margin-top:9px;max-height:150px">تو یک مدرس ارشد برنامه‌نویسی هستی.
+برای دوره «{course_title}» روز {day_number} با موضوع «{topic}»
+یک درس ۱۰ دقیقه‌ای بنویس. سطح: {level} — لحن: {tone}.
+
+ساختار اجباری:
+1) هدف امروز (یک جمله)
+2) توضیح مفهوم با مثال واقعی
+3) کد اجراشدنی (پایتون ۳.۱۱)
+4) نکته طلایی (یک insight عملی)
+5) تمرین با خروجی مشخص (۳۵ دقیقه)
+
+خروجی را در قالب Markdown با Frontmatter بده.</div>
+                <div class="hstack" style="margin-top:10px">
+                  <button class="btn sm pri">📋 کپی پرامپت</button>
+                  <button class="btn sm">✏️ ویرایش</button>
+                  <button class="btn sm">⬆ نسخه جدید</button>
+                  <span class="spacer" style="flex:1"></span>
+                  <span class="tiny muted">متغیرها: ۵</span>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="between"><div><div class="strong small">🧩 prompt-11 · تبدیل فلوی CMS به درس با مثال واقعی</div><div class="tiny muted">دسته: مدیریت محصول · نسخه ۱ · ۹ بار استفاده</div></div><span class="badge n">عادی</span></div>
+                <p class="tiny muted" style="margin:8px 0 0">تو یک طراح محصول هستی. برای روز {day_number} از دوره «{course_title}»،…</p>
+                <div class="hstack" style="margin-top:8px"><button class="btn sm">📋 کپی</button><button class="btn sm">✏️ ویرایش</button></div>
+              </div>
+
+              <div class="card">
+                <div class="between"><div><div class="strong small">🔁 prompt-04 · ساخت ۵ درس هفته از یک سرفصل</div><div class="tiny muted">دسته: برنامه‌نویسی · نسخه ۲ · ۳۱ بار استفاده</div></div><span class="badge n">عادی</span></div>
+                <div class="hstack" style="margin-top:8px"><button class="btn sm">📋 کپی</button><button class="btn sm">✏️ ویرایش</button><button class="btn sm">نسخه‌ها (۲)</button></div>
+              </div>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">جایگذاری خودکار متغیرها</div>
+                <div class="field" style="margin-bottom:7px"><label class="lbl">course_title</label><input class="input" value="پایتون و معماری بک‌اند"></div>
+                <div class="g2">
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">day_number</label><input class="input num" value="۴۴"></div>
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">topic</label><input class="input" value="زمان‌بند کارها و Retry"></div>
+                </div>
+                <div class="g2">
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">level</label><select class="select"><option>متوسط</option><option>مقدماتی</option><option>پیشرفته</option></select></div>
+                  <div class="field" style="margin-bottom:7px"><label class="lbl">tone</label><select class="select"><option>معلم حامی، بدون شعار</option><option>خشک و فنی</option></select></div>
+                </div>
+                <button class="btn pri blk sm">📋 کپی پرامپت پرشده</button>
+              </div>
+              <div class="card soft">
+                <div class="strong small" style="margin-bottom:8px">گیت کیفیت خودکار (پیش از انتشار)</div>
+                <div class="stack small">
+                  <div class="between"><span>هدف امروز در یک جمله؟</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>کد قابل اجرا در نسخه پایتون دوره؟</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>تمرین با خروجی مشخص؟</span><span class="badge ok">✓</span></div>
+                  <div class="between"><span>زمان کل بین ۲۰ تا ۵۰ دقیقه؟</span><span class="badge warn">۳۵ + ۶۰</span></div>
+                </div>
+                <p class="tiny muted" style="margin:9px 0 0">درس با وضعیت «۳۵+۶۰ دقیقه» به‌عنوان مینی‌پروژه معتبر است — گیت کیفیت برچسب مخصوص دارد.</p>
+              </div>
+              <div class="call info"><span class="ic">📌</span><p class="small" style="margin:0">دسترسی سریع: هر پرامپت با دکمه کپی، در کلیپ‌بورد آماده است تا در ChatGPT یا Claude استفاده شود — همان‌طور که PRD ۲.۰ خواسته، اما این‌بار نسخه‌دار و همراه با جایگذاری متغیر.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-aup" data-kick="۴ پنل مدیریت" data-title="بارگذاری گروهی — از Zip تا درخت" data-desc="مسیر پرسرعت برای ادمین‌های حرفه‌ای: کشیدن یک Zip → نگاشت خودکار پوشه‌ها به روزها → گزارش خشک اعتبارسنجی (ترتیب، کدهای ناسازگار، متادیتای ناقص) → تأیید. دکمه «فقط تغییرات را به‌روزرسانی کن» برای آپلود بعدی همان فاز اضافه شده تا کار ادمین به بازنویسی تبدیل نشود." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/upload</div><span class="win-tag">پنل مدیریت · بارگذاری</span></div>
+        <div class="app-main">
+          <div class="app-top"><h2>بارگذاری گروهی محتوا</h2><span class="spacer" style="flex:1"></span><span class="badge n">قاعده: بافر ۱۴ روزه حفظ شود</span></div>
+
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:13px">
+            <div>
+              <div class="card dash center" style="padding:26px 16px">
+                <div class="ico lg" style="margin:0 auto 9px;font-size:22px">📦</div>
+                <div class="strong small">فایل Zip یا پوشه Markdown را بکشید و رها کنید</div>
+                <p class="tiny muted" style="margin:7px 0 12px">ساختار پوشه‌ها به‌طور خودکار به فاز/هفته/روز نگاشت می‌شود.</p>
+                <div class="hstack" style="justify-content:center"><button class="btn sm">انتخاب فایل…</button><button class="btn ghost sm">بارگذاری پوشه</button></div>
+                <hr class="sep">
+                <div class="code" style="font-size:11.5px;text-align:left">phase-03/
+  week-09/
+    day-043-queue.md
+    day-044-scheduler.md
+    day-045-idempotency.md
+  week-10/
+    day-046-monitoring.md</div>
+              </div>
+              <div class="card soft" style="margin-top:11px">
+                <div class="strong small" style="margin-bottom:6px">حالت‌های آپلود</div>
+                <div class="hstack"><span class="chip on">فقط افزودن موارد جدید</span><span class="chip">به‌روزرسانی موارد موجود</span><span class="chip">همه را جایگزین کن</span></div>
+                <div class="hstack" style="margin-top:9px"><span class="chip on">اعتبارسنجی سخت (خطا = توقف)</span><span class="chip">انتشار پیش‌نویس به‌عنوان پیش‌نویس</span></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="card sect">
+                <div class="between" style="margin-bottom:8px"><h3>گزارش اعتبارسنجی · phase-03.zip</h3><span class="badge bad">۲ خطا · ۱ هشدار</span></div>
+                <div class="stack">
+                  <div class="call bad" style="padding:9px 11px"><span class="ic">✕</span><p class="small" style="margin:0"><b>روز ۴۶ دو بار تکرار شده است.</b> دو فایل با شماره روز یکسان: day-046-monitoring.md و day-046-flower.md — یکی را نگه دار و دیگری را حذف یا شماره‌گذاری کن.</p></div>
+                  <div class="call bad" style="padding:9px 11px"><span class="ic">✕</span><p class="small" style="margin:0"><b>روز ۴۵ متادیتای ناقص دارد.</b> فیلد <span class="mono">estimated_minutes</span> خالی است؛ پیش‌فرض ۳۵ دقیقه اعمال شود یا اصلاح کنی؟ <span class="chip tiny">اعمال پیش‌فرض</span></p></div>
+                  <div class="call warn" style="padding:9px 11px"><span class="ic">⚠</span><p class="small" style="margin:0"><b>ترتیب هفته‌ها پیوسته نیست.</b> بین week-09 و week-10 روزهای ۴۳–۴۷ پر شده‌اند اما روز ۴۸ (مرور جمعه) وجود ندارد — ساختار پیش‌فرض هفتگی می‌تواند آن را بسازد. <span class="chip tiny">ساخت خودکار روز مرور</span></p></div>
+                  <div class="call ok" style="padding:9px 11px"><span class="ic">✓</span><p class="small" style="margin:0">۳ فایل سالم شناسایی شد: روزهای ۴۳، ۴۴، ۴۶ · نگاشت فاز ۳ / هفته ۹ و ۱۰ · وضعیت پیشنهادی: <b>منتشرشده</b></p></div>
+                </div>
+                <hr class="sep">
+                <div class="between">
+                  <span class="tiny muted">۱۲ فایل در صف · حجم ۱۴۸ کیلوبایت · زمان تقریبی: کمتر از ۵ ثانیه</span>
+                  <div class="hstack"><button class="btn sm ghost">دانلود گزارش (CSV)</button><button class="btn sm pri" disabled>تأیید و بارگذاری (با رفع خطاها) <span class="an" data-note="0">✎</span></button></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="strong small" style="margin-bottom:7px">پیش از تأیید، یک قاب پیش‌نمایش ببین</div>
+                <div class="ph ph-txt" style="height:70px">Diff پیش‌نمایش: ۳ فایل جدید · ۰ به‌روزرسانی · تاریخچه نسخه هر فایل یک نسخه ذخیره می‌کند</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-anotif" data-kick="۴ پنل مدیریت" data-title="اعلان‌ها، صف ارسال و لاگ روبیکا" data-desc="کنترل‌اتاق فرمان: هر پیام در صف با زمان، وضعیت و متن قابل بازبینی است. سه چیز مهم دارد: پنجره‌ی سکوت، سقف سخت سه پیام در روز، و بازگویی/تلاش مجدد برای ارسال‌های ناموفق. لاگ، عیب‌یابی «چرا پیام دیشب نرسید؟» را از حدس‌وگمان به مشاهده تبدیل می‌کند." data-who="🔐 پنل مدیریت محتوا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://app.qatreh.ir/admin/notifications</div><span class="win-tag">پنل مدیریت · اعلان‌ها</span></div>
+        <div class="app-main">
+          <div class="app-top">
+            <h2>اعلان‌ها و صف ارسال</h2>
+            <span class="spacer" style="flex:1"></span>
+            <span class="badge ok">اتصال روبیکا: سالم</span><span class="badge n">آخرین پینگ: ۲ دقیقه پیش</span>
+          </div>
+
+          <div class="g4 sect">
+            <div class="kpi"><div class="l">پیام‌های امروز</div><div class="v num">۳ / ۳</div><div class="tiny muted">سقف سخت رعایت شده</div></div>
+            <div class="kpi"><div class="l">در صف</div><div class="v num">۱</div><div class="tiny muted">یادآوری عصرانه · ۱۸:۰۰</div></div>
+            <div class="kpi"><div class="l">ناموفق (۲۴ ساعت)</div><div class="v num">۰</div></div>
+            <div class="kpi"><div class="l">پنجره سکوت</div><div class="v small strong">۲۳:۰۰ – ۰۷:۰۰</div></div>
+          </div>
+
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:13px">
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="between" style="padding:12px 13px 0"><h3>صف و ارسال‌های امروز</h3><div class="seg tiny"><button class="on">امروز</button><button>هفته</button><button>ناموفق‌ها</button></div></div>
+              <table class="tbl">
+                <thead><tr><th>زمان</th><th>نوع</th><th>گیرنده</th><th>وضعیت</th><th></th></tr></thead>
+                <tbody>
+                  <tr><td class="num">۰۸:۰۰</td><td>☀️ پیام درس روز ۴۳</td><td class="mono tiny">mehdi_dev</td><td><span class="badge ok">ارسال‌شده</span></td><td><button class="btn sm">متن</button></td></tr>
+                  <tr><td class="num">۰۸:۰۰</td><td>☀️ پیام درس روز ۴۳</td><td class="mono tiny">sara_pm</td><td><span class="badge ok">ارسال‌شده</span></td><td><button class="btn sm">متن</button></td></tr>
+                  <tr><td class="num">۱۲:۳۰</td><td>🏅 تبریک ثبت تمرین</td><td class="mono tiny">mehdi_dev</td><td><span class="badge ok">ارسال‌شده</span></td><td><button class="btn sm">متن</button></td></tr>
+                  <tr><td class="num">۱۸:۰۰</td><td>⏰ یادآوری عصرانه (اگر ثبت نشده)</td><td class="mono tiny">sara_pm</td><td><span class="badge info">در صف</span></td><td><button class="btn sm">ویرایش</button></td></tr>
+                  <tr><td class="num">۲۰:۰۰</td><td>🔔 «۲ روز تا پایان فاز ۳»</td><td class="mono tiny">همه (۲)</td><td><span class="badge n">پیش‌نویس</span></td><td><button class="btn sm">ارسال‌نکن</button></td></tr>
+                </tbody>
+              </table>
+              <div class="hstack" style="padding:11px 13px"><button class="btn sm">🔁 تلاش مجدد ناموفق‌ها</button><button class="btn sm">⏸ توقف ارسال همه (حالت تعمیر)</button></div>
+            </div>
+
+            <div class="stack">
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">متن پیام صبحگاهی · قالب</div>
+                <div class="code" style="font-size:11.5px;white-space:pre-wrap">☀️ <b>روز {day} از {total}</b> — {course_title}
+🎯 هدف امروز: {goal}
+⏱ مطالعه {read_min} دقیقه · تمرین {ex_min} دقیقه
+{exercise_title}
+
+لینک: {deep_link}
+
+دستورها: وضعیت · توقف ۵ · ساعت 21:00</div>
+                <div class="hstack" style="margin-top:9px"><span class="chip">متغیر: ۷</span><span class="chip on">پیش‌نمایش با داده واقعی</span><button class="btn sm">ویرایش قالب</button></div>
+              </div>
+              <div class="card">
+                <div class="strong small" style="margin-bottom:8px">قواعد ارسال (قابل تنظیم)</div>
+                <div class="stack small">
+                  <div class="between"><span>پنجره سکوت</span><span class="chip">۲۳:۰۰ – ۰۷:۰۰</span></div>
+                  <div class="between"><span>سقف روزانه</span><span class="chip">۳ پیام</span></div>
+                  <div class="between"><span>عدم ارسال پس از ثبت موفق تمرین</span><span class="chip on">فعال</span></div>
+                  <div class="between"><span>جمعه‌ها (روز مرور)</span><span class="chip">فقط کارنامه ۱۰:۰۰</span></div>
+                  <div class="between"><span>تلاش مجدد خودکار</span><span class="chip">۲ بار · فاصله ۵ دقیقه</span></div>
+                </div>
+              </div>
+              <div class="call info"><span class="ic">🧾</span><p class="small" style="margin:0">هر ارسال در «لاگ روبیکا» با شناسه پیام، کد وضعیت و بدنه ذخیره می‌شود؛ حذف لاگ بعد از ۳۰ روز به‌صورت خودکار انجام می‌گیرد.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-r1" data-kick="۵ بازوی روبیکا" data-title="پیام صبحگاهی — کالبدشکافی یک پیام" data-desc="مسیر ۲ سند: هر پیام باید در سه ثانیه اول سه چیز را منتقل کند: امروز روز چندم است، امروز چه کاری باید بکنم، و از کجا شروع کنم. پیام بعد از ثبت موفق تمرین، دیگر ارسال نمی‌شود (حالت راست: تبدیل به پیام تبریک)." data-who="📱 بازوی روبیکا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">rubika://bot/qatreh · پیام ۰۸:۰۰</div><span class="win-tag">بازوی پیگیری · پیام صبحگاهی</span></div>
+        <div style="display:grid;grid-template-columns:344px minmax(0,1fr) 300px;gap:16px;padding:16px">
+          <div class="phone">
+            <div class="p-top"><span class="avatar">💧</span><div class="small strong">ربات قطره</div><span class="spacer" style="flex:1"></span><span class="tiny">۰۸:۰۰</span></div>
+            <div class="chat">
+              <div class="bg them">
+                ☀️ <b>روز ۴۳ از ۱۸۰</b> — پایتون و معماری بک‌اند<br><br>
+                🎯 <b>هدف امروز:</b> یک کار سنگین را از مسیر درخواست جدا کنی.<br><br>
+                ⏱ مطالعه ۱۰ دقیقه · تمرین ۳۵ دقیقه<br>
+                🏋️ تمرین: صف کارها با Redis و Celery
+                <span class="lnk">📖 مطالعه درس امروز و ثبت تمرین ←</span>
+                <div class="meta">۰۸:۰۰</div>
+              </div>
+              <div class="bg them" style="background:#fafbfc">
+                <span class="tiny muted">دستورها:</span><br>
+                <span class="mono tiny">وضعیت</span> · <span class="mono tiny">توقف ۵</span> · <span class="mono tiny">ساعت 21:00</span> · <span class="mono tiny">راهنما</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="margin-bottom:9px">کالبدشکافی پیام</h3>
+            <div class="stack">
+              <div class="card soft"><div class="between"><span class="small strong">۱ · شماره روز و مقصد</span><span class="badge n">ثابت</span></div><p class="tiny muted" style="margin:5px 0 0">«روز ۴۳ از ۱۸۰» — حس پیشرفت و پایان‌پذیری. عدد روز، نه تاریخ شمسی.</p></div>
+              <div class="card soft"><div class="between"><span class="small strong">۲ · هدف امروز</span><span class="badge n">متغیر {goal}</span></div><p class="tiny muted" style="margin:5px 0 0">یک جمله از Frontmatter درس. اگر خالی باشد، معلم مجاز به انتشار نیست (گیت کیفیت).</p></div>
+              <div class="card soft"><div class="between"><span class="small strong">۳ · بودجه زمانی</span><span class="badge n">از بودجه کاربر</span></div><p class="tiny muted" style="margin:5px 0 0">اگر کاربر «۲۰ دقیقه» انتخاب کرده باشد، همین خط به «۲۰ دقیقه» تغییر می‌کند.</p></div>
+              <div class="card soft"><div class="between"><span class="small strong">۴ · لینک عمیق</span><span class="badge info">قلب مسیر ۲</span></div><p class="tiny muted" style="margin:5px 0 0">مستقیم به <span class="mono">/course/…/day/43</span> — نه به صفحه اصلی. یک کلیک تا درس.</p></div>
+              <div class="card soft"><div class="between"><span class="small strong">۵ · خط دستورها</span><span class="badge n">توانمندسازی</span></div><p class="tiny muted" style="margin:5px 0 0">همیشه یک ردیف دستور دیده می‌شود تا کاربر بداند می‌تواند کنترل بگیرد — نه اینکه گیر کند.</p></div>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="phone" style="width:100%">
+              <div class="p-top"><span class="avatar">💧</span><div class="small strong">حالت G: ثبت‌شده</div></div>
+              <div class="chat" style="min-height:0;padding:10px">
+                <div class="bg them" style="background:#eef8f1;border-color:#cfe9d9">
+                  ✅ <b>قطره امروز ثبت شد.</b><br>روز ۴۳ · Streak ۱۳ 🔥
+                  <div class="meta">۰۸:۰۳</div>
+                </div>
+              </div>
+            </div>
+            <div class="call ok"><span class="ic">🔕</span><p class="small" style="margin:0">قاعده ضد‌اسپم: اگر تمرین امروز در وب ثبت شده باشد، یادآوری عصرانه حذف می‌شود — کاربر هرگز دو بار برای یک کار پیام نمی‌گیرد.</p></div>
+            <div class="call bad"><span class="ic">🚧</span><p class="small" style="margin:0"><b>پیش‌نیاز بحرانی:</b> این لینک تنها زمانی روی موبایل باز می‌شود که وب‌اپ روی یک آدرس در دسترس میزبانی شود. جایگزین اضطراری: «کد روز» (مثلاً <span class="mono">Q-43</span>) که کاربر در وب‌اپ وارد می‌کند.</p></div>
+            <div class="card">
+              <div class="strong small" style="margin-bottom:6px">اعتبارسنجی پیش از ارسال</div>
+              <div class="stack small">
+                <div class="between"><span>درس روز منتشر شده؟</span><span class="badge ok">✓</span></div>
+                <div class="between"><span>کاربر در حالت توقف؟</span><span class="badge n">خیر</span></div>
+                <div class="between"><span>در پنجره سکوت؟</span><span class="badge n">خیر</span></div>
+                <div class="between"><span>سقف ۳ پیام روز؟</span><span class="badge ok">۱ / ۳</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-r2" data-kick="۵ بازوی روبیکا" data-title="یادآوری عصرانه + ثبت سریع از داخل روبیکا" data-desc="پیشنهاد مهم این سند: اگر کاربر در روبیکا بماند و «انجام دادم» را همان‌جا تیک بزند، سطح ۱ به یک ثانیه می‌رسد و Streak زنده می‌ماند — بدون باز کردن وب‌اپ. این تنها نقطه‌ای است که بازو از «یادآور» به «کانال اصلی یادگیری» ارتقا پیدا می‌کند." data-who="📱 بازوی روبیکا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">rubika://bot/qatreh · یادآوری ۱۸:۰۰</div><span class="win-tag">بازوی پیگیری · یادآوری و ثبت سریع</span></div>
+        <div style="display:grid;grid-template-columns:344px minmax(0,1fr) 300px;gap:16px;padding:16px">
+          <div class="phone">
+            <div class="p-top"><span class="avatar">💧</span><div class="small strong">ربات قطره</div><span class="spacer" style="flex:1"></span><span class="tiny">۱۸:۰۰</span></div>
+            <div class="chat">
+              <div class="bg them">
+                ⏰ <b>۴ ساعت تا پایان امروز.</b><br>
+                تمرین روز ۴۳ ثبت نشده. با ۱۵ ثانیه هم می‌شود قطرهٔ امروز را نگه داشت:
+                <div class="kbdr">
+                  <span>۱ · انجام دادم ✓</span>
+                  <span>۲ · اسکرین‌شات می‌فرستم</span>
+                  <span>۳ · ثبت در وب‌اپ</span>
+                  <span>۴ · امشب نمی‌رسم</span>
+                </div>
+                <div class="meta">۱۸:۰۰</div>
+              </div>
+              <div class="bg me">۱<div class="meta">۱۸:۰۲</div></div>
+              <div class="bg them" style="background:#eef8f1;border-color:#cfe9d9">
+                ثبت شد ✅ <b>Streak ۱۳ 🔥</b><br>
+                این «خوداظهاری سطح ۱» است؛ اگر بعداً اسکرین‌شات یا لینک بفرستی، به «تأییدشده» ارتقا می‌گیرد.
+                <div class="meta">۱۸:۰۲</div>
+              </div>
+              <div class="bg me">چرا ۱۳ نشد؟ دیروز ۱۲ بود<div class="meta">۱۸:۰۳</div></div>
+              <div class="bg them">
+                چون امروز هم ثبت کردی و دیروز را هم با مهلت جبران نگه داشتی 🙂 عالی پیش می‌روی.
+                <div class="meta">۱۸:۰۴</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="margin-bottom:9px">چهار پاسخ، چهار منطق</h3>
+            <div class="stack">
+              <div class="card soft"><div class="strong small">۱ · انجام دادم ✓</div><p class="tiny muted" style="margin:5px 0 0">ثبت سطح ۱ + تبریک + دعوت به ارتقا با مدرک. کاربر در کمتر از ۲ ثانیه Streak را حفظ می‌کند.</p></div>
+              <div class="card soft"><div class="strong small">۲ · اسکرین‌شات می‌فرستم</div><p class="tiny muted" style="margin:5px 0 0">ربات گیره‌ی فایل باز می‌کند؛ رسانه ذخیره و به درس روز پیوست می‌شود (نیازمند بررسی محدودیت‌های API روبیکا).</p></div>
+              <div class="card soft"><div class="strong small">۳ · ثبت در وب‌اپ</div><p class="tiny muted" style="margin:5px 0 0">همان لینک عمیق روز؛ مسیر تخصصی برای تمرین‌های سنگین.</p></div>
+              <div class="card soft"><div class="strong small">۴ · امشب نمی‌رسم</div><p class="tiny muted" style="margin:5px 0 0">پاسخ‌های مهربان: «ژتون مرخصی (۲ در ماه) مصرف کنم؟» یا «فردا صبح با مهلت جبران ادامه بده». بدون سرزنش.</p></div>
+            </div>
+            <div class="call gold" style="margin-top:11px"><span class="ic">🕐</span><p class="small" style="margin:0"><b>قاعده ۲۴ ساعته:</b> پیام‌های یادآوری حداکثر تا ساعت ۲۱:۰۰ و فقط یک‌بار در روز. پس از ساعت ۲۱، سکوت کامل — حتی اگر ثبت نشده باشد.</p></div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="strong small" style="margin-bottom:7px">ظرفیت دقیق یادآوری</div>
+              <table class="tbl">
+                <thead><tr><th>وضعیت</th><th>پیام عصر</th></tr></thead>
+                <tbody>
+                  <tr><td class="small">ثبت‌شده امروز</td><td><span class="badge n">ارسال نمی‌شود</span></td></tr>
+                  <tr><td class="small">ثبت‌نشده · روز عادی</td><td><span class="badge ok">یک پیام</span></td></tr>
+                  <tr><td class="small">تأخیری (دیروز باز)</td><td><span class="badge info">پیام مهلت جبران</span></td></tr>
+                  <tr><td class="small">در حالت توقف</td><td><span class="badge n">۰</span></td></tr>
+                  <tr><td class="small">جمعه (روز مرور)</td><td><span class="badge n">فقط کارنامه ۱۰:۰۰</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card soft">
+              <div class="strong small" style="margin-bottom:6px">قیاس: اگر از روبیکا ثبت شود چه می‌شود؟</div>
+              <p class="tiny muted" style="margin:0">در پایگاه داده همان رکورد <span class="mono">daily_logs</span> با <span class="mono">exercise_submitted=1</span> و <span class="mono">level=1</span> و <span class="mono">source="rubika"</span> ساخته می‌شود. وب و ربات روی یک منبع حقیقت می‌نویسند — نه دو سیستم موازی.</p>
+            </div>
+            <div class="call info"><span class="ic">🔬</span><p class="small" style="margin:0">این فلوی «ثبت سریع» قبل از پیاده‌سازی به یک اسپایک فنی یک‌روزه نیاز دارد: بررسی وجود و پایداری دکمه‌های سریع در API روبیکا؛ اگر نبود، همان منطق با پاسخ‌های شماره‌ای متنی کار می‌کند.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-r3" data-kick="۵ بازوی روبیکا" data-title="دستورات کنترلی — «وضعیت»، «دوره‌ها»، «توقف»، «ساعت»" data-desc="دستورات سند ۲.۰ حفظ شده‌اند، اما دو اصلاح: (۱) پاسخ‌های متنی-عددی به‌جای تکیه بر buttons نامطمئن API، (۲) در پاسخ «وضعیت» یک کارت فشرده با Streak، روز جاری و کنش بعدی می‌آید — چون دستور tanpa کنش بعدی، فقط یک گزارش خاموش است." data-who="📱 بازوی روبیکا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">rubika://bot/qatreh · گفت‌وگوی دستورات</div><span class="win-tag">بازوی پیگیری · کنترل</span></div>
+        <div style="display:grid;grid-template-columns:344px minmax(0,1fr) 300px;gap:16px;padding:16px">
+          <div class="phone">
+            <div class="p-top"><span class="avatar">💧</span><div class="small strong">ربات قطره</div></div>
+            <div class="chat">
+              <div class="bg me">وضعیت<div class="meta">۲۰:۱۱</div></div>
+              <div class="bg them">
+                📊 <b>وضعیت تو</b><br>
+                🐍 پایتون و بک‌اند · روز <b>۴۳</b> از ۱۸۰ · پیشرفت ۲۴٪<br>
+                🔥 Streak: <b>۱۳ روز</b> (رکورد ۱۹)<br>
+                📅 این هفته: ۴ از ۶ روز ✓<br>
+                ⏭ بعدی: زمان‌بند کارها و Retry
+                <span class="lnk">ادامه در وب‌اپ ←</span>
+                <div class="meta">۲۰:۱۱</div>
+              </div>
+              <div class="bg me">دوره‌ها<div class="meta">۲۰:۱۲</div></div>
+              <div class="bg them">
+                ۱ · 🐍 پایتون و معماری بک‌اند <b>(فعال · روز ۴۳)</b><br>
+                ۲ · 🎨 مبانی فرانت‌اند (نگهداری · روز ۵۸)<br>
+                ۳ · 🌿 Git و GitHub (تمام‌شده)<br><br>
+                برای تغییر دوره فعال، شماره را بفرست. فقط یکی می‌تواند فعال باشد.
+                <div class="meta">۲۰:۱۲</div>
+              </div>
+              <div class="bg me">توقف ۵<div class="meta">۲۰:۱۳</div></div>
+              <div class="bg them" style="background:#fffdf5;border-color:#f0dcb4">
+                ⏸ یادآوری‌ها تا ۵ روز متوقف شد.<br>
+                روزهای توقف «ازدست‌رفته» حساب نمی‌شوند و Streak نمی‌شکند.<br>
+                هر وقت خواستی: <span class="mono tiny">ادامه</span>
+                <div class="meta">۲۰:۱۳</div>
+              </div>
+              <div class="bg me">ساعت 21:30<div class="meta">۲۰:۱۴</div></div>
+              <div class="bg them">✅ ساعت یادآوری عصرانه به ۲۱:۳۰ تغییر کرد. (پیام صبح بدون تغییر ماند: ۰۸:۰۰)<div class="meta">۲۰:۱۴</div></div>
+            </div>
+          </div>
+
+          <div>
+            <h3 style="margin-bottom:9px">جدول دستورات (از PRD ۲.۰) و پاسخ‌های پیشنهادی</h3>
+            <div class="card" style="padding:0;overflow:hidden">
+              <table class="tbl">
+                <thead><tr><th>دستور</th><th>عملکرد</th><th>پاسخ</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono tiny">وضعیت</td><td class="small">کارت آمار + کنش بعدی</td><td><span class="badge ok">فوری</span></td></tr>
+                  <tr><td class="mono tiny">دوره‌ها</td><td class="small">فهرست شماره‌دار + سوئیچ</td><td><span class="badge ok">فوری</span></td></tr>
+                  <tr><td class="mono tiny">توقف [n]</td><td class="small">خاموشی اعلان‌ها تا n روز</td><td><span class="badge ok">فوری</span></td></tr>
+                  <tr><td class="mono tiny">ادامه</td><td class="small">فعال‌سازی مجدد</td><td><span class="badge ok">فوری</span></td></tr>
+                  <tr><td class="mono tiny">ساعت HH:MM</td><td class="small">تغییر ساعت یادآوری</td><td><span class="badge warn">اعتبارسنجی</span></td></tr>
+                  <tr><td class="mono tiny">راهنما</td><td class="small">راهنمای کامل + کلمات کلیدی</td><td><span class="badge n">ثابت</span></td></tr>
+                  <tr><td class="mono tiny">امروز</td><td class="small">پیام امروز را دوباره بفرست</td><td><span class="badge info">افزوده</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="call info" style="margin-top:11px"><span class="ic">⌨️</span><p class="small" style="margin:0">دستور ناشناس → پاسخ مهربان با فهرست گزینه‌ها: «دستور را نفهمیدم. این‌ها را می‌توانی بفرستی: وضعیت، دوره‌ها، توقف ۵، ادامه، ساعت 21:00». هرگز پیام خالی یا خطای خام.</p></div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="strong small" style="margin-bottom:7px">اعتبارسنجی ورودی‌ها</div>
+              <div class="stack small">
+                <div class="between"><span><span class="mono tiny">ساعت 25:00</span></span><span class="badge bad">رد → پیشنهاد معتبر</span></div>
+                <div class="between"><span><span class="mono tiny">توقف سه</span></span><span class="badge bad">عدد لازم است</span></div>
+                <div class="between"><span><span class="mono tiny">توقف 60</span></span><span class="badge warn">سقف ۳۰ روز</span></div>
+                <div class="between"><span><span class="mono tiny">۳</span> (تغییر دوره)</span><span class="badge n">روز نگهداری از روز اول شروع می‌شود</span></div>
+              </div>
+            </div>
+            <div class="card soft">
+              <div class="strong small" style="margin-bottom:6px">معماری</div>
+              <p class="tiny muted" style="margin:0">Webhook یا Polling → FastAPI → همان سرویس‌های وب داخلی (نه مسیرهای جدا). هر دستور، همان توابع دامنه را صدا می‌زند که وب‌اپ صدا می‌زند؛ بنابراین «ساعت 21:30» در روبیکا بلافاصله در صفحه تنظیمات وب هم دیده می‌شود.</p>
+            </div>
+            <div class="call warn"><span class="ic">⚠</span><p class="small" style="margin:0">محدودیت‌های احتمالی روبیکا (نرخ ارسال، فرمت پیام، رسانه) باید در اسپایک فنی ثبت شود؛ طراحی بالا متن‌محور است تا در بدترین حالت هم کار کند.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-r4" data-kick="۵ بازوی روبیکا" data-title="جریان‌های پیام — هشت سناریو، یک لحن" data-desc="کتابخانه‌ی متن پیام‌ها: هر سناریو با متغیرهایش نوشته می‌شود تا لحن واحد بماند. قاعده لحن: کوتاه، بدون شعار، بدون سرزنش، هر پیام حداکثر یک کنش. ستون کنار، قواعد سخت ارسال و پرچم‌های حساسیت را فهرست می‌کند." data-who="📱 بازوی روبیکا">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">/admin/notifications/templates</div><span class="win-tag">بازوی پیگیری · کتابخانه پیام</span></div>
+        <div style="padding:16px" class="g2">
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">☀️ صبح · درس روز</span><span class="badge n">هر روز کاری</span></div>
+            <p class="small" style="margin:0">«روز ۴۳ از ۱۸۰ — پایتون. هدف امروز: صف کارها با Redis.» + لینک عمیق درس.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">⏰ عصر · یادآوری</span><span class="badge n">اگر ثبت نشده</span></div>
+            <p class="small" style="margin:0">«۴ ساعت تا پایان امروز. با ۱۵ ثانیه هم می‌شود قطرهٔ امروز را نگه داشت.» + چهار پاسخ.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">🏅 ثبت · تبریک</span><span class="badge n">رویدادی</span></div>
+            <p class="small" style="margin:0">«قطره امروز ثبت شد. Streak ۱۳ 🔥 — ۶ روز تا رکورد جدیدت.» بدون اموجی اضافه.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">🤝 شکست · بازگشت</span><span class="badge n">پس از ازدست‌رفتن</span></div>
+            <p class="small" style="margin:0">«Streak از صفر شروع شد، اما رکورد ۱۹ روزه‌ات سر جایش است. امروز؟» + یک دکمه. جمله سرزنش‌آمیز وجود ندارد.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">🗓 جمعه · کارنامه</span><span class="badge n">جمعه ۱۰:۰۰</span></div>
+            <p class="small" style="margin:0">«هفته ۹: ۵ درس، ۱ مینی‌پروژه، ۲ ساعت و ۴۰ دقیقه یادگیری.» + تصویر کارت + لینک کارنامه.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">🏆 پایان فاز · نشان</span><span class="badge n">حداکثر فازی</span></div>
+            <p class="small" style="margin:0">«فاز ۳ تمام شد. نشان «صف‌ساز» را گرفتی. فاز ۴: معماری سرویس — فردا شروع می‌کنیم.»</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">⏸ تأیید توقف / ادامه</span><span class="badge n">دستوری</span></div>
+            <p class="small" style="margin:0">«یادآوری‌ها تا ۵ روز متوقف شد؛ روزها ازدست‌رفته حساب نمی‌شوند.» + یادآوری یک‌خطی روز بازگشت.</p>
+          </div>
+          <div class="card soft">
+            <div class="between" style="margin-bottom:7px"><span class="small strong">📎 ارتقای مدرک</span><span class="badge n">پس از خوداظهاری</span></div>
+            <p class="small" style="margin:0">«امروز را با خوداظهاری ثبت کردی. اسکرین‌شات بفرست تا «تأییدشده» شود.» — تشویق، نه اجبار.</p>
+          </div>
+        </div>
+        <div style="padding:0 16px 16px">
+          <div class="card">
+            <div class="strong small" style="margin-bottom:8px">قواعد سخت ارسال</div>
+            <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px">
+              <div class="call ok" style="padding:9px 11px"><span class="ic">🔢</span><p class="tiny" style="margin:0">حداکثر ۳ پیام در روز برای هر کاربر</p></div>
+              <div class="call ok" style="padding:9px 11px"><span class="ic">🌙</span><p class="tiny" style="margin:0">پنجره سکوت ۲۳:۰۰ تا ۰۷:۰۰</p></div>
+              <div class="call ok" style="padding:9px 11px"><span class="ic">🔕</span><p class="tiny" style="margin:0">پس از ثبت موفق، هیچ یادآوری‌ای ارسال نمی‌شود</p></div>
+              <div class="call ok" style="padding:9px 11px"><span class="ic">✋</span><p class="tiny" style="margin:0">توقف با یک دستور، بدون تأیید چندمرحله‌ای</p></div>
+              <div class="call ok" style="padding:9px 11px"><span class="ic">💬</span><p class="tiny" style="margin:0">لحن معلم حامی؛ بدون سرزنش، بدون مقایسه با دیگران</p></div>
+              <div class="call ok" style="padding:9px 11px"><span class="ic">🎯</span><p class="tiny" style="margin:0">هر پیام فقط یک کنش اصلی دارد</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="frame" id="f-states" data-kick="۶ سیستمی" data-title="حالت‌های صفحه — جایی که محصول واقعی ساخته می‌شود" data-desc="PRD فقط حالت موفق را می‌دید. این فریم، حالت‌های خالی، بارگذاری، خطا، آفلاین، دسترس‌پذیری و ریز-کپی‌ها را یک‌جا تعریف می‌کند. قاعده کلی: هیچ‌وقت صفحه بن‌بست یا پیام خطای خام نشان نمی‌دهیم؛ هر حالت یک کنش معتبر دارد." data-who="🧩 سیستمی">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">design-system/states</div><span class="win-tag">راهنمای طراحی · حالت‌ها</span></div>
+        <div style="padding:16px">
+          <h3 style="margin-bottom:9px">۱ · حالت‌های خالی (Empty)</h3>
+          <div class="g3 sect">
+            <div class="card dash center" style="padding:18px">
+              <div class="ico lg" style="margin:0 auto 8px">📘</div>
+              <div class="small strong">درس امروز منتشر نشده</div>
+              <p class="tiny muted" style="margin:6px 0 9px">معلم هنوز این درس را آماده نکرده. از یادآوری‌ها خبرت می‌کنیم؛ می‌توانی در این فاصله مرور هفته قبل را بخوانی.</p>
+              <button class="btn sm">مرور هفته قبل</button>
+            </div>
+            <div class="card dash center" style="padding:18px">
+              <div class="ico lg" style="margin:0 auto 8px">📁</div>
+              <div class="small strong">هنوز مدرکی ثبت نکرده‌ای</div>
+              <p class="tiny muted" style="margin:6px 0 9px">اولین مدرک، همین امروز ساخته می‌شود — یک خط یادداشت هم کافی است.</p>
+              <button class="btn sm pri">رفتن به درس امروز</button>
+            </div>
+            <div class="card dash center" style="padding:18px">
+              <div class="ico lg" style="margin:0 auto 8px">🔐</div>
+              <div class="small strong">شما مدیر محتوا هستید، ولی دوره‌ای ثبت نشده</div>
+              <p class="tiny muted" style="margin:6px 0 9px">با یک Zip یا فرم «دوره جدید»، اولین دوره در ۵ دقیقه ساخته می‌شود.</p>
+              <button class="btn sm">+ ساخت دوره</button>
+            </div>
+          </div>
+
+          <h3 style="margin-bottom:9px">۲ · بارگذاری (Loading) — چرا اسکلتانی، نه اسپینر</h3>
+          <div class="g2 sect">
+            <div class="card">
+              <div class="tiny muted" style="margin-bottom:8px">اسکلتانی برای داشبورد (HTMX: hx-indicator + skeleton)</div>
+              <div class="stack">
+                <div class="skel" style="width:42%"></div>
+                <div class="skel" style="width:88%"></div>
+                <div class="skel" style="width:70%"></div>
+                <div class="g3" style="margin-top:6px"><div class="skel" style="height:52px"></div><div class="skel" style="height:52px"></div><div class="skel" style="height:52px"></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="tiny muted" style="margin-bottom:8px">بارگذاری کنش (submit بدون رفرش)</div>
+              <div class="hstack"><button class="btn pri" disabled>در حال ثبت… <span class="tiny">⌛</span></button><button class="btn" disabled>✓ ثبت تمرین و ثبت قطره امروز</button></div>
+              <hr class="sep">
+              <div class="tiny muted" style="margin-bottom:6px">شبکه کند (آفلاین موقت):</div>
+              <div class="hstack"><span class="chip a">به‌محض بخشیدن شبکه، خودت را تکرار می‌کند… ارسال مجدد خودکار</span></div>
+              <p class="tiny muted" style="margin:8px 0 0">قاعده: هر کنش دیرتر از ۱ ثانیه بازخورد بصری بگیرد. هر ارسال پس از ۵ ثانیه، پیام «در صف است و به‌محض وصل شدن ثبت می‌شود» می‌گیرد.</p>
+            </div>
+          </div>
+
+          <h3 style="margin-bottom:9px">۳ · خطا و بازیابی — چهار سناریو پرتکرار</h3>
+          <div class="g2 sect">
+            <div class="call bad"><span class="ic">📡</span><div><p class="small strong" style="margin-bottom:3px">قطع اینترنت هنگام ثبت تمرین</p><p class="tiny" style="margin:0">«یادداشتت روی همین دستگاه نگه داشته شد و اول فرصت وصل شدن به سرور می‌رسد. حافظت می‌کنیم که از دست نرود.» (ذخیره محلی + retry خودکار)</p></div></div>
+            <div class="call bad"><span class="ic">📎</span><div><p class="small strong" style="margin-bottom:3px">فایل بزرگ‌تر از حد مجاز</p><p class="tiny" style="margin:0">«حجم فایل ۸.۲ مگابایت است؛ سقف ۵ مگابایت. عکس را فشرده کن یا لینک بفرست — بقیه فرم دست‌نخورده می‌ماند.» (هرگز فرم را خالی نکن)</p></div></div>
+            <div class="call bad"><span class="ic">🔍</span><div><p class="small strong" style="margin-bottom:3px">لینک مستقیم درس نامعتبر / ۴۰۴</p><p class="tiny" style="margin:0">«این روز در دسترس نیست. ممکن است دوره بازآرایی شده باشد.» + «رفتن به آخرین روز خوانده‌شده» (No dead end)</p></div></div>
+            <div class="call bad"><span class="ic">🤖</span><div><p class="small strong" style="margin-bottom:3px">خطای ارسال پیام روبیکا</p><p class="tiny" style="margin:0">در پنل: «۳ ارسال ناموفق — تلاش مجدد خودکار» + دکمه تلاش انسانی. کاربر پیام خطا از سمت ربات نمی‌گیرد.</p></div></div>
+          </div>
+
+          <h3 style="margin-bottom:9px">۴ · دسترس‌پذیری و RTL</h3>
+          <div class="g2">
+            <div class="card">
+              <div class="tiny muted" style="margin-bottom:8px">کنتراست + تمرکز کیبورد + هدف لمس</div>
+              <div class="hstack" style="margin-bottom:8px">
+                <span class="chip" style="background:#2f5fe0;color:#fff;border-color:#2f5fe0">سرمه‌ای روی سفید ۸.۱:۱ ✓</span>
+                <span class="chip" style="background:#1a8f4a;color:#fff;border-color:#1a8f4a">سبز تیره ۵.۴:۱ ✓</span>
+                <span class="chip" style="background:#8b93a5;color:#fff;border-color:#8b93a5">خاکستری ۳.۱:۱ ✕ متن</span>
+              </div>
+              <div class="hstack" style="margin-bottom:8px">
+                <button class="btn sm" style="outline:2px solid #2f5fe0;outline-offset:2px">فوکوس: حلقه ۲px + آفست</button>
+                <span class="chip">هدف لمس: ≥ ۴۴px</span>
+              </div>
+              <div class="tiny muted">وضعیت‌ها فقط با رنگ منتقل نمی‌شوند: ✓ ✕ ⏸ 🔁 + متن راوی.
+              <div class="hstack" style="margin-top:6px"><span class="daypill ok">✓ تکمیل</span><span class="daypill miss">— ازدست‌رفته</span><span class="daypill rest">⏸ مرخصی</span></div></div>
+            </div>
+            <div class="card">
+              <div class="tiny muted" style="margin-bottom:8px">RTL/LTR: کد و پیش‌نمایش، جهت مستقل</div>
+              <div class="g2">
+                <div>
+                  <div class="tiny muted">❌ کد داخل قاب RTL (وارونه)</div>
+                  <div class="ph ph-txt" style="height:58px">def send(x):  →  (x)send def</div>
+                </div>
+                <div>
+                  <div class="tiny muted">✅ قاب LTR با dir="ltr"</div>
+                  <div class="code" style="padding:8px">def send(x):
+    return x</div>
+                </div>
+              </div>
+              <hr class="sep">
+              <p class="tiny muted" style="margin:0">قاعده: بدنه RTL · بلوک کد و URL با <span class="mono">dir="ltr"</span> و <span class="mono">text-align:left</span> · اعداد UI فارسی، اعداد کد لاتین · تاریخ ذخیره میلادی، نمایش شمسی.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame" id="f-flows" data-kick="۶ سیستمی" data-title="جریان‌های کاربری، نقشه صفحات و کیت UI" data-desc="سه جریان اصلی (وب خالص، روبیکا-محور، خط تولید محتوا) به‌همراه نقشه صفحات MVP و اجزای پایه رابط. این فریم مرجع یکدست‌سازی برای فاز بصری است: هر رنگ، هر برچسب و هر جزء در بقیه فریم‌ها فقط از همین کیت برداشته شده." data-who="🧩 سیستمی">
+  <div class="duo">
+    <div>
+      <div class="win">
+        <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">design-system/flows</div><span class="win-tag">راهنمای طراحی · جریان‌ها و کیت</span></div>
+        <div style="padding:16px">
+          <h3 style="margin-bottom:9px">جریان ۱ · مسیر وب خالص (Standalone — استقلال کامل از پیام‌رسان)</h3>
+          <div class="flow sect">
+            <div class="fbox">ورود با لینک جادویی</div><div class="arr">←</div>
+            <div class="fbox">داشبورد «امروز»</div><div class="arr">←</div>
+            <div class="fbox">درس روز (۱۰ دقیقه)</div><div class="arr">←</div>
+            <div class="fbox">تمرین (۲۵–۴۵ دقیقه)</div><div class="arr">←</div>
+            <div class="fbox a">فرم ثبت مدرک</div><div class="arr">←</div>
+            <div class="fbox">تأیید + Streak</div><div class="arr">←</div>
+            <div class="fbox">درس فردا باز می‌شود</div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">جریان ۲ · مسیر روبیکا-محور (Notification-Driven)</h3>
+          <div class="flow sect">
+            <div class="fbox">۰۸:۰۰ پیام درس + هدف</div><div class="arr">←</div>
+            <div class="fbox a">کلیک لینک عمیق</div><div class="arr">←</div>
+            <div class="fbox">وب‌اپ → همان روز</div><div class="arr">←</div>
+            <div class="fbox">ثبت مدرک</div><div class="arr">←</div>
+            <div class="fbox">۱۸:۰۰ یادآوری (اگر ثبت نشده)</div><div class="arr">←</div>
+            <div class="fbox">۱ · انجام دادم (ثبت سریع)</div><div class="arr">←</div>
+            <div class="fbox a">Streak بیدار می‌ماند</div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">جریان ۳ · خط تولید محتوا (پنل مدیریت)</h3>
+          <div class="flow sect">
+            <div class="fbox">کپی پرامپت نسخه‌دار</div><div class="arr">←</div>
+            <div class="fbox">تولید در ChatGPT/Claude</div><div class="arr">←</div>
+            <div class="fbox a">بارگذاری Zip/MD</div><div class="arr">←</div>
+            <div class="fbox">گزارش اعتبارسنجی</div><div class="arr">←</div>
+            <div class="fbox">ویرایش در ویرایشگر</div><div class="arr">←</div>
+            <div class="fbox">گیت کیفیت</div><div class="arr">←</div>
+            <div class="fbox a">انتشار + صف ارسال</div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">نقشه صفحات (نکته: کلاه‌قرمز‌ها افزوده‌های این سند نسبت به PRD ۲.۰ هستند)</h3>
+          <div class="sm sect">
+            <div class="smbox">
+              <h4>👤 یادگیرنده</h4>
+              <button>ورود / آنبوردینگ <span class="badge info tiny">جدید</span></button>
+              <button>داشبورد امروز</button>
+              <button>دوره‌های من</button>
+              <button>درس روز + ثبت تمرین</button>
+              <button>تقویم ۱۸۰ روزه</button>
+              <button>مدارک من <span class="badge info tiny">جدید</span></button>
+              <button>کارنامه هفتگی <span class="badge info tiny">جدید</span></button>
+              <button>تنظیمات و روبیکا</button>
+            </div>
+            <div class="smbox">
+              <h4>🔐 پنل مدیریت</h4>
+              <button>داشبورد پوشش محتوا <span class="badge info tiny">جدید</span></button>
+              <button>مدیریت دوره‌ها</button>
+              <button>درخت دروس و فازها</button>
+              <button>ویرایشگر درس + تاریخچه <span class="badge info tiny">جدید</span></button>
+              <button>کتابخانه پرامپت AI</button>
+              <button>بارگذاری گروهی</button>
+              <button>اعلان‌ها و صف ارسال <span class="badge info tiny">جدید</span></button>
+              <button>لاگ روبیکا <span class="badge info tiny">جدید</span></button>
+            </div>
+            <div class="smbox">
+              <h4>📱 بازوی روبیکا</h4>
+              <button>پیام صبحگاهی</button>
+              <button>یادآوری عصرانه</button>
+              <button>ثبت سریع در پیام‌رسان <span class="badge info tiny">جدید</span></button>
+              <button>وضعیت / دوره‌ها / توقف / ساعت</button>
+              <button>کارنامه و نشان‌ها</button>
+              <button>بازگشت مهربان پس از شکست <span class="badge info tiny">جدید</span></button>
+            </div>
+          </div>
+
+          <h3 style="margin:13px 0 9px">کیت UI (لو-فای)</h3>
+          <div class="g2">
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">رنگ‌های نقش‌دار</div>
+              <div class="sw">
+                <div><div class="cbox" style="background:#2f5fe0"></div><div class="nam">کنش اصلی #2F5FE0</div></div>
+                <div><div class="cbox" style="background:#e8eeff"></div><div class="nam">زمینه تأکید #E8EEFF</div></div>
+                <div><div class="cbox" style="background:#1a8f4a"></div><div class="nam">موفق #1A8F4A</div></div>
+                <div><div class="cbox" style="background:#c0392b"></div><div class="nam">خطا #C0392B</div></div>
+                <div><div class="cbox" style="background:#b7791f"></div><div class="nam">هشدار #B7791F</div></div>
+                <div><div class="cbox" style="background:#171a21"></div><div class="nam">متن #171A21</div></div>
+              </div>
+              <p class="tiny muted" style="margin:8px 0 0">رنگ + نماد + متن؛ رنگ تنها حامل معنا نیست. ارتفاع/شعاع روی سیستم ۸ پیکسلی.</p>
+            </div>
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">مقیاس تایپوگرافی (Vazirmatn / Estedad)</div>
+              <div class="stack" style="gap:6px">
+                <div style="font-size:21px;font-weight:800">سرتیتر صفحه · ۲۱/۸۰۰</div>
+                <div style="font-size:17px;font-weight:700">عنوان بخش · ۱۷/۷۰۰</div>
+                <div style="font-size:14.5px;font-weight:700">عنوان کارت · ۱۴.۵/۷۰۰</div>
+                <div style="font-size:14px">متن اصلی · ۱۴/۴۰۰ — ارتفاع خط ۱.۷۵ برای متن فارسی</div>
+                <div class="tiny muted">متادیتا · ۱۲ و ۱۱ — فقط برای اطلاعات فرعی</div>
+                <div class="mono" style="font-size:12px">code: dir=ltr · tabular-nums</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">اجزای پایه</div>
+              <div class="hstack" style="margin-bottom:8px"><button class="btn pri">کنش اصلی</button><button class="btn">ثانویه</button><button class="btn ghost">دashed</button><button class="btn sm">کوچک</button></div>
+              <div class="hstack" style="margin-bottom:8px"><span class="badge ok">✓ تأییدشده</span><span class="badge warn">خوداظهاری</span><span class="badge bad">ازدست‌رفته</span><span class="badge info">امروز</span><span class="badge n">خنثی</span></div>
+              <div class="hstack" style="margin-bottom:8px"><span class="chip on">انتخاب‌شده</span><span class="chip">گزینه</span><span class="chip a">دوره فعال ▾</span><span class="daypill ok">✓ تکمیل</span><span class="daypill rest">⏸ مرخصی</span></div>
+              <div class="hstack"><div class="avatar">م‍</div><div class="ico">🐍</div><div class="bar" style="width:90px"><i style="width:60%"></i></div><span class="kbd">Ctrl</span><span class="kbd">Enter</span></div>
+            </div>
+            <div class="card">
+              <div class="tiny muted strong" style="margin-bottom:7px">الگوها (Patterns)</div>
+              <ul class="small ink2" style="display:flex;flex-direction:column;gap:6px">
+                <li>◆ هر صفحه یک CTA اصلی — بقیه ثانویه یا ghost</li>
+                <li>◆ کارت درس: متادیتا → هدف → بدنه → نکته → تمرین → ثبت</li>
+                <li>◆ کارت روز تقویم: عدد روز بزرگ‌تر از تاریخ، سطح اثبات زیر آن</li>
+                <li>◆ ربات: هر پیام یک کنش؛ فهرست گزینه‌ها با شماره‌های فارسی</li>
+                <li>◆ پیام‌های سیستمی: چگونه، چه اتفاقی افتاد، حالا چه کار کنم</li>
+                <li>◆ نوار کنار ادمین: همیشه «وضعیت پوشش محتوا» دیده شود</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="legendbox" style="margin-top:13px">
+            <b>راهنمای خواندن وایرفریم:</b> متن ساده = محتوای نمونه · خط‌های متقاطع = تصویر/ویدیو/نمودار · کادر خط‌چین = منطقه تعاملی (drag & drop) ·
+            دکمه آبی = کنش اصلی · <span class="badge info">برچسب آبی</span> = افزوده یا تصمیم این سند · <span class="badge ok">سبز</span> = تأییدشده/موفق · <span class="badge warn">زرد</span> = هشدار/خوداظهاری · <span class="badge bad">قرمز</span> = خطا/ازدست‌رفته · <span class="badge n">خاکستری</span> = خنثی/متادیتا.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+</div>
+
+<script>
+const NOTES = {
+"f-login": {who:"👤 بخش یادگیرنده · ورود", items:[
+ {t:"یک شماره، یک لینک، تمام — ورود و اتصال بازوی روبیکا در یک گام ادغام می‌شوند؛ no رمز، no فراموشی رمز.", hot:true},
+ {t:"نشست ۳۰ روزه: کاربر روزانه دوباره لاگین نمی‌کند — اصطکاک روزانه صفر است."},
+ {t:"لینک یک‌بارمصرف ۱۵ دقیقه‌ای: اگر کاربر پیام را فوروارد کند، خطر امنیتی ندارد."},
+ {t:"حالت خطای «لینک منقضی» دارای کنش «ارسال لینک تازه» است — هیچ بن‌بستی وجود ندارد."},
+ {t:"«ورود با ایمیل» به‌عنوان راه پشتیبان باقی می‌ماند، اما مسیر پیش‌فرض روبیکا است."}]},
+"f-onb": {who:"👤 بخش یادگیرنده · آنبوردینگ", items:[
+ {t:"اولین تعهد کاربر در ۹۰ ثانیه: دوره، بودجه زمانی، ساعت یادآوری — سه تصمیمی که بقیه عمر محصول بر آن سوار است.", hot:true},
+ {t:"گام سوم با «پیش‌نمایش پیام فردا صبح» تمام می‌شود؛ کاربر پیش از دریافت، قاعده بازی را می‌بیند."},
+ {t:"گزینه «۲۰ دقیقه» برای روزهای شلوغ نجات‌دهنده پایبندی است — بدون مجبورکردن به تمرین سنگین."},
+ {t:"سطح اثبات پیش‌فرض (تیک + یک خط) همین‌جا به کاربر معرفی می‌شود، نه در لحظه فشار."},
+ {t:"قاعده «۱ دوره فعال» از آنبوردینگ اعلام می‌شود تا بعداً به تعارض چنددوره‌ای نخوریم."}]},
+"f-dash": {who:"👤 بخش یادگیرنده · داشبورد", items:[
+ {t:"داشبورد = صفحه تصمیم روزانه. تنها یک CTA اصلی: «شروع درس امروز». بقیه کنش‌ها ثانویه‌اند.", hot:true},
+ {t:"کارت قهرمان: روز x از ۱۸۰ + هدف امروز + Streak + پیشرفت — همه در یک نگاه، بدون اسکرول."},
+ {t:"«ثبت مدرک دیروز (تأخیری)» همیشه در دید است؛ کاربر هرگز به‌خاطر یک روز جامانده گیر نمی‌کند."},
+ {t:"نقشه هفته با نماد + متن (نه فقط رنگ) و یادآوری مهلت جبران."},
+ {t:"بخش «دوره‌های دیگر» با برچسب نگهداری، بار روزانه را شفاف می‌کند و از وسوسه دوره جدید جلوگیری می‌کند."}]},
+"f-courses": {who:"👤 بخش یادگیرنده · دوره‌ها", items:[
+ {t:"یک دوره فعال (پررنگ + CTA) و بقیه فشرده — سلسله‌مراتب بصری، قاعده محصول را منتقل می‌کند.", hot:true},
+ {t:"مسیر «تمام‌شده → دریافت گواهی»: پاداش پایان دوره دیده می‌شود، پس ارزش ادامه‌دادن بالاست."},
+ {t:"نوار خط‌خورده بالا = تصویر/آیکون دوره؛ در فاز بصری به تصویر واقعی تبدیل می‌شود."},
+ {t:"پیشنهاد محتاط: تا پایان دوره فعال، دوره جدید پیشنهاد نشود (مگر بودجه ۹۰ دقیقه)."},
+ {t:"دکمه «فعال‌کردن به‌جای دوره فعلی» سوئیچ را صریح می‌کند — بدون حذف پیشرفت."}]},
+"f-day": {who:"👤 قلب محصول · درس روز", items:[
+ {t:"لحظه مطالعه و لحظه ثبت در یک صفحه و یک نفس‌اند؛ فاصله‌انداختن بین آن‌ها، بزرگ‌ترین خطای طراحی این محصول است.", hot:true},
+ {t:"سه سطح اثبات همیشه دیده می‌شوند: کاربر در روز شلوغ سطح ۱ را انتخاب می‌کند — Streak نمی‌شکند، صداقت هم حفظ می‌شود."},
+ {t:"ثبت با HTMX بدون رفرش؛ دکمه در حالت loading است و فرم هرگز خالی نمی‌شود.", hot:true},
+ {t:"میان‌بر Ctrl+Enter برای کاربران حرفه‌ای که تایپ می‌کنند."},
+ {t:"«فقط مطالعه (بدون ثبت مدرک)» صریح و درجه‌دو است — می‌دانیم بعضی روزها فقط خواندن ممکن است."},
+ {t:"جعبه کد با dir=ltr جدا شده تا در قاب RTL وارونه نشود."}]},
+"f-done": {who:"👤 قلب محصول · نتیجه ثبت", items:[
+ {t:"پاداش متغیر (V): Streak، نشان تأیید، پیشرفت فاز و «شگفتی روز» — نه یک تیک خشک.", hot:true},
+ {t:"پیام «سه‌شنبه هنوز باز است» در همان لحظه موفقیت، مسیر جبران را به کاربر نشان می‌دهد."},
+ {t:"سناریوی شکست Streak با لحن مهربان و تأکید بر رکورد حفظ‌شده؛ سرزنش = رهاکردن.", hot:true},
+ {t:"فقط یک CTA پررنگ (درس فردا)؛ ویرایش یادداشت کنش ثانویه است."},
+ {t:"حالت «ثبت تکراری» به‌جای خطا، پیشنهاد به‌روزرسانی می‌دهد."}]},
+"f-cal": {who:"👤 بخش یادگیرنده · تقویم", items:[
+ {t:"ستون اول = شنبه؛ ساختار هفته (۵ درس + مینی‌پروژه + مرور جمعه) در خودِ تقویم خوانده می‌شود.", hot:true},
+ {t:"مرز فازها با خط و برچسب پررنگ است تا حس «پیمودن مسیر» به‌وجود بیاید، نه فهرست بی‌انتها."},
+ {t:"هر سلول سطح اثبات همان روز را هم نشان می‌دهد: ۱، ۲، ۳."},
+ {t:"ژتون مرخصی و توقف برنامه‌ریزی‌شده در تقویم دیده می‌شوند — استراحت، بخشی از طراحی است."},
+ {t:"خروجی ICS و فهرست سرفصل‌ها: کاربر می‌تواند مسیر را بیرون از محصول هم نگه دارد."}]},
+"f-evi": {who:"👤 بخش یادگیرنده · سرمایه‌گذاری", items:[
+ {t:"افزوده این سند: مرحله Investment مدل عادت نازک بود — این آرشیو آن را ضخیم می‌کند.", hot:true},
+ {t:"جدول ساده و قابل جست‌وجو؛ هر ردیف یک خاطره یادگیری است، نه یک فایل."},
+ {t:"برچسب سطح به کاربر می‌گوید کدام مدارک قابل ارائه به کارفرما هستند (۲ و ۳)."},
+ {t:"خروجی Zip/PDF و در پایان دوره، پرتفولیوی یک‌صفحه‌ای — ROI ملموس یادگیری."},
+ {t:"«به‌روزرسانی» برای خوداظهاری قبلی: ارتقای سطح همیشه ممکن است."}]},
+"f-week": {who:"👤 بخش یادگیرنده · کارنامه", items:[
+ {t:"افزوده این سند: پاداش متغیر ثابت هفتگی؛ بدون آن انگیزه فقط به Streak وابسته می‌ماند و با یک شکست فرو می‌ریزد.", hot:true},
+ {t:"آزمون سه‌مفهومی جمعه، به‌جای مرور آزاد — یادگیری فعال و خروجی قابل سنجش."},
+ {t:"کارت پیشرفت قابل اشتراک: لایه اجتماعی اختیاری و پیش‌فرض خاموش تا فشار مقایسه‌ای ساخته نشود."},
+ {t:"اعداد قابل افتخار: «۲ ساعت و ۴۰ دقیقه یادگیری» بهتر از «۳۱ ساعت حضور در اپ» است — ضد‌متریک زمان حضور."},
+ {t:"«توقع هفته آینده» با نشان پایان فاز، هدف کوچکی برای هفته بعد می‌کارد."}]},
+"f-set": {who:"👤 بخش یادگیرنده · تنظیمات", items:[
+ {t:"همه کنترل‌ها در یک صفحه و یک منبع حقیقت: تغییر در وب، فوراً در ربات هم اعمال می‌شود.", hot:true},
+ {t:"«توقف موقت» با یک کلیک — همان دستوری که در روبیکا هم هست (`توقف ۵`)."},
+ {t:"قطع اتصال روبیکا هشدار صریح دارد: وب کار می‌کند، اما احتمال رهاکردن دوره چند برابر می‌شود."},
+ {t:"جمعه پیش‌فرض خاموش + سقف ۳ پیام: کاربر مطمئن است اسپم نمی‌شود، پس اجازه اعلان می‌دهد."},
+ {t:"دسترس‌پذیری در دست کاربر: اندازه متن، کاهش انیمیشن، تم."}]},
+"f-adash": {who:"🔐 پنل مدیریت · داشبورد پوشش", items:[
+ {t:"افزوده این سند و بزرگ‌ترین ریسک پروژه: بار تولید ۱۸۰ درس. بافر محتوا باید یک عدد ثابت روی داشبورد باشد.", hot:true},
+ {t:"هشدار «بافر ۳ روز» با یک کلیک به کتابخانه پرامپت وصل می‌شود — از هشدار تا عمل، یک قدم."},
+ {t:"تقویم پوشش با وضعیت‌های منتشرشده / AI / پیش‌نویس / خالی؛ ستون‌ها روزهای دوره‌اند نه روزهای تقویم."},
+ {t:"پنل «امروز چه اتفاقی می‌افتد»: ارسال‌های انجام‌شده، در صف، و خطاها."},
+ {t:"قاعده بافر ۱۴ روزه در همین صفحه یادآوری می‌شود تا به فراموشی نرود."}]},
+"f-acourses": {who:"🔐 پنل مدیریت · دوره‌ها", items:[
+ {t:"فرم‌ها فارسی و مخصوص کاربر واقعی‌اند (آرش)، اما خروجی همان فایل‌های md + Frontmatter است.", hot:true},
+ {t:"نوار کنار، ساختار پوشه‌ای واقعی روی دیسک را نشان می‌دهد تا شکاف ذهنی «پنل ↔ فایل» برداشته شود."},
+ {t:"آمار زنده هر دوره: منتشرشده از کل + بافر — دو عددی که ادمین هر روز باید ببیند."},
+ {t:"slug لاتین جدا از عنوان فارسی، برای URL پایدار و لینک عمیق روبیکا."},
+ {t:"«ساختار هفته» به‌عنوان تنظیم سطح دوره (۵+۱+۱ پیش‌فرض)."}]},
+"f-atree": {who:"🔐 پنل مدیریت · درخت دروس", items:[
+ {t:"سه سطح دوره/فاز/هفته با وضعیت تولید هر درس: منتشرشده، AI، پیش‌نویس، خالی.", hot:true},
+ {t:"دکمه «ویرایش» فقط روی درس نیازمند ویرایش پررنگ است — مسیر پرتکرار ادمین.", hot:true},
+ {t:"جابه‌جایی هفته‌ها و باز/بستن فازها برای بازآرایی برنامه، بدون از دست رفتن داده."},
+ {t:"خروجی گروهی به Markdown/Zip: داده همیشه قابل بردن است (قفل‌شدن روی ابزار نداریم)."},
+ {t:"نمای جدولی برای کارهای دسته‌ای (انتشار گروهی) پشت همین صفحه است."}]},
+"f-aedit": {who:"🔐 پنل مدیریت · ویرایشگر", items:[
+ {t:"چیدمان سه‌ستونی: متادیتای فارسی → مارک‌داون → پیش‌نمایش زنده؛ ادمین بدون رفرش هم می‌بیند.", hot:true},
+ {t:"گیت کیفیت پایین صفحه: هدف، کد اجراشدنی، تمرین با خروجی، زمان — مانع انتشار محتوای بی‌کیفیت."},
+ {t:"وضعیت «AI · نیازمند ویرایش» عمداً بلوکه است؛ هیچ متن AI بدون انسان منتشر نمی‌شود."},
+ {t:"تاریخچه نسخه‌ها (۲۰ نسخه) با بازگردانی — جانِ ادمینی که تنهاست."},
+ {t:"نوار کنش چسبان: ذخیره خودکار، انتشار برنامه‌ریزی‌شده، ارسال در صف پیام."}]},
+"f-apro": {who:"🔐 پنل مدیریت · پرامپت‌ها", items:[
+ {t:"پرامپت‌ها دارایی اصلی تولید محتوا هستند: نسخه‌دار، دسته‌بندی‌شده و با آمار مصرف.", hot:true},
+ {t:"جایگذاری خودکار متغیرها (دوره، روز، سطح، لحن) + کپی یک‌کلیکی — دقیقاً خواسته PRD ۲.۰، ولی بدون خطای انسانی."},
+ {t:"گیت کیفیت خودکار کنار پرامپت دیده می‌شود تا معلم پیش از تولید بداند چه چیزی از او انتظار می‌رود."},
+ {t:"«نسخه جدید» جای ویرایش مستقیم را می‌گیرد تا پرامپت‌های موفق از دست نروند."},
+ {t:"دسته‌بندی‌ها همان دسته‌های PRD است: برنامه‌نویسی، دواپس، محصول، توسعه فردی."}]},
+"f-aup": {who:"🔐 پنل مدیریت · بارگذاری", items:[
+ {t:"گزارش اعتبارسنجی خشک و دقیق: تکرار روز، متادیتای ناقص، شکاف ترتیب — با راه‌حل در همان خط.", hot:true},
+ {t:"حالت پیش‌فرض «فقط افزودن موارد جدید» است تا آپلود دوباره، کار ویرایش‌شده را خراب نکند."},
+ {t:"«ساخت خودکار روز مرور جمعه» نشان می‌دهد ساختار هفتگی یک قاعده است، نه محتوای دستی."},
+ {t:"تأیید نهایی تا رفع خطاها غیرفعال است؛ کیفیت قبل از انتشار، نه بعد از آن."},
+ {t:"پیش‌نمایش diff قبل از تأیید: شفافیت کامل با داده‌ی کاربران واقعی."}]},
+"f-anotif": {who:"🔐 پنل مدیریت · اعلان‌ها", items:[
+ {t:"صف ارسال با زمان، گیرنده و وضعیت؛ به‌همراه تلاش مجدد و «توقف کامل ارسال» برای حالت تعمیر.", hot:true},
+ {t:"پنجره سکوت + سقف ۳ پیام + عدم ارسال پس از ثبت موفق: سه قاعده ضد‌اسپم که اعتماد کاربر را می‌سازند."},
+ {t:"قالب پیام با متغیرها و پیش‌نمایش داده واقعی — بدون ویرایش کد برای تغییر متن."},
+ {t:"لاگ ۳۰ روزه، عیب‌یابی «چرا پیام نرسید؟» را از حدس به مشاهده تبدیل می‌کند."},
+ {t:"ستون‌های زمان با اعداد فارسی و ترتیب RTL، ولی بدنه پیام‌ها با ساختار چپ‌به‌راست ایمن."}]},
+"f-r1": {who:"📱 بازوی روبیکا · پیام صبحگاهی", items:[
+ {t:"هر پیام حداکثر سه چیز: روز چندم، امروز چه کاری، از کجا شروع کنم. بقیه حذف می‌شود.", hot:true},
+ {t:"لینک عمیق مستقیماً به همان درس — نه صفحه اصلی. این یک کلیک، کل مسیر ۲ سند است.", hot:true},
+ {t:"خط دستورها همیشه پایین پیام می‌آید تا کاربر بداند کنترل دست خودش است."},
+ {t:"اعتبارسنجی پیش از ارسال (درس منتشر شده؟ کاربر در توقف؟ سقف پیام؟) تا ارسال اشتباه نداشته باشیم."},
+ {t:"هشدار بحرانی: بدون میزبانی در دسترس موبایل، لینک عمیق کار نمی‌کند — جایگزین: کد روز."}]},
+"f-r2": {who:"📱 بازوی روبیکا · یادآوری عصرانه", items:[
+ {t:"پیشنهاد کلیدی این سند: ثبت سطح ۱ از داخل روبیکا؛ اگر کاربر در پیام‌رسان بماند، Streak زنده می‌ماند.", hot:true},
+ {t:"چهار پاسخ با چهار منطق متفاوت — از «انجام دادم» تا «امشب نمی‌رسم» (ژتون/مهلت جبران)."},
+ {t:"قاعده ۲۴ ساعته: هیچ یادآوری‌ای پس از ۲۱:۰۰ و هیچ‌وقت دو بار برای یک کار."},
+ {t:"پاسخ به سؤال کاربر («چرا ۱۳ نشد؟») به‌عنوان سناریو طراحی شده؛ ربات باید توضیح بدهد، نه فقط اعلام کند."},
+ {t:"ثبت از ربات همان رکورد وبه را می‌سازد (source=rubika)؛ یک منبع حقیقت، دو کانال."}]},
+"f-r3": {who:"📱 بازوی روبیکا · دستورات", items:[
+ {t:"جدول دستورات PRD ۲.۰ حفظ شد؛ دو افزوده: دستور «امروز» و پاسخ کارت‌فشرده برای «وضعیت».", hot:true},
+ {t:"طراحی متن‌محور با پاسخ‌های شماره‌ای — مقاوم در برابر محدودیت‌های احتمالی API روبیکا."},
+ {t:"دستور ناشناس → فهرست گزینه‌ها؛ هرگز خطای خام یا سکوت."},
+ {t:"ربات و وب روی یک وضعیت می‌نویسند: «ساعت 21:30» بلافاصله در تنظیمات وب دیده می‌شود."},
+ {t:"اعتبارسنجی ورودی‌ها (ساعت نامعتبر، سقف توقف ۳۰ روز) پیش از اعمال."}]},
+"f-r4": {who:"📱 بازوی روبیکا · کتابخانه پیام", items:[
+ {t:"هشت سناریو با متغیرهای مشخص؛ لحن واحد: کوتاه، بدون شعار، بدون سرزنش، هر پیام یک کنش.", hot:true},
+ {t:"«شکست Streak» مهم‌ترین پیام محصول است: تأکید بر رکورد حفظ‌شده و یک دکمه آغاز دوباره."},
+ {t:"پیام «ارتقای مدرک» تشویق می‌کند، اجبار نمی‌کند — سطح ۱ هم معتبر است."},
+ {t:"قواعد سخت (۳ پیام، پنجره سکوت، عدم ارسال پس از ثبت) بخشی از هویت محصول‌اند، نه تنظیمات جانبی."},
+ {t:"این کتابخانه در پنل مدیریت قابل ویرایش است؛ تغییر لحن، بدون تغییر کد."}]},
+"f-states": {who:"🧩 سیستمی · حالت‌ها", items:[
+ {t:"محصول واقعی در همین حالت‌ها ساخته می‌شود؛ PRD ۲.۰ فقط مسیر موفق را دیده بود.", hot:true},
+ {t:"اسکلتانی به‌جای اسپینر: حس سرعت و پایداری، خصوصاً روی اینترنت ایران."},
+ {t:"قطع اینترنت هنگام ثبت: ذخیره محلی + ارسال مجدد خودکار — کاربر هرگز یادداشتش را از دست نمی‌دهد."},
+ {t:"هر خطا سه بخش دارد: چه شد، چرا، حالا چه کار کنم. بدون کد فنی خام."},
+ {t:"RTL/LTR و دسترس‌پذیری به‌عنوان قاعده سیستمی تعریف شده‌اند، نه تصمیم صفحه‌به‌صفحه."}]},
+"f-flows": {who:"🧩 سیستمی · جریان‌ها و کیت", items:[
+ {t:"سه جریان مکمل: وب خالص (استقلال)، روبیکا-محور (عادت‌سازی)، خط تولید محتوا (پایداری محصول).", hot:true},
+ {t:"نقشه صفحات، افزوده‌های این سند نسبت به PRD ۲.۰ را با برچسب آبی نشان می‌دهد: آنبوردینگ، مدارک من، کارنامه، پوشش محتوا، تاریخچه، صف ارسال، لاگ."},
+ {t:"کیت UI مرجع یکدست‌سازی فاز بصری است: رنگ‌های نقش‌دار، مقیاس تایپوگرافی، اجزای پایه."},
+ {t:"هر رنگ فقط با نماد و متن معنا می‌گیرد؛ کوررنگی هیچ اطلاعاتی را حذف نمی‌کند."},
+ {t:"مقیاس ۸ پیکسلی و ارتفاع خط ۱.۷۵ برای متن فارسی؛ اعداد فارسی در UI، لاتین در کد."}]}
+};
+
+const order = Array.from(document.querySelectorAll('.nav button[data-goto]')).map(b => b.dataset.goto);
+const fa = n => Number(n).toLocaleString('fa-IR');
+
+/* --- ساخت تیتر هر فریم + پنل انوتیشن + صفحه‌گرد --- */
+document.querySelectorAll('.frame').forEach(sec => {
+  const duo = sec.querySelector('.duo');
+  if (duo) {
+    const fh = document.createElement('div');
+    fh.className = 'fhead';
+    fh.innerHTML = '<div class="kick">' + (sec.dataset.kick || '') + '</div>'
+      + '<h1>' + (sec.dataset.title || '') + '</h1>'
+      + '<p>' + (sec.dataset.desc || '') + '</p>';
+    sec.insertBefore(fh, duo);
+
+    const cfg = NOTES[sec.id];
+    if (cfg) {
+      let aside = duo.querySelector('aside.notes');
+      if (!aside) { aside = document.createElement('aside'); aside.className = 'notes'; duo.appendChild(aside); }
+      const h3 = document.createElement('h3');
+      h3.textContent = '🔎 انوتیشن UX · ' + fa(cfg.items.length) + ' مورد';
+      const ol = document.createElement('ol');
+      cfg.items.forEach((it, i) => {
+        const li = document.createElement('li');
+        if (it.hot) li.classList.add('hot');
+        li.innerHTML = '<span class="n">' + fa(i + 1) + '</span><span>' + it.t + '</span>';
+        ol.appendChild(li);
+      });
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = cfg.who;
+      aside.innerHTML = '';
+      aside.append(h3, ol, who);
+    }
+  }
+
+  const idx = order.indexOf(sec.id);
+  const pg = document.createElement('div');
+  pg.className = 'hstack';
+  pg.style.marginTop = '4px';
+  const prev = order[idx - 1], next = order[idx + 1];
+  pg.innerHTML = (prev ? '<button class="btn sm" data-goto="' + prev + '">→ فریم قبلی</button>' : '')
+    + (next ? '<button class="btn sm" data-goto="' + next + '">فریم بعدی ←</button>' : '')
+    + '<span class="tiny muted" style="margin-inline-start:auto">فریم ' + fa(idx + 1) + ' از ' + fa(order.length) + '</span>';
+  sec.appendChild(pg);
+});
+
+/* --- ناوبری --- */
+function show(id, push) {
+  const target = document.getElementById(id) ? id : order[0];
+  document.querySelectorAll('.frame').forEach(f => f.classList.toggle('on', f.id === target));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.goto === target));
+  if (push && location.hash !== '#' + target) { try { history.replaceState(null, '', '#' + target); } catch (e) { /* iframe سندباکسی */ } }
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-goto]');
+  if (go) { show(go.dataset.goto, true); return; }
+  const an = e.target.closest('.an');
+  if (an) {
+    const sec = an.closest('.frame');
+    const items = sec ? sec.querySelectorAll('.notes ol li') : [];
+    const li = items[parseInt(an.dataset.note || '0', 10)];
+    if (li) { li.classList.add('hot'); li.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    return;
+  }
+  const ctrl = e.target.closest('[data-ctrl]');
+  if (ctrl) {
+    const k = ctrl.dataset.ctrl;
+    if (k === 'notes') {
+      const hidden = document.body.classList.toggle('hidenotes');
+      ctrl.setAttribute('aria-pressed', String(!hidden));
+      ctrl.textContent = hidden ? '📝 نمایش انوتیشن‌ها' : '📝 پنهان‌کردن انوتیشن‌ها';
+    }
+    if (k === 'print') window.print();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, select')) return;
+  const cur = order.findIndex(id => document.getElementById(id) && document.getElementById(id).classList.contains('on'));
+  if (e.key === 'ArrowLeft' && cur < order.length - 1) show(order[cur + 1], true);
+  if (e.key === 'ArrowRight' && cur > 0) show(order[cur - 1], true);
+});
+window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+show(location.hash.slice(1) || order[0], false);
+</script>
+</body>
+</html>

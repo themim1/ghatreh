@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}درس تازه — قطره{% endblock %}
+{% block content %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <a class="btn sm" href="/admin/lessons"><svg class="ic"><use href="#i-arrowr"/></svg>دروس</a>
+  <h1>درس تازه</h1>
+</div>
+
+<div class="g2">
+  <div class="card">
+    <div class="small xbold" style="margin-bottom:10px">۱) شماره روز را انتخاب کن</div>
+    <form method="post" action="/admin/lesson/new">
+      <span class="label">شماره روز (۱ تا {{ total_days|fa }})</span>
+      <input class="input num" name="day_number" value="{{ suggest_day }}" style="max-width:140px">
+      <div class="cap muted" style="margin-top:8px">پیشنهاد: <span class="num">{{ suggest_day|fa }}</span> — یعنی یک هفته جلوتر از روز جاری، تا بافر ۷ روزه بماند.</div>
+      <button class="btn pri blk" style="margin-top:12px" type="submit">ساختن و رفتن به ویرایشگر</button>
+    </form>
+    {% if used_days %}
+    <div class="divider"></div>
+    <div class="cap muted num">روزهای پرِ فعلی: {{ used_days|list|sort|join('، ') }}</div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="row between" style="margin-bottom:10px">
+      <span class="small xbold">۲) اسکلت Markdown آماده</span>
+      <button class="btn sm" type="button" onclick="copyText(this.dataset.t, this)" data-t="{{ next_md }}">
+        <svg class="ic sm"><use href="#i-copy"/></svg>کپی قالب
+      </button>
+    </div>
+    <pre class="mono tiny" dir="ltr" style="background:var(--surface2);padding:11px;border-radius:12px;overflow:auto;max-height:330px">{{ next_md }}</pre>
+    <div class="callout" style="margin-top:10px">
+      <svg class="ic"><use href="#i-info"/></svg>
+      <div class="small">میان‌بر سریع‌تر: همان قالب را پر کن و از <a href="/admin/upload" style="color:var(--pri)">بارگذاری گروهی</a> وارد کن — وضعیت و هشدارها خودکار چک می‌شود.</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

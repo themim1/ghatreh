@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}اعلان‌ها — قطره{% endblock %}
+{% block content %}
+{% set queued = items|selectattr('status', 'eq', 'queued')|list|length %}
+{% set sent = items|selectattr('status', 'eq', 'sent')|list|length %}
+
+<div class="row wrap" style="margin-bottom:14px">
+  <div><h1>موتور ارسال</h1>
+  <div class="cap muted num">{{ items|length|fa }} رکورد اخیر · {{ queued|fa }} در صف · {{ sent|fa }} ارسال‌شده · {{ failed|fa }} خطا · امروز {{ today_count|fa }} پیام</div></div>
+  <span class="spacer"></span>
+  <form method="post" action="/admin/notifications/tick"><button class="btn sm" type="submit">اجرای tick دستی</button></form>
+  <form method="post" action="/rubika/test"><button class="btn sm pri" type="submit">ارسال آزمایشی</button></form>
+  <a class="btn sm" href="/rubika/preview">پیش‌نمایش متن‌ها</a>
+</div>
+
+<div class="g3" style="margin-bottom:14px">
+  <div class="card">
+    <div class="row" style="gap:10px">
+      <span class="ico sm {% if settings.rubika_token %}ok{% else %}gold{% endif %}"><svg class="ic sm"><use href="#i-chat"/></svg></span>
+      <div><div class="small bold">{% if settings.rubika_token %}روبیکا متصل{% else %}حالت آفلاین{% endif %}</div>
+      <div class="tiny muted">{% if settings.rubika_token %}ارسال واقعی فعال — چت {{ settings.rubika_chat_id }}{% else %}پیام‌ها ثبت می‌شوند تا توکن در تنظیمات بیاید{% endif %}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row" style="gap:10px">
+      <span class="ico sm"><svg class="ic sm"><use href="#i-clock"/></svg></span>
+      <div><div class="small bold num">صبح {{ settings.morning_time|fa }} · عصر {{ settings.evening_time|fa }}</div>
+      <div class="tiny muted">پنجره سکوت ۲۳:۰۰–۰۷:۰۰ · حداکثر ۳ پیام در روز</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row" style="gap:10px">
+      <span class="ico sm {% if settings.paused_until %}gold{% else %}ok{% endif %}"><svg class="ic sm"><use href="#i-{{ 'clock' if settings.paused_until else 'checkc' }}"/></svg></span>
+      <div><div class="small bold">{% if settings.paused_until %}در توقف تا {{ settings.paused_until }}{% else %}موتور فعال{% endif %}</div>
+      <div class="tiny muted">هر پیام حداکثر یک بار در روز ارسال می‌شود — بدون تکرار</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card pad0">
+  <table class="tbl">
+    <thead><tr><th style="width:118px">ساخته‌شده</th><th style="width:96px">نوع</th><th style="width:92px">وضعیت</th><th>متن</th><th style="width:118px">ارسال</th><th style="width:104px"></th></tr></thead>
+    <tbody>
+      {% for n in items %}
+      <tr>
+        <td class="cap muted num">{{ n.created_at.strftime('%m-%d %H:%M')|fa }}</td>
+        <td><span class="badge {% if n.kind == 'morning' %}info{% elif n.kind == 'congrats' %}ok{% elif n.kind == 'evening' %}warn{% else %}n{% endif %}">{{ n.kind }}</span></td>
+        <td>{% if n.status == 'sent' %}<span class="badge ok">ارسال شد</span>
+            {% elif n.status == 'failed' %}<span class="badge bad">خطا</span>
+            {% elif n.status == 'skipped' %}<span class="badge n">رد شد</span>
+            {% else %}<span class="badge warn">در صف</span>{% endif %}</td>
+        <td class="small">
+          {% if n.reason %}<span class="badge bad tiny">{{ n.reason[:36] }}</span>{% endif %}
+          <span dir="auto">{{ n.body.split('\n')[0][:92] }}</span>
+        </td>
+        <td class="cap muted num">{% if n.sent_at %}{{ n.sent_at.strftime('%m-%d %H:%M')|fa }}{% else %}—{% endif %}</td>
+        <td>{% if n.status == 'failed' %}
+          <form method="post" action="/admin/notifications/{{ n.id }}/retry"><button class="btn sm ghost" type="submit">تلاش دوباره</button></form>
+        {% endif %}</td>
+      </tr>
+      {% endfor %}
+      {% if not items %}<tr><td colspan="6" class="cap muted">صف خالی است — tick بعدی پیام صبحگاهی را می‌سازد.</td></tr>{% endif %}
+    </tbody>
+  </table>
+</div>
+
+<div class="callout" style="margin-top:14px">
+  <svg class="ic"><use href="#i-info"/></svg>
+  <div class="small">قاعده‌های سخت موتور: اگر امروز ثبت شده باشد، یادآوری عصرانه ساخته نمی‌شود · توقف، همه پیام‌ها را متوقف می‌کند · در پنجره سکوت هیچ پیامی ساخته نمی‌شود.</div>
+</div>
+
+{% endblock %}
